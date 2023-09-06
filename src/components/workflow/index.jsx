@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import ReactFlow, { useNodesState, useEdgesState, MiniMap, Controls, Background, MarkerType } from 'reactflow';
 import 'reactflow/dist/style.css';
 import StyledSimulation from "./styled"
+import {white} from "../style/index"
 
 import ConditionalNode from '../nodes/conditional/CustomConditionalNode';
 import InputNode from '../nodes/input/CustomInputNode';
@@ -42,19 +43,17 @@ export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
   };
 
   const [columns, setColumns]  = useState( [{name:"central", gap: 260 }] )
-  const [lines, setLines]  = useState( [{name:"start", gap: 260 }] )
   const [nodes, setNodes] = useNodesState([])
   const [edges] = useEdgesState([])
   
   let nextNodeId = initialNode;
 
-  const [parentNode] = useState( { column: "central", line:"start", id: "0", typo:"task"} );
-
-  const updateParentNode = ( column, id, type ) => {
+  const [parentNode] = useState( { x: 260, y: 0, column: "central", id: "0"} );
+  const updateParentNode = ( posX, posY, column, id ) => {
     parentNode.id = id;
-    parentNode.line = line;
+    parentNode.x = posX
+    parentNode.y = posY
     parentNode.column = column;
-    parentNode.type = type;
   }
 
   const getColumn = (columnName) => {
