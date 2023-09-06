@@ -33,6 +33,10 @@ export default styled.div`
     color: ${white};
   }
   
+  .react-flow__controls{
+    box-shadow: none;
+  }
+
   .react-flow__controls-button{
     background-color: ${smokeWhiteHover};
     border-radius: 4px;
