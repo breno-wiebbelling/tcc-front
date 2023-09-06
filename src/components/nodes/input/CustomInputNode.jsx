@@ -1,17 +1,16 @@
 import { Handle, Position } from 'reactflow';
-import ConditionalNodeStyled from "./ConditionalNodeStyled"
+import InputNodeStyled from "./styledInputNode"
 import React  from 'react';
 
 export default ({ data }) => {
-
+  
   return (
-    <ConditionalNodeStyled>
-      <Handle className={"handle_top"} type="target" position={Position.Top} />
+    <InputNodeStyled>
       <div className="worker">
         <p>{data.label}</p>
       </div>
       <Handle className="handle_bottom" type="source" position={Position.Bottom} />
-    </ConditionalNodeStyled>
+    </InputNodeStyled>
   );
 }
 

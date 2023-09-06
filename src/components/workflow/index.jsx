@@ -1,27 +1,32 @@
 import React, {useEffect, useState} from 'react';
 import ReactFlow, { useNodesState, useEdgesState, MiniMap, Controls, Background, MarkerType } from 'reactflow';
 import 'reactflow/dist/style.css';
+import StyledSimulation from "./styled"
 
-import {ConditionalNode} from '../nodes/conditional/CustomConditionalNode';
+import ConditionalNode from '../nodes/conditional/CustomConditionalNode';
+import InputNode from '../nodes/input/CustomInputNode';
+import DefaultNode from '../nodes/default/CustomDefaultNode';
+import OutputNode from '../nodes/output/CustomOutputNode';
 
 const FINAL_KEY = "output";
-const TASK_KEY  = "default";
-const START_KEY = "input";
+const TASK_KEY  = "task";
+const START_KEY = "start";
 const CONDITIONAL_KEY = "conditional"
 
-const Y_GAP = 180;
+const Y_GAP = 150;
 const X_GAP = 200;
 
 const onNodeClick = (event, node) => alert(JSON.stringify(node));
 
-const getGap = (currentIndex, totalLength) => {
+//Column
+const getGapColumn = (currentIndex, totalLength) => {
   let middlePosition  = Math.ceil((totalLength/2))
   let currentPosition = currentIndex+1;
 
   if( currentPosition <  middlePosition){ 
     return -Math.abs(X_GAP); 
-  }else 
-  if( currentPosition == middlePosition ){
+  }
+  else if( currentPosition == middlePosition ){
     return (totalLength%2 === 0) ? -Math.abs(X_GAP) : 0;
   }   
 
@@ -29,21 +34,27 @@ const getGap = (currentIndex, totalLength) => {
 } 
 
 export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
-  const nodeTypes = { conditional: ConditionalNode, start: ConditionalNode, task: ConditionalNode, final: ConditionalNode};
+  const nodeTypes = { 
+    conditional:ConditionalNode, 
+    start:InputNode, 
+    task:DefaultNode,
+    final:OutputNode, 
+  };
 
   const [columns, setColumns]  = useState( [{name:"central", gap: 260 }] )
+  const [lines, setLines]  = useState( [{name:"start", gap: 260 }] )
   const [nodes, setNodes] = useNodesState([])
   const [edges] = useEdgesState([])
   
   let nextNodeId = initialNode;
 
-  const [parentNode] = useState( { x: 260, y: 0, column: "central", id: "0"} );
+  const [parentNode] = useState( { column: "central", line:"start", id: "0", typo:"task"} );
 
-  const updateParentNode = ( posX, posY, column, id ) => {
+  const updateParentNode = ( column, id, type ) => {
     parentNode.id = id;
-    parentNode.x = posX
-    parentNode.y = posY
+    parentNode.line = line;
     parentNode.column = column;
+    parentNode.type = type;
   }
 
   const getColumn = (columnName) => {
@@ -57,7 +68,7 @@ export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
   }
 
   const formatNewColumn = (currentIndex, totalLength, parentColumnName) => {
-    let gapResult = getGap(currentIndex, totalLength)
+    let gapResult = getGapColumn(currentIndex, totalLength)
     if(gapResult === 0) { return parentColumnName}
     
     let newColumnName = Math.random().toString(36).substring(2, 8);
@@ -70,8 +81,8 @@ export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
         if( column.name === newColumnName ){
           column.baseColumn = columnAtTheSamePosition.name;
           column.gap = (column.gap > 0) ? -Math.abs(column.gap) : Math.abs(column.gap); 
-        }else
-        if( column.name === parentColumnName ){
+        }
+        else if( column.name === parentColumnName ){
           column.baseColumn = newColumnName;
         }
 
@@ -104,7 +115,7 @@ export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
   const reloadNodesPosition = () => {
     setNodes(latest => {
       return latest.map(node => {
-        node.position.x = getColumnPosition(node?.column, columns);
+        node.position.x = getColumnPosition(node.column, columns);
         return node;
       })
     })
@@ -112,15 +123,20 @@ export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
 
   const formatNode = (currentNodeIndex) => {
     let currentNode = initialNodes[currentNodeIndex];
-
-    currentNode.position = {x: getColumnPosition(parentNode.column), y: parentNode.y + Y_GAP};
+    console.log(parentNode.id)
+    currentNode.position = { x: getColumnPosition(parentNode.column), y: parentNode.y + Y_GAP };
+    if(parentNode.type === "conditional") {
+      currentNode.position.y += (Y_GAP/2);
+    }
     currentNode.column = parentNode.column;
 
     switch (currentNode.type){
       case TASK_KEY: case START_KEY:
+        currentNode.position.y += (Y_GAP/4);
         nextNodeId=currentNode.details.nextNode;
         formatNewEdge(currentNode.id, nextNodeId)
-        updateParentNode(currentNode.position.x, currentNode.position.y, currentNode.column, currentNode.id)
+        updateParentNode(currentNode.position.x, currentNode.position.y, currentNode.column, currentNode.id, currentNode.type)
+        reloadNodesPosition()
         break;
 
       case CONDITIONAL_KEY:
@@ -131,8 +147,7 @@ export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
         currentNode.details.nextNode.forEach((conditionalResult, index) => {
           let columnName = formatNewColumn(index, currentNode.details.nextNode.length, currentNode.column);
           let nodeIndex  = initialNodes.findIndex(node => node.id === conditionalResult); 
-          updateParentNode( getColumnPosition(columnName), prev_y_position, columnName, prev_parent_id )
-          
+          updateParentNode( getColumnPosition(columnName), prev_y_position, columnName, prev_parent_id, currentNode.type)
           formatNewEdge(prev_parent_id, conditionalResult)
           formatNode(nodeIndex)
         })
@@ -147,25 +162,32 @@ export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
   }
 
   useEffect(() => {
+    
     while(initialNodes.length > 0){
       let currentNodeIndex = initialNodes.findIndex(node => node.id === nextNodeId);
+      
+      if(currentNodeIndex == -1){
+        currentNodeIndex = 0;
+        console.log(initialNodes[0])
+      }
 
       formatNode(currentNodeIndex)
     }
-  })
+  }, [])
 
   return (
-    <div style={{ width:(isInfoPanelOpen) ? '100vw':'70vw', height: '92vh' }}>
+    <StyledSimulation style={{ width:(isInfoPanelOpen) ? '100vw':'70vw' }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
+        style={{ borderRadius:"10px"  }}
       >
-        <MiniMap  style={{ "backgroundColor": "#c2c2c2"}}/>
+        {/* <MiniMap  style={{ "backgroundColor": "#e6e6e6"}}/> */}
         <Controls/>
-        <Background style={{ "backgroundColor": "#dcdcdc"}}/>
+        <Background style={{ "backgroundColor": "#ffffff"}} color="#ffffff" />
       </ReactFlow>
-    </div>
+    </StyledSimulation>
   );
 };

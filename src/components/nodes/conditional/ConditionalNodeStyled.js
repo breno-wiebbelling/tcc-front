@@ -1,40 +1,37 @@
 import styled from "styled-components";
+import { denseLightBlue, white } from "../../style/index"
 
-export const ConditionalNodeStyled = styled.div`
+export default styled.div`
   
-    background-color: #4b4bbb;
+  width: 200px;
+  height: 160px;
+
+  display:flex;
+  align-items: center;
+  justify-content: center;
+
+  .worker {
     width: 100px;
-    height: 100px;
+    height: 100px; 
+
+    cursor: pointer;
+    font-weight: bold;
     color: white;
-    border-radius: 10px;
-    
-    display:flex;
+    border-radius: 7px;
+
+    display: flex;
     align-items: center;
     justify-content: center;
 
-    cursor: pointer;
+    background-color: ${denseLightBlue};
+    transform: rotate(45deg); 
+  }
 
-    transform: translateX(25px) rotate(45deg);
-    p{
-      transform: rotate(-45deg);
-    }
-  
-    .handle_top{
-      left:0%;
-    }
+  .worker p{
+    transform: rotate(-45deg); 
+  }
 
-    .handle_left{
-      background-color: #4b4bbb;
-      height: 100px;
-      width: 100px;
-      top: 50%
-    }
-
-    .handle_rigth{
-      top: 100%
-    }
-
-    .handle_bottom{
-      left: 100%;
-    }
+  .worker .handle_top{
+    left:0%;
+  }
 `
