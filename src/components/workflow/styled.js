@@ -4,13 +4,11 @@ import { smokeWhite } from "../style";
 export default styled.div`
 
   position: relative;
-  padding: 15px;
   background-color: ${smokeWhite};
 
-  height: '92vh';
+  height: 92vh;
+  width: 100%;
+  padding: 1%;
 
-  .react-flow__edge{
-    background-color: ${smokeWhite};
-    color: white;
-  } 
+  box-sizing: border-box;
 `

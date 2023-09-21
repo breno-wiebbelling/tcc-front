@@ -3,11 +3,10 @@ import { smokeWhiteHover, smoke, smokeWhite, white } from "../../components/styl
 
 export default styled.div`
 
-  max-width: 100vw;
-  max-height: 100vh;
+  width: 100vw;
+  height: 100vh;
 
   .container{
-    width: 100vw;
     height: 92vh;
     display: flex;
 
@@ -33,30 +32,4 @@ export default styled.div`
     color: ${white};
   }
   
-  .react-flow__controls{
-    box-shadow: none;
-  }
-
-  .react-flow__controls-button{
-    background-color: ${smokeWhiteHover};
-    border-radius: 4px;
-    margin: 2px 0px;
-  }
-
-  .react-flow__controls-button:hover{
-    background-color: ${smoke};
-  }
-
-  .react-flow__controls-button:active{
-    background-color: ${smokeWhite};
-  }
-
-  .react-flow__controls-button svg{
-    fill:smokeBlack;
-  }
-
-  * .react-flow__controls-interactive{
-    display: none;
-  }
-
 `

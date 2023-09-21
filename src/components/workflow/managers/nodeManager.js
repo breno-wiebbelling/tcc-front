@@ -21,11 +21,19 @@ export const nodeTypes = {
 
 export const onNodeClick = (event, node) => alert(JSON.stringify(node));
 
-export const reloadNodesPosition = (setNodes, columnManagerInstance) => {
+export const reloadNodesPosition = (setNodes, columnManagerInstance, lineManagerInstance) => {
+
   setNodes(latest => {
     return latest.map(node => {
-      node.position.x = columnManagerInstance.getColumnPosition(node.column, columnManagerInstance.columns);
-      return node;
+      
+      return {
+        ...node,
+        position : {
+          x : columnManagerInstance.getColumnPosition(node.column),
+          y : lineManagerInstance.getLinePosition(node.line)
+        }
+      }
+      
     })
   })
 }

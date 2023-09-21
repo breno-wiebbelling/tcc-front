@@ -17,7 +17,6 @@ export default ({ isOpen, setIsOpen, children }) => {
         style={{ 
           "width": (isOpen) ? "30vw" : "0vw", 
           "height":"100%",
-          "transition": ".40s", 
           "overflow": "hidden" 
         }}
       >
@@ -31,12 +30,12 @@ export default ({ isOpen, setIsOpen, children }) => {
             <IconButton 
               onClick={closePanel}
               sx={{ 
-                "background-color": smoke,
+                "backgroundColor": smoke,
                 "color": white,
-                "margin-top": "15px",
-                "margin-bottom": "15px",
+                "marginTop": "15px",
+                "marginBottom": "15px",
                 "&:hover": {
-                  "background-color": smokeWhite,
+                  "backgroundColor": smokeWhite,
                 } 
               }}
             >
@@ -51,10 +50,10 @@ export default ({ isOpen, setIsOpen, children }) => {
             <Box 
               sx={{
                 "display": "flex",
-                "align-items": "center",
-                "justify-content": "center",
+                "alignItems": "center",
+                "justifyContent": "center",
                 "height":"80%",
-                "background-color": smokeWhite,
+                "backgroundColor": smokeWhite,
               }}
             >
               {children}

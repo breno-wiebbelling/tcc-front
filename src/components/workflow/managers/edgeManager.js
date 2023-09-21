@@ -3,12 +3,12 @@ import {MarkerType } from 'reactflow';
 export default ( edges ) => {
   const edgesLibrary = {};
 
-  edgesLibrary.formatNewEdge = (currentNodeId, parentNodeId) => {
+  edgesLibrary.create = (currentNodeId, parentNodeId) => {
     if(parentNodeId !== "0"){
       edges.push(
         {
           id: `e${currentNodeId}-${parentNodeId}`,
-          // type: "step",
+          type: "step",
           source: currentNodeId, target: parentNodeId,
           makerEnd: {type: MarkerType.Arrow}, animated:false,
           style: {

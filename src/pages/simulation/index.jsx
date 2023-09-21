@@ -44,7 +44,7 @@ export const Simulation = () => {
       <Header/>
 
       <div className='container'>
-        <SimulationFlow initialNode={initialNode} initialNodes={initialNodes} isInfoPanelOpen={{isInfoPanelOpen}} />
+        <SimulationFlow initialNode={initialNode} initialNodes={initialNodes} isInfoPanelOpen={isInfoPanelOpen} />
         
         {!isInfoPanelOpen && 
           <IconButton className="openInfoPanel" onClick={ () => { setIsInfoPanelOpen(true)} } >
