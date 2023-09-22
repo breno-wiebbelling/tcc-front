@@ -41,7 +41,6 @@ const LineManager =  () => {
 
       lineLibrary.lines.push({ name: newLineName, baseLine:parentLineName, gap: Y_GAP });
 
-      //TODO 
       let fixedLines = lines.map(line => {
         if(line.name === nextLine.name){ line.baseLine = newLineName }
         

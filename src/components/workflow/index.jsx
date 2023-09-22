@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import 'reactflow/dist/style.css';
-import Canvas from "./draw/Canvas/canvas.jsx"
+import ReactFlow, { useNodesState, useEdgesState, MiniMap, Controls, Background, MarkerType } from 'reactflow';
 
 import StyledSimulation from "./styled"
 import {white} from "../style/index"
@@ -21,6 +21,15 @@ export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
   const columnManagerInstance = ColumnManager();
   const edgeManagerInstance = EdgesManager(edges);
   const lineManagerInstance = LineManager();
+
+  //update edges------
+  //set new line before last
+    //update line that was using last (start using new line)
+  
+  //get nodes that were using last as reference
+    //create one ghost for each (using same column as node and on the new line)
+    //create adge from node to ghost and ghost to last
+  //
 
   const updateParentNode = ( newParentNode ) => {
     parentNode.column = newParentNode.column;
@@ -71,14 +80,19 @@ export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
           break;
       }
 
-      // updateParentNode(currentNode);
       setNodes((latest) => {
         return [...latest, currentNode]
       })
 
       initialNodes.splice(currentNodeIndex, 1);
     }
-  }
+  } 
+
+  useEffect(() => {
+    if(initialNodes.length == 0){
+      
+    }
+  }, [initialNodes])
 
   useEffect(()=> {
     setScreenWidth((current) => {
@@ -95,8 +109,17 @@ export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
   }, []);
 
   return (
-    <StyledSimulation style={{ "width": screenWidth }} > 
-      <Canvas screenWidth={screenWidth} nodes={nodes} />
+    <StyledSimulation style={{ width:(isInfoPanelOpen) ? '100vw':'70vw' }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodeClick={onNodeClick}
+        nodeTypes={nodeTypes}
+        style={{ borderRadius:"10px"  }}
+      >
+        <Controls/>
+        <Background style={{ "backgroundColor": white}} color="#ffffff" />
+      </ReactFlow>
     </StyledSimulation>
   );
 };
