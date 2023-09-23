@@ -1,35 +1,22 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import 'reactflow/dist/style.css';
-import ReactFlow, { useNodesState, useEdgesState, MiniMap, Controls, Background, MarkerType } from 'reactflow';
+import ReactFlow, { Controls, Background } from 'reactflow';
 
 import StyledSimulation from "./styled"
-import {white} from "../style/index"
+import { white } from "../style/index"
 
-import ColumnManager, {central_column_name} from "./managers/columnManager";
+import ColumnManager from "./managers/columnManager";
 import EdgesManager from "./managers/edgeManager";
-import LineManager, {first_line_name, last_line_name} from "./managers/lineManager";
-import { nodeKeys, nodeTypes, onNodeClick, reloadNodesPosition } from './managers/nodeManager';
+import LineManager, { first_line_name, last_line_name } from "./managers/lineManager";
+import { nodeKeys, nodeTypes } from './managers/nodeManager';
 
-let counter = 0;
+export default ({ initialNodes, initialNode, isInfoPanelOpen, openNodeInformation }) => {
 
-export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
-
-  const [screenWidth, setScreenWidth] = useState((!isInfoPanelOpen) ? '100vw':'70vw');
-  const [edges] = useState([]);
   const [nodes, setNodes] = useState([]);
-  const [parentNode]      = useState({ column: central_column_name, line:first_line_name });
+  const edgeManagerInstance = EdgesManager();
   const columnManagerInstance = ColumnManager();
-  const edgeManagerInstance = EdgesManager(edges);
   const lineManagerInstance = LineManager();
-
-  //update edges------
-  //set new line before last
-    //update line that was using last (start using new line)
-  
-  //get nodes that were using last as reference
-    //create one ghost for each (using same column as node and on the new line)
-    //create adge from node to ghost and ghost to last
-  //
+  const [parentNode] = useState({ column: columnManagerInstance.central_column_name, line:first_line_name });
 
   const updateParentNode = ( newParentNode ) => {
     parentNode.column = newParentNode.column;
@@ -45,7 +32,7 @@ export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
       switch (currentNode.type){
 
         case nodeKeys.START_KEY:
-          currentNode.column = central_column_name;
+          currentNode.column = columnManagerInstance.central_column_name;
           currentNode.line = first_line_name;
         
         case nodeKeys.TASK_KEY:
@@ -54,7 +41,7 @@ export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
 
         case nodeKeys.START_KEY: case nodeKeys.TASK_KEY:
           edgeManagerInstance.create(currentNode.id, currentNode.details.nextNode);
-          updateParentNode(currentNode)
+          updateParentNode(currentNode);
           createNode(currentNode.details.nextNode);
           break;
 
@@ -75,45 +62,67 @@ export default ({initialNodes, initialNode, isInfoPanelOpen }) => {
           break;
 
         case nodeKeys.FINAL_KEY:
-          currentNode.column = central_column_name;
+          currentNode.column = columnManagerInstance.central_column_name;
           currentNode.line = last_line_name;
           break;
+
       }
 
-      setNodes((latest) => {
-        return [...latest, currentNode]
-      })
-
+      setNodes((latest) => { return [...latest, currentNode] })
       initialNodes.splice(currentNodeIndex, 1);
     }
   } 
 
-  useEffect(() => {
-    if(initialNodes.length == 0){
-      
-    }
-  }, [initialNodes])
+  const reloadNodesAndUpdateEdges = () => {
+    setNodes(latestNodes => {
 
-  useEffect(()=> {
-    setScreenWidth((current) => {
-      return (!isInfoPanelOpen) ? '100vw':'70vw';
+      let newGhostLine = lineManagerInstance.processGhostLine();
+      let lastNode = latestNodes.find(node => node.type == nodeKeys.FINAL_KEY);
+
+      latestNodes.forEach(node => {
+        if(node.type != "final" 
+          && node.details.nextNode == lastNode.id
+          && node.column != "central"
+        ){
+            let newNode = {
+              id: Math.random().toString(36).substring(2, 8),
+              details: {"nextNode":lastNode.id},
+              type: nodeKeys.GHOST,
+              column:node.column,
+              line:newGhostLine,
+            }
+
+            latestNodes.push(newNode)
+            edgeManagerInstance.updateTarget(node.id, lastNode.id, newNode.id)
+            edgeManagerInstance.create(newNode.id, lastNode.id)
+          }
+      })
+
+      return latestNodes.map(node => {
+
+        return {
+          ...node,
+          position : {
+            x : columnManagerInstance.getColumnPosition(node.column),
+            y : lineManagerInstance.getLinePosition(node.line)
+          }
+        }
+        
+      })  
     })
-  }, [isInfoPanelOpen])
+  }  
 
   useEffect(() => { 
-    counter++;
-    if(counter<=1){
-      createNode(initialNode) 
-      reloadNodesPosition(setNodes, columnManagerInstance, lineManagerInstance);
-    }
+    createNode(initialNode) 
+    reloadNodesAndUpdateEdges();
   }, []);
 
   return (
-    <StyledSimulation style={{ width:(isInfoPanelOpen) ? '100vw':'70vw' }}>
+    <StyledSimulation style={{ width:(!isInfoPanelOpen) ? '100vw':'70vw' }}>
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodeClick={onNodeClick}
+        nodes={ nodes }
+        edges={ edgeManagerInstance.edges }
+        onNodeClick={ openNodeInformation }
         nodeTypes={nodeTypes}
         style={{ borderRadius:"10px"  }}
       >

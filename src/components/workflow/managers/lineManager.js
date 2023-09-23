@@ -10,7 +10,7 @@ const LineManager =  () => {
 
   const [lines, setLines] = useState([
     { name:first_line_name, gap: 0 },
-    { name:last_line_name, baseLine:first_line_name, gap: Y_GAP }
+    { name:last_line_name, baseLine:first_line_name, gap: Y_GAP/4 }
   ]);
 
   lineLibrary.lines = lines;
@@ -21,6 +21,7 @@ const LineManager =  () => {
   }
 
   lineLibrary.getLinePosition = (lineName) => {
+
     let currentLine = lineLibrary.getLine(lineName);
 
     if(lineName === first_line_name){
@@ -42,7 +43,7 @@ const LineManager =  () => {
       lineLibrary.lines.push({ name: newLineName, baseLine:parentLineName, gap: Y_GAP });
 
       let fixedLines = lines.map(line => {
-        if(line.name === nextLine.name){ line.baseLine = newLineName }
+        if(line.name === last_line_name){ line.baseLine = newLineName }
         
         return line;
       })
@@ -53,7 +54,21 @@ const LineManager =  () => {
     else{
       return nextLine.name;
     }
+  }
 
+  lineLibrary.processGhostLine = () => {
+    let lastLine = lines.find(line => line.name == last_line_name);
+    let prevLine = lines.find(line => line.name == lastLine.baseLine);
+
+    let newLineName = Math.random().toString(36).substring(2, 8);
+    lineLibrary.lines.push({ name:newLineName, baseLine:prevLine.name, gap: Y_GAP })
+
+    let fixedLines = lines.map(line => {
+      if(line.name == last_line_name){ line.baseLine = newLineName}
+    })
+
+    lineLibrary.setLines(fixedLines);
+    return newLineName;
   }
 
   return lineLibrary;

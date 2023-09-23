@@ -4,9 +4,7 @@ import './style.css'
 
 const App = () => {
   return (
-    <React.StrictMode>
       <AppRoutes />
-    </React.StrictMode>
   )
 }
 

@@ -53,7 +53,6 @@ export default ({ isOpen, setIsOpen, children }) => {
                 "alignItems": "center",
                 "justifyContent": "center",
                 "height":"80%",
-                "backgroundColor": smokeWhite,
               }}
             >
               {children}

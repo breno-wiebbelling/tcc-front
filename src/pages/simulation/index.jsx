@@ -7,6 +7,7 @@ import InfoPanel from "../../components/workflow/panel/index.jsx"
 import DescriptionIcon from '@mui/icons-material/Description';
 import IconButton from '@mui/material/IconButton';
 import SimulationInfo from "../../components/simulation/infoPanel/index.jsx"
+import NodeInfo from "../../components/nodes/infoPanel/index.jsx"
 
 const getUserNodes = () => {
   return [
@@ -23,28 +24,26 @@ const getUserNodes = () => {
 
 export const Simulation = () => {
   const [isInfoPanelOpen, setIsInfoPanelOpen] = useState(false); 
-  const [InfoComponent, setInfoComponent] = useState(null);
   const [simulationInfo, setSimulationInfo] = useState(null);
-  let initialNode = "1";
-  let initialNodes = getUserNodes();
+  const [InfoPanelComponent, setInfoPanelComponent] = useState(()=> { return <SimulationInfo simulationInfo={simulationInfo}/> });
+  const initialNodes = getUserNodes();
+  const initialNode = "1";
+
+  const openNodeInformation = (event, node_information) => {
+    setInfoPanelComponent(()=> { return <NodeInfo nodeInfo={node_information}/> });
+    setIsInfoPanelOpen(true);
+  }
 
   useEffect(() => {
-    //TODO: get info
-    setSimulationInfo({
-      "name": "Busca de usuários",
-      "created":"22/03/2023",
-      "descripiton": "Busca de usuários validos para cartão cartão corporativo"
-    })
-    setInfoComponent( ()=> { return <SimulationInfo/> } )
-
-  }, []);
+    setSimulationInfo({ "name": "Busca de usuários", "created":"22/03/2023", "descripiton": "Busca de usuários validos para cartão cartão corporativo"});
+  }, [])
 
   return (
     <SimulationStyled>
       <Header/>
 
       <div className='container'>
-        <SimulationFlow initialNode={initialNode} initialNodes={initialNodes} isInfoPanelOpen={isInfoPanelOpen} />
+        <SimulationFlow initialNode={initialNode} initialNodes={initialNodes} isInfoPanelOpen={isInfoPanelOpen} openNodeInformation={openNodeInformation} />
         
         {!isInfoPanelOpen && 
           <IconButton className="openInfoPanel" onClick={ () => { setIsInfoPanelOpen(true)} } >
@@ -53,7 +52,7 @@ export const Simulation = () => {
         }
 
         <InfoPanel isOpen={isInfoPanelOpen} setIsOpen={setIsInfoPanelOpen}>
-          { InfoComponent }
+          { InfoPanelComponent }
         </InfoPanel>
       </div>
      

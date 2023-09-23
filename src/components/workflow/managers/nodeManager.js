@@ -1,39 +1,21 @@
-import ConditionalNode from '../../nodes/conditional/CustomConditionalNode'; 
-import InputNode from '../../nodes/input/CustomInputNode'; 
-import DefaultNode from '../../nodes/default/CustomDefaultNode'; 
-import OutputNode from '../../nodes/output/CustomOutputNode';
+import ConditionalNode from '../../nodes/types/conditional/CustomConditionalNode'; 
+import InputNode from '../../nodes/types/input/CustomInputNode'; 
+import DefaultNode from '../../nodes/types/default/CustomDefaultNode'; 
+import OutputNode from '../../nodes/types/output/CustomOutputNode';
+import GhostNode from '../../nodes/types/ghost/CustomeGhostNode'
 
-const nodeKeys = {
+export const nodeKeys = {
+  GHOST:"ghost",
   FINAL_KEY:"final",
   TASK_KEY:"task",
   START_KEY:"start",
   CONDITIONAL_KEY:"conditional"
-}
-
-export { nodeKeys };
+};
 
 export const nodeTypes = { 
   conditional:ConditionalNode, 
   start:InputNode, 
   task:DefaultNode,
   final:OutputNode, 
+  ghost:GhostNode
 };
-
-export const onNodeClick = (event, node) => alert(JSON.stringify(node));
-
-export const reloadNodesPosition = (setNodes, columnManagerInstance, lineManagerInstance) => {
-
-  setNodes(latest => {
-    return latest.map(node => {
-      
-      return {
-        ...node,
-        position : {
-          x : columnManagerInstance.getColumnPosition(node.column),
-          y : lineManagerInstance.getLinePosition(node.line)
-        }
-      }
-      
-    })
-  })
-}
