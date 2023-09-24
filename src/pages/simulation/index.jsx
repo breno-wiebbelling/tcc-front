@@ -9,6 +9,9 @@ import IconButton from '@mui/material/IconButton';
 import SimulationInfo from "../../components/simulation/infoPanel/index.jsx"
 import NodeInfo from "../../components/nodes/infoPanel/index.jsx"
 
+//TODO
+const nodeEventNames = { add: "addNode", edit:"editNode", delete: "deleteNode" }
+
 const getUserNodes = () => {
   return [
     { id: '1',      type: 'start',          details: {nextNode: "2"},               data: { label: 'START' } },
@@ -29,8 +32,27 @@ export const Simulation = () => {
   const initialNodes = getUserNodes();
   const initialNode = "1";
 
-  const openNodeInformation = (event, node_information) => {
-    setInfoPanelComponent(()=> { return <NodeInfo nodeInfo={node_information}/> });
+  const nodeClickEvents = {
+    editNode : (node_information) => { openModalWithNodeEvent(nodeEventNames.edit, node_information) },
+    deleteNode : (node_information) => { openModalWithNodeEvent(nodeEventNames.delete, node_information) },
+  }
+
+  const openModalWithNodeEvent = (eventName, node_information) => {
+    alert(eventName)
+    switch (eventName){
+      case nodeEventNames.add:
+        setInfoPanelComponent(() => { return <NodeInfo nodeInfo={node_information}/> });
+        break;
+
+      case nodeEventNames.edit:
+        setInfoPanelComponent(() => { return <NodeInfo nodeInfo={node_information}/> });
+        break;
+
+      case nodeEventNames.delete:
+        setInfoPanelComponent(() => { return <NodeInfo nodeInfo={node_information}/> });
+        break;
+    }
+      
     setIsInfoPanelOpen(true);
   }
 
@@ -43,7 +65,12 @@ export const Simulation = () => {
       <Header/>
 
       <div className='container'>
-        <SimulationFlow initialNode={initialNode} initialNodes={initialNodes} isInfoPanelOpen={isInfoPanelOpen} openNodeInformation={openNodeInformation} />
+        <SimulationFlow 
+          initialNode={initialNode} 
+          initialNodes={initialNodes} 
+          isInfoPanelOpen={isInfoPanelOpen} 
+          nodeClickEvents={nodeClickEvents} 
+        />
         
         {!isInfoPanelOpen && 
           <IconButton className="openInfoPanel" onClick={ () => { setIsInfoPanelOpen(true)} } >

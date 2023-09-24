@@ -10,7 +10,7 @@ import EdgesManager from "./managers/edgeManager";
 import LineManager, { first_line_name, last_line_name } from "./managers/lineManager";
 import { nodeKeys, nodeTypes } from './managers/nodeManager';
 
-export default ({ initialNodes, initialNode, isInfoPanelOpen, openNodeInformation }) => {
+export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents }) => {
 
   const [nodes, setNodes] = useState([]);
   const edgeManagerInstance = EdgesManager();
@@ -65,9 +65,10 @@ export default ({ initialNodes, initialNode, isInfoPanelOpen, openNodeInformatio
           currentNode.column = columnManagerInstance.central_column_name;
           currentNode.line = last_line_name;
           break;
-
       }
 
+      currentNode.data.click = nodeClickEvents;
+   
       setNodes((latest) => { return [...latest, currentNode] })
       initialNodes.splice(currentNodeIndex, 1);
     }
@@ -122,7 +123,6 @@ export default ({ initialNodes, initialNode, isInfoPanelOpen, openNodeInformatio
       <ReactFlow
         nodes={ nodes }
         edges={ edgeManagerInstance.edges }
-        onNodeClick={ openNodeInformation }
         nodeTypes={nodeTypes}
         style={{ borderRadius:"10px"  }}
       >

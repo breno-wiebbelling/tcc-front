@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { smokeWhiteHover, smoke, smokeWhite, white } from "../../components/style/index";
+import { smokeWhiteHover, smokeWhite, smoke, white } from "../../components/style/index";
 
 export default styled.div`
 
@@ -28,8 +28,8 @@ export default styled.div`
     justify-content: center;
 
     cursor: pointer;
-    background-color: ${smoke};
-    color: ${white};
+    background-color: ${smokeWhiteHover};
+    color: #0000008a;
   }
   
 `

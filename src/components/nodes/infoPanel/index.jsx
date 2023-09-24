@@ -4,8 +4,6 @@ import { Container, Typography } from '@mui/material';
 
 export default ({ nodeInfo  }) => {
 
-  console.log(nodeInfo)
-
   return (
     <SimulationInfoStyled>
 

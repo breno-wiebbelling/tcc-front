@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { softGreen, smokeBlack } from "../../../style";
+import { softGreen, smokeBlack, smokeWhiteHover, smoke } from "../../../style";
 
 export default styled.div`
     width: 200px;
@@ -31,22 +31,26 @@ export default styled.div`
     }
 
     .action_button{
-        
         width: 50px;
         height: 50px;
 
         position:absolute;
-        top:0;
+        top:10px;
+        
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-        background-color: black;
         transition-duration: .5s;
 
         z-index: -1;
     }
 
-    .left{ left:-70px; 
-        top: ${ props => (props.border) ? "80px" : "0px" };
-        left: 75px;}
-    .rigth{ right:-70px; }
+    .action_button .action_button_element{
+        background-color: ${smokeWhiteHover};
+        width: 100%;
+        height: 100%;
+    }
+
     
 `
