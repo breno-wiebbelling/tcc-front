@@ -7,7 +7,7 @@ import { white } from "../common/style/index"
 import ColumnManager from "./managers/columnManager";
 import EdgesManager from "./managers/edgeManager";
 import LineManager, { first_line_name, last_line_name } from "./managers/lineManager";
-import { nodeKeys, nodeTypes } from './managers/nodeManager';
+import { nodeKeys, nodeTypes, findNodeFrequencies } from './managers/nodeManager';
 import { idGenerator } from "../common/idManager"
 
 export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents }) => {
@@ -70,29 +70,34 @@ export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents })
   const reloadNodesAndAddGhostNodes = () => {
     setNodes(latestNodes => {
 
-      //TODO: remove from here
       if(!latestNodes.find(node => node.type === nodeKeys.CONDITIONAL_KEY)) { return latestNodes }
 
+      let nodesWithSimilarity = findNodeFrequencies(latestNodes);
 
+      console.log(nodesWithSimilarity);
+      
+      // nodesWithSimilarity.forEach(similarNode => {
+      //   edgesManagerInstance.updateTarget(node.id, lastNode.id, newNode.id)
+      //   edgesManagerInstance.create(newNode.id, lastNode.id)
+      // })
 
-      let newGhostLine = lineManagerInstance.processGhostLine();
-      let lastNode = latestNodes.find(node => node.type === nodeKeys.FINAL_KEY);
+      // let newGhostLine = lineManagerInstance.processGhostLine();
+      // let lastNode = latestNodes.find(node => node.type === nodeKeys.FINAL_KEY);
 
-      latestNodes.forEach(node => {
-        if( node.type !== nodeKeys.FINAL_KEY && node.details.nextNode === lastNode.id ){
-          let newNode = {
-            id: idGenerator(), details: {"nextNode":lastNode.id},
-            type: nodeKeys.GHOST,
-            column:node.column, line:newGhostLine,
-          }
+      // latestNodes.forEach(node => {
+      //   if( node.type !== nodeKeys.FINAL_KEY && node.details.nextNode === lastNode.id ){
+      //     let newNode = {
+      //       id: idGenerator(), details: {"nextNode":lastNode.id},
+      //       type: nodeKeys.GHOST,
+      //       column:node.column, line:newGhostLine,
+      //     }
 
-          node.details.nextNode = newNode.id;
+      //     node.details.nextNode = newNode.id;
           
-          latestNodes.push(newNode)
-          edgesManagerInstance.updateTarget(node.id, lastNode.id, newNode.id)
-          edgesManagerInstance.create(newNode.id, lastNode.id)
-        }
-      })
+      //     latestNodes.push(newNode)
+
+      //   }
+      // })
 
       return latestNodes;
     })
@@ -193,7 +198,7 @@ export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents })
       return latestNodes;
     });
 
-    updateGhostPositions(">")
+    updateGhostPositions()
     updateNodesPositions()
   }
 

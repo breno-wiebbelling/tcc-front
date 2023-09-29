@@ -16,9 +16,9 @@ const getUserNodes = () => {
   return [
     { id: '1',     type: 'start',          details: {nextNode: "21"},                data: { label: 'START' } },
     { id: '2',     type: 'conditional',    details: {nextNode: ["3", "4", "31"]},   data: { label: '2' } },
-    { id: '21',    type: 'task',           details: {nextNode: "2" },               data: { label: '3' } },
+    { id: '21',    type: 'task',           details: {nextNode: "2" },               data: { label: '21' } },
     { id: '3',     type: 'task',           details: {nextNode: "5" },               data: { label: '3' } },
-    { id: '31',    type: 'task',           details: {nextNode: "5" },               data: { label: '3' } },
+    { id: '31',    type: 'task',           details: {nextNode: "5" },               data: { label: '31' } },
     { id: '4',     type: 'task',           details: {nextNode: "5" },               data: { label: '4' } },
     { id: '5',     type: 'final',          details: {nextNode: "" },                data: { label: 'FINAL' } }
   ];

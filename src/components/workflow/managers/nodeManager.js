@@ -21,3 +21,41 @@ export const nodeTypes = {
   ghost:GhostNode,
   conditional_ghost:GhostNode
 };
+
+export const findNodeFrequencies  = (given_nodes) => {
+  let processedNodes = [];
+  let nodeFrequencyRegistrator = [];
+
+  let nodeWasNotProcessed = false;
+  let nodeIsNotOnNodeFrequency = false;
+
+  const verifyAndProcessNodeFrequency = (nodeId) => {
+    nodeWasNotProcessed = !processedNodes.includes(nodeId)
+    nodeIsNotOnNodeFrequency = !nodeFrequencyRegistrator.includes(nodeId);
+
+    if( nodeWasNotProcessed ){
+      processedNodes.push(nodeId);
+      return;
+    }
+
+    if( nodeIsNotOnNodeFrequency ){
+      nodeFrequencyRegistrator.push(nodeId);
+      return;
+    }
+  }
+
+  given_nodes.forEach(node => {
+    console.log(node)
+    if(node.type === nodeKeys.CONDITIONAL_KEY){
+      node.details.nextNode.forEach(nextNodeId => {
+        verifyAndProcessNodeFrequency(nextNodeId)
+      });
+
+      return;
+    }
+
+    verifyAndProcessNodeFrequency(node.details.nextNode)    
+  });
+
+  return nodeFrequencyRegistrator;
+}
