@@ -1,3 +1,4 @@
+import React  from 'react';
 import { Handle, Position } from 'reactflow';
 import DefaultNodeStyled from "./styledDefaultNode"
 import ClickOutsideWrapper from '../ClickOutsideElement'; 
@@ -5,10 +6,9 @@ import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
-import React  from 'react';
-
-export default ({ data, currentNodeSelected }) => {
+export default ({ data }) => {
   const [isOptionsVisible, setIsOptionsVisible] = React.useState(false);
 
   return (
@@ -17,47 +17,33 @@ export default ({ data, currentNodeSelected }) => {
         <Handle className="handle_bottom" type="target" position={Position.Top} />
         <div
           className="worker"
-          style={{ border: isOptionsVisible ? '3px solid black' : '1px solid black' }}
+          style={{ border: isOptionsVisible ? '2px solid black' : '1px solid black' }}
           onClick={ () => { setIsOptionsVisible(true); }}
         >
-          <p 
-            onClick={ () => { setIsOptionsVisible(true); }}
-          >
-            {data.label}
-          </p>
+          <p onClick={ () => { setIsOptionsVisible(true); }}> {data.label} </p>
         </div>
-
-        <div>
+        <div onClick={ () => { setIsOptionsVisible(false); }} >
           <div 
             className='action_button left' 
-            onClick={data.click.addNode}
-            style={{
-              "left": (isOptionsVisible) ? "-70px" : "0px" ,
-            }}
+            onClick={ () => { data.click.addNode(data) } }  style={{ "left": (isOptionsVisible) ? "-70px" : "0px" }}
           >
             <IconButton className='action_button_element'>
-              <AddIcon/>
+              <AddIcon className='add_action'/>
+              <ArrowBackIosIcon className='arrow_action'/>
             </IconButton>
           </div>
           <div 
             className='action_button center'
-            onClick={data.click.editNode}
-            style={{
-              "top": (isOptionsVisible) ? "80px" : "0px" ,
-              "left": "75px"
-            }}
+            onClick={data.click.editNode}  style={{ "top": (isOptionsVisible) ? "80px" : "0px" , "left": "75px" }}
           >
             <IconButton className='action_button_element'>
               <EditIcon/>
             </IconButton>
           </div>
 
-          <div 
+          <div  
             className='action_button rigth'
-            onClick={data.click.deleteNode}
-            style={{
-              "right": (isOptionsVisible) ? "-70px" : "0px" ,
-            }}
+            onClick={ () => { data.click.deleteNode(data) } }  style={{ "right": (isOptionsVisible) ? "-70px" : "0px" }}
           >
             <IconButton className='action_button_element'>
               <DeleteIcon/>

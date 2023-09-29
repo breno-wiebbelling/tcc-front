@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { smokeWhite } from "../../style/index";
+import { smokeWhite } from "../../common/style/index";
 
 export default styled.div`
   

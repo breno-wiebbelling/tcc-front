@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { denseLightBlue, white } from "../../../style/index"
+import { denseLightBlue } from "../../../../common/style/index"
 
 export default styled.div`
   
@@ -9,6 +9,8 @@ export default styled.div`
   display:flex;
   align-items: center;
   justify-content: center;
+  cursor:pointer;
+  border-radius: 50%;
 
   .worker {
     width: 100px;
@@ -31,7 +33,4 @@ export default styled.div`
     transform: rotate(-45deg); 
   }
 
-  .worker .handle_top{
-    left:0%;
-  }
 `

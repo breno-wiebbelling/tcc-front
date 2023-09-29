@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Container } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import AddIcon from '@mui/icons-material/Add';
 import InfoStyled from './index';
-import { smoke, white, smokeWhite, smokeWhiteHover } from "../../style/index"
+import { smokeWhiteHover, smokeWhite, smoke, smokeBlack } from "../../common/style/index"
 import IconButton from '@mui/material/IconButton';
 
 export default ({ isOpen, setIsOpen, children }) => {
@@ -30,19 +30,23 @@ export default ({ isOpen, setIsOpen, children }) => {
             <IconButton 
               onClick={closePanel}
               sx={{ 
-                "backgroundColor": smoke,
-                "color": white,
+                "backgroundColor": smokeWhite,
                 "marginTop": "15px",
                 "marginBottom": "15px",
                 "&:hover": {
-                  "backgroundColor": smokeWhite,
+                  "backgroundColor": smokeWhiteHover,
+                },
+                "&:active": {
+                  "backgroundColor": smoke,
                 } 
+
               }}
             >
-              <CloseIcon
+              <AddIcon
                 sx={{
-                  "width": "20px",
-                  "height": "20px"
+                  "width": "25px",
+                  "height": "25px",
+                  "transform": "rotate(45deg)"
                 }}
               />
             </IconButton>

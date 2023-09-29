@@ -1,8 +1,9 @@
 import {useState} from 'react';
+import {idGenerator} from '../../common/idManager'
 
 const first_line_name = "first";
 const last_line_name = "last";
-const Y_GAP = 200;
+const Y_GAP = 150;
 
 export { first_line_name, last_line_name }
 const LineManager =  () => {
@@ -10,14 +11,21 @@ const LineManager =  () => {
 
   const [lines, setLines] = useState([
     { name:first_line_name, gap: 0 },
-    { name:last_line_name, baseLine:first_line_name, gap: Y_GAP/4 }
+    { name:last_line_name, baseLine:first_line_name, gap: Y_GAP }
   ]);
 
-  lineLibrary.lines = lines;
+  lineLibrary.getLines = () => {
+    return lines;
+  }
+
   lineLibrary.setLines = setLines;
 
   lineLibrary.getLine = (lineName) => {
     return lines.filter(line => line.name === lineName)[0];
+  }
+
+  lineLibrary.getNextLine = (lineName) => {
+    return lines.find(line => line.baseLine === lineName);
   }
 
   lineLibrary.getLinePosition = (lineName) => {
@@ -35,16 +43,19 @@ const LineManager =  () => {
 
   lineLibrary.process = (parentLineName) => {
 
-    let nextLine = lineLibrary.lines.filter(line => line.baseLine === parentLineName)[0];
- 
+    let nextLine = lines.filter(line => line.baseLine === parentLineName)[0];
+    
     if( nextLine.name === last_line_name ){
-      let newLineName = Math.random().toString(36).substring(2, 8);
+      let newLineName = idGenerator();
 
-      lineLibrary.lines.push({ name: newLineName, baseLine:parentLineName, gap: Y_GAP });
+      lines.push({ 
+        name: newLineName, 
+        baseLine: parentLineName, 
+        gap: Y_GAP  
+      });
 
       let fixedLines = lines.map(line => {
         if(line.name === last_line_name){ line.baseLine = newLineName }
-        
         return line;
       })
 
@@ -60,15 +71,28 @@ const LineManager =  () => {
     let lastLine = lines.find(line => line.name == last_line_name);
     let prevLine = lines.find(line => line.name == lastLine.baseLine);
 
-    let newLineName = Math.random().toString(36).substring(2, 8);
-    lineLibrary.lines.push({ name:newLineName, baseLine:prevLine.name, gap: Y_GAP })
+    let newLineName = idGenerator();
+    lines.push({ name:newLineName, baseLine:prevLine.name, gap: Y_GAP})
 
     let fixedLines = lines.map(line => {
       if(line.name == last_line_name){ line.baseLine = newLineName}
     })
 
-    lineLibrary.setLines(fixedLines);
+    setLines(fixedLines);
     return newLineName;
+  }
+
+  lineLibrary.remove = (lineName) => {
+    let fixedLines = lines;
+
+    let removedLineIndex = lines.findIndex(line => line.name === lineName);
+    let removedLine = lines[removedLineIndex];
+    fixedLines.splice(removedLineIndex, 1);
+
+    let nextLine = lineLibrary.getNextLine(removedLine.name);
+    nextLine.baseLine = removedLine.baseLine;
+
+    setLines(fixedLines)
   }
 
   return lineLibrary;

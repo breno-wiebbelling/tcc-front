@@ -7,7 +7,7 @@ import Avatar from '@mui/material/Avatar';
 import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import Link from '@mui/material/Link';
 
-import { white, smokeBlack } from '../style';
+import { white, smokeBlack } from '../common/style';
 
 const pages = ['Projetos', 'Variáveis', 'Simulações'];
 

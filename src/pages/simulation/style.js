@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { smokeWhiteHover, smokeWhite, smoke, white } from "../../components/style/index";
+import { smokeWhiteHover, smokeWhite, smoke, white } from "../../components/common/style/index";
 
 export default styled.div`
 
@@ -28,8 +28,16 @@ export default styled.div`
     justify-content: center;
 
     cursor: pointer;
-    background-color: ${smokeWhiteHover};
+    background-color: ${smokeWhite};
     color: #0000008a;
+  }
+
+  .openInfoPanel:hover{
+    background-color: ${smokeWhiteHover};
+  }
+
+  .openInfoPanel:active{
+    background-color: ${smoke};
   }
   
 `

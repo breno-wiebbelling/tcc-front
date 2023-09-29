@@ -1,7 +1,8 @@
 import {useState} from 'react';
+import { idGenerator } from '../../common/idManager'
 
 export default () => {
-  const X_GAP = 200;
+  const X_GAP = 300;
 
   const [columns, setColumns]  = useState( [{name:"central", gap: 260 }] )
 
@@ -27,7 +28,7 @@ export default () => {
     if( currentPosition <  middlePosition){ 
       return -Math.abs(X_GAP); 
     }
-    else if( currentPosition == middlePosition ){
+    else if( currentPosition === middlePosition ){
       return (totalLength%2 === 0) ? -Math.abs(X_GAP) : 0;
     }   
   
@@ -38,7 +39,7 @@ export default () => {
     let gapResult = columnLibrary.getColumnGap(currentIndex, totalLength)
     if(gapResult === 0) { return parentColumnName}
     
-    let newColumnName = Math.random().toString(36).substring(2, 8);
+    let newColumnName = idGenerator();
     columns.push({name: newColumnName, baseColumn: parentColumnName, gap: gapResult})
     
     let columnAtTheSamePosition = columns.filter(c => columnLibrary.getColumnPosition(c.name) === columnLibrary.getColumnPosition(newColumnName) && c.name !== newColumnName)[0]
@@ -61,7 +62,6 @@ export default () => {
 
     return newColumnName;
   }
-
 
   return columnLibrary;
 }
