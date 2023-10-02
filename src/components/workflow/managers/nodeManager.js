@@ -10,7 +10,7 @@ export const nodeKeys = {
   TASK_KEY:"task",
   START_KEY:"start",
   CONDITIONAL_KEY:"conditional",
-  CONDITIONAL_GHOST:"conditional_ghost"
+  CONDITIONAL_GHOST_KEY:"conditional_ghost"
 };
 
 export const nodeTypes = { 
@@ -21,6 +21,12 @@ export const nodeTypes = {
   ghost:GhostNode,
   conditional_ghost:GhostNode
 };
+
+export const nodeCRUDOperations = {
+  ADD_BELOW:"new_node_below",
+  CONDITIONAL_KEY:"new_leg",
+  ADD_ABOVE:"new_node_above"
+}
 
 export const findNodeFrequencies  = (given_nodes) => {
   let processedNodes = [];
@@ -45,11 +51,11 @@ export const findNodeFrequencies  = (given_nodes) => {
   }
 
   given_nodes.forEach(node => {
-    console.log(node)
+
+    if([nodeKeys.CONDITIONAL_GHOST, nodeKeys.GHOST].includes(node.type)){ return }
+
     if(node.type === nodeKeys.CONDITIONAL_KEY){
-      node.details.nextNode.forEach(nextNodeId => {
-        verifyAndProcessNodeFrequency(nextNodeId)
-      });
+      node.details.nextNode.forEach(nextNodeId => { verifyAndProcessNodeFrequency(nextNodeId) });
 
       return;
     }

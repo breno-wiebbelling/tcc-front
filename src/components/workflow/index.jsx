@@ -72,32 +72,50 @@ export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents })
 
       if(!latestNodes.find(node => node.type === nodeKeys.CONDITIONAL_KEY)) { return latestNodes }
 
+      let conditionalNodes = latestNodes.filter(node => node.type === nodeKeys.CONDITIONAL_KEY)
+      conditionalNodes.forEach(conditionalNode => {
+
+        let ghostLine = lineManagerInstance.processConditionalGhostLine(conditionalNode.line);
+
+        conditionalNode.details.nextNode.forEach(nextNodeId => {
+          let nextNode = latestNodes.find(node => node.id === nextNodeId);
+          let newConditionalGhost = {
+            id: idGenerator(), 
+            details: {"nextNode":nextNode.id},
+            type: nodeKeys.CONDITIONAL_GHOST,
+            column:nextNode.column, line:ghostLine,
+          }
+          latestNodes.push(newConditionalGhost);
+
+          edgesManagerInstance.updateTarget(conditionalNode.id, nextNodeId, newConditionalGhost.id)
+          edgesManagerInstance.create(newConditionalGhost.id, nextNodeId);
+        })
+
+      })
+
       let nodesWithSimilarity = findNodeFrequencies(latestNodes);
+      nodesWithSimilarity.forEach(similarNodeId => {
+        let similarNode = latestNodes.find(node => node.id === similarNodeId);
+        //TODO: remove includes
+        let nodesPoitingToSimilarNode = latestNodes.filter(node => node.details.nextNode.includes(similarNodeId))
 
-      console.log(nodesWithSimilarity);
-      
-      // nodesWithSimilarity.forEach(similarNode => {
-      //   edgesManagerInstance.updateTarget(node.id, lastNode.id, newNode.id)
-      //   edgesManagerInstance.create(newNode.id, lastNode.id)
-      // })
+        let ghostLine = lineManagerInstance.processGhostLine(similarNode.line);
 
-      // let newGhostLine = lineManagerInstance.processGhostLine();
-      // let lastNode = latestNodes.find(node => node.type === nodeKeys.FINAL_KEY);
+        nodesPoitingToSimilarNode.forEach(nodePoitingToSimilar => {
 
-      // latestNodes.forEach(node => {
-      //   if( node.type !== nodeKeys.FINAL_KEY && node.details.nextNode === lastNode.id ){
-      //     let newNode = {
-      //       id: idGenerator(), details: {"nextNode":lastNode.id},
-      //       type: nodeKeys.GHOST,
-      //       column:node.column, line:newGhostLine,
-      //     }
+          let newGhostNode  = {
+            id: idGenerator(), details: {"nextNode":nodePoitingToSimilar.details.nextNode},
+            type: nodeKeys.GHOST,
+            column:nodePoitingToSimilar.column, line:ghostLine,
+          }
 
-      //     node.details.nextNode = newNode.id;
-          
-      //     latestNodes.push(newNode)
+          nodePoitingToSimilar.details.nextNode = newGhostNode.id;
+          latestNodes.push(newGhostNode);
 
-      //   }
-      // })
+          edgesManagerInstance.updateTarget(nodePoitingToSimilar.id, similarNodeId, newGhostNode.id)
+          edgesManagerInstance.create(newGhostNode.id, similarNodeId)
+        })
+      })
 
       return latestNodes;
     })
@@ -143,10 +161,14 @@ export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents })
 
   const reprocessNextNode = (currentNode, currentNodes) => {
     let nextNode = currentNodes.find(node => node.id === currentNode.details.nextNode);
-    nextNode.line = lineManagerInstance.process(currentNode.line);
+    console.clear()
+    console.log(`Current node  ${currentNode}`)
+    console.log(`Next node  ${nextNode}`)
+    console.log(currentNodes)
 
+    nextNode.line = lineManagerInstance.process(currentNode.line);
     if([nodeKeys.FINAL_KEY, nodeKeys.GHOST].includes(nextNode.type)) { return currentNodes };
-    
+
     if(nextNode.type === nodeKeys.CONDITIONAL_KEY){
       nextNode.details.nextNode.forEach(nextNodeId => {
         let nextConditionalNode = currentNodes.find(node => node.id === nextNodeId);
@@ -167,7 +189,7 @@ export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents })
     return reprocessNextNode(nextNode, currentNodes);
   }
 
-  nodeClickEvents.addNode = (fromNodeInformation) => {
+  const addNodeBelow = (fromNodeInformation) => {
     setNodes(latestNodes => {
       let currentNode = latestNodes.find(node => node.id === fromNodeInformation.id);
 
@@ -189,7 +211,6 @@ export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents })
       })
 
       latestNodes = [...latestNodes, newNode]
-      // latestNodes = reprocessNodeOnNextPosition(newNode, latestNodes)
       latestNodes = reprocessNextNode(currentNode, latestNodes)
 
       edgesManagerInstance.updateSource(currentNode.id, newNode.details.nextNode, newNode.id);
@@ -202,20 +223,34 @@ export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents })
     updateNodesPositions()
   }
 
+  nodeClickEvents.addNode = (mode, nodeInformation) => {}
+
   nodeClickEvents.deleteNode = (nodeInformation) => {
-    let removedNode;
 
     setNodes(latestNodes => {
       let removedNodeIndex = latestNodes.findIndex(node => node.id === nodeInformation.id);
-      removedNode = latestNodes[removedNodeIndex];
-      let previousNode = latestNodes.find(node => node.details.nextNode.includes(nodeInformation.id));
-      previousNode.details.nextNode = removedNode.details.nextNode;
+      let removedNode = latestNodes[removedNodeIndex];
+      let previousNodes = latestNodes.filter(node => 
+        (node.details.nextNode === (nodeInformation.id))
+        ||(node.type === nodeKeys.CONDITIONAL_KEY && node.details.nextNode.includes(nodeInformation.id))
+      );
 
-      edgesManagerInstance.remove(previousNode.id, removedNode.id);
-      edgesManagerInstance.updateSource(removedNode.id, removedNode.details.nextNode, previousNode.id)
-      
-      latestNodes.splice(removedNodeIndex, 1);   
-      reprocessNextNode(previousNode, latestNodes);
+      previousNodes.forEach(previousNode => {
+
+        if(previousNode.type === nodeKeys.CONDITIONAL_KEY){
+          let nextNodes = previousNode.details.nextNode;
+          nextNodes[nextNodes.indexOf(removedNode.id)] = removedNode.details.nextNode;
+        }
+        else{
+          previousNode.details.nextNode = removedNode.details.nextNode;
+          latestNodes.splice(removedNodeIndex, 1);   
+          //ERROR
+          reprocessNextNode(previousNode, latestNodes);
+          edgesManagerInstance.remove(previousNode.id, removedNode.id);
+          edgesManagerInstance.updateSource(removedNode.id, removedNode.details.nextNode, previousNode.id)
+        }
+        
+      })
         
       return latestNodes;
     })
@@ -262,20 +297,21 @@ export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents })
 
           currentNode.details.nextNode.forEach((conditionalLegId, index) => {
             let columnNameForFollowingChild = columnManagerInstance.create( index, currentNode.details.nextNode.length, currentNode.column );
-            let newConditionalGhost = {
-              id: idGenerator(),
-              type: nodeKeys.CONDITIONAL_GHOST,
-              details: { nextNode:conditionalLegId },
-              line: lineManagerInstance.process(currentNode.line),
-              column: columnNameForFollowingChild
-            }
+            // let newConditionalGhost = {
+            //   id: idGenerator(),
+            //   type: nodeKeys.CONDITIONAL_GHOST,
+            //   details: { nextNode:conditionalLegId },
+            //   line: lineManagerInstance.process(currentNode.line),
+            //   column: columnNameForFollowingChild
+            // }
 
-            setNodes(latestNodes => { return [...latestNodes, newConditionalGhost] })
-            updateParentNode({ column: columnNameForFollowingChild, line: newConditionalGhost.line });
+            // setNodes(latestNodes => { return [...latestNodes, newConditionalGhost] })
+            updateParentNode({ column: columnNameForFollowingChild, line: currentNode.line });
             
-            edgesManagerInstance.create( prev_parentNode.id, newConditionalGhost.id );
-            edgesManagerInstance.create( newConditionalGhost.id, conditionalLegId );
+            // edgesManagerInstance.create( prev_parentNode.id, newConditionalGhost.id );
+            // edgesManagerInstance.create( newConditionalGhost.id, conditionalLegId );
 
+            edgesManagerInstance.create( prev_parentNode.id, conditionalLegId );
             processNode(conditionalLegId);
           })
           

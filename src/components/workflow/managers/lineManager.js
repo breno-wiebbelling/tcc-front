@@ -67,15 +67,29 @@ const LineManager =  () => {
     }
   }
 
-  lineLibrary.processGhostLine = () => {
-    let lastLine = lines.find(line => line.name == last_line_name);
+  lineLibrary.processGhostLine = (currentLineName) => {
+    let lastLine = lines.find(line => line.name == currentLineName);
     let prevLine = lines.find(line => line.name == lastLine.baseLine);
 
     let newLineName = idGenerator();
     lines.push({ name:newLineName, baseLine:prevLine.name, gap: Y_GAP})
 
     let fixedLines = lines.map(line => {
-      if(line.name == last_line_name){ line.baseLine = newLineName}
+      if(line.name == currentLineName){ line.baseLine = newLineName}
+    })
+
+    setLines(fixedLines);
+    return newLineName;
+  }
+
+  lineLibrary.processConditionalGhostLine = (currentLineName) => {
+    let lineBasedOnCurrentLine = lines.find(line => line.baseLine === currentLineName);
+    
+    let newLineName = idGenerator();
+    lines.push({ name:newLineName, baseLine:lineBasedOnCurrentLine.baseLine, gap: Y_GAP})
+
+    let fixedLines = lines.map(line => {
+      if(line.name == lineBasedOnCurrentLine.name){ line.baseLine = newLineName}
     })
 
     setLines(fixedLines);
