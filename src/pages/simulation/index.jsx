@@ -36,7 +36,6 @@ export const Simulation = () => {
   }
 
   const openModalWithNodeEvent = (eventName, node_information) => {
-    alert(eventName)
     switch (eventName){
 
       case nodeEventNames.edit:

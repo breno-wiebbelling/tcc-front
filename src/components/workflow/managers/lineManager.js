@@ -14,14 +14,16 @@ const LineManager =  () => {
     { name:last_line_name, baseLine:first_line_name, gap: Y_GAP }
   ]);
 
-  lineLibrary.getLines = () => {
-    return lines;
-  }
-
+  lineLibrary.getLines = () => { return lines; }
   lineLibrary.setLines = setLines;
 
   lineLibrary.getLine = (lineName) => {
     return lines.filter(line => line.name === lineName)[0];
+  }
+
+  lineLibrary.getBaseLine = (currentLineName) => {
+    let currentLine = lines.find(line => line.name === currentLineName);
+    return lineLibrary.getLine(currentLine.baseLine);
   }
 
   lineLibrary.getNextLine = (lineName) => {
@@ -42,9 +44,8 @@ const LineManager =  () => {
   }
 
   lineLibrary.process = (parentLineName) => {
+    let nextLine = lines.find(line => line.baseLine === parentLineName);
 
-    let nextLine = lines.filter(line => line.baseLine === parentLineName)[0];
-    
     if( nextLine.name === last_line_name ){
       let newLineName = idGenerator();
 

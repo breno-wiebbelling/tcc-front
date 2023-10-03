@@ -7,6 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { nodeCRUDOperations } from "../../../managers/nodeManager";
 
 export default ({ data }) => {
   const [isOptionsVisible, setIsOptionsVisible] = React.useState(false);
@@ -25,7 +26,7 @@ export default ({ data }) => {
         <div onClick={ () => { setIsOptionsVisible(false); }} >
           <div 
             className='action_button left' 
-            onClick={ () => { data.click.addNode(data) } }  style={{ "left": (isOptionsVisible) ? "-70px" : "0px" }}
+            onClick={ () => { data.click.addNode(nodeCRUDOperations.ADD_BELOW, data) } }  style={{ "left": (isOptionsVisible) ? "-70px" : "0px" }}
           >
             <IconButton className='action_button_element'>
               <AddIcon className='add_action'/>
