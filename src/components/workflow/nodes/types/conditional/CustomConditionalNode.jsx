@@ -1,25 +1,60 @@
+import React  from 'react';
 import { Handle, Position } from 'reactflow';
 import ConditionalNodeStyled from "./ConditionalNodeStyled"
 import ClickOutsideWrapper from '../ClickOutsideElement'; 
-import React  from 'react';
+
+import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { nodeCRUDOperations } from "../../../managers/nodeManager";
 
 export default ({ data }) => {
-  const [border, setBorder] = React.useState(false);
+  const [isOptionsVisible, setIsOptionsVisible] = React.useState(false);
 
   return (
-    <ClickOutsideWrapper onOutsideClick={ () => { setBorder(false); } }>
+    <ClickOutsideWrapper onOutsideClick={ () => { setIsOptionsVisible(false); } }>
       <ConditionalNodeStyled>
         <Handle type="target" position={Position.Top} />
         <div
           className="worker"
-          style={{ border: border ? '3px solid black' : '1px solid black' }}
-          onClick={ () => { setBorder(true); }}
+          style={{ border: isOptionsVisible ? '2px solid black' : '1px solid black' }}
+          onClick={ () => { setIsOptionsVisible(true); }}
         >
-          <p>{data.label}</p>
+          <p onClick={ () => { setIsOptionsVisible(true); }}> {data.label} </p>
+        </div>
+        <div onClick={ () => { setIsOptionsVisible(false); }} >
+          <div 
+            className='action_button left' 
+            onClick={ () => { data.click.addNode(nodeCRUDOperations.CONDITIONAL_KEY, data) } } 
+            style={{ "top": (isOptionsVisible) ? "170px" : "50px" , "left": "75px" }} 
+          >
+            <IconButton className='action_button_element'>
+              <AddIcon className='add_action'/>
+              <ArrowBackIosIcon className='arrow_action'/>
+            </IconButton>
+          </div>
+          <div 
+            className='action_button center'
+            onClick={data.click.editNode}  
+            style={{ "left": (isOptionsVisible) ? "-40px" : "50px" }}
+          >
+            <IconButton className='action_button_element'>
+              <EditIcon/>
+            </IconButton>
+          </div>
+
+          <div  
+            className='action_button rigth'
+            onClick={ () => { data.click.deleteNode(data) } }  style={{ "right": (isOptionsVisible) ? "-40px" : "50px" }}
+          >
+            <IconButton className='action_button_element'>
+              <DeleteIcon/>
+            </IconButton>
+          </div>
         </div>
         <Handle type="source" position={Position.Bottom} />
-        <Handle type="source" position={Position.Right} />
-        <Handle type="source" position={Position.Left} />
       </ConditionalNodeStyled>
     </ClickOutsideWrapper>
   );

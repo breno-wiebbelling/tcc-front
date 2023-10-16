@@ -14,7 +14,8 @@ const LineManager =  () => {
     { name:last_line_name, baseLine:first_line_name, gap: Y_GAP }
   ]);
 
-  lineLibrary.getLines = () => { return lines; }
+  lineLibrary.last_line_name = last_line_name;
+  lineLibrary.lines = lines;
   lineLibrary.setLines = setLines;
 
   lineLibrary.getLine = (lineName) => {
@@ -27,7 +28,7 @@ const LineManager =  () => {
   }
 
   lineLibrary.getNextLine = (lineName) => {
-    return lines.find(line => line.baseLine === lineName);
+    return lineLibrary.lines.find(line => line.baseLine === lineName);
   }
 
   lineLibrary.getLinePosition = (lineName) => {
@@ -44,9 +45,14 @@ const LineManager =  () => {
   }
 
   lineLibrary.process = (parentLineName) => {
-    let nextLine = lines.find(line => line.baseLine === parentLineName);
 
-    if( nextLine.name === last_line_name ){
+    if(parentLineName === last_line_name){
+      parentLineName = lines.find(line => line.name === last_line_name).baseLine;
+    }
+
+    let nextLine = lineLibrary.lines.find(line => line.baseLine === parentLineName);
+
+    if( nextLine.name === lineLibrary.last_line_name ){
       let newLineName = idGenerator();
 
       lines.push({ 
@@ -69,14 +75,14 @@ const LineManager =  () => {
   }
 
   lineLibrary.processGhostLine = (currentLineName) => {
-    let lastLine = lines.find(line => line.name == currentLineName);
-    let prevLine = lines.find(line => line.name == lastLine.baseLine);
-
+    let lastLine = lines.find(line => line.name === currentLineName);
+    let prevLine = lines.find(line => line.name === lastLine.baseLine);
+  
     let newLineName = idGenerator();
     lines.push({ name:newLineName, baseLine:prevLine.name, gap: Y_GAP})
 
     let fixedLines = lines.map(line => {
-      if(line.name == currentLineName){ line.baseLine = newLineName}
+      if(line.name === currentLineName){ line.baseLine = newLineName}
     })
 
     setLines(fixedLines);
@@ -90,7 +96,7 @@ const LineManager =  () => {
     lines.push({ name:newLineName, baseLine:lineBasedOnCurrentLine.baseLine, gap: Y_GAP})
 
     let fixedLines = lines.map(line => {
-      if(line.name == lineBasedOnCurrentLine.name){ line.baseLine = newLineName}
+      if(line.name === lineBasedOnCurrentLine.name){ line.baseLine = newLineName}
     })
 
     setLines(fixedLines);
@@ -98,16 +104,19 @@ const LineManager =  () => {
   }
 
   lineLibrary.remove = (lineName) => {
-    let fixedLines = lines;
 
-    let removedLineIndex = lines.findIndex(line => line.name === lineName);
-    let removedLine = lines[removedLineIndex];
+    if(lineName === last_line_name){ return }
+
+    let fixedLines = lines;
+    let removedLineIndex = lineLibrary.lines.findIndex(line => line.name === lineName);
+
+    let removedLine = lineLibrary.lines[removedLineIndex];
     fixedLines.splice(removedLineIndex, 1);
 
     let nextLine = lineLibrary.getNextLine(removedLine.name);
     nextLine.baseLine = removedLine.baseLine;
 
-    setLines(fixedLines)
+    lineLibrary.setLines(fixedLines)
   }
 
   return lineLibrary;

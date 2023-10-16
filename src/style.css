@@ -1,10 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300&family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&family=Literata:opsz,wght@7..72,300;7..72,400;7..72,500&family=Roboto:wght@300&display=swap');
 
 *{
     margin: 0;
     padding: 0;
-    font-family: "Poppins";
+    font-family: 'Inter', sans-serif;
+    font-family: 'JetBrains Mono', monospace;
+    /* font-family: 'Literata', serif; */
+    /* font-family: 'Roboto', sans-serif; */
+}
+
+* .display_flex_center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+* button{
+    cursor: pointer;
+    font-weight: 600;
 }
 
 .react-flow__attribution{

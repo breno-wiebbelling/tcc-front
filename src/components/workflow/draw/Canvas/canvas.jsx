@@ -50,15 +50,6 @@ const Canvas = ({screenWidth, nodes}) => {
   useEffect(() => {
     const handleCanvasClick = (event) => {
       const mousePosition = getMouseCoordinates(event, panOffset, scale, scaleOffset);
-      console.log("aqui")
-      console.log(mousePosition.clientX)
-
-      nodes.forEach(node => {
-        if(node.id == 1){
-
-          console.log((node.position.x - panOffset.x * scale + scaleOffset.x) / scale)
-        }
-      })
     };
 
     canvasRef.current.addEventListener('click', handleCanvasClick);

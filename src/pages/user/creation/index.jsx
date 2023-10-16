@@ -136,6 +136,10 @@ export const CreationPage = () => {
 										variant="contained"
 										fullWidth
 										color="primary"
+										sx={{ 
+											fontWeight: 600,
+											letterSpacing:"2px"
+										}}
 									>
 										Próximo
 									</Button>
@@ -152,7 +156,7 @@ export const CreationPage = () => {
 										error={formErrors.passwordConfirmation}
 										onChange={(e) => { setPasswordConfirmation(e.target.value) }}
 									/>
-									<Button type="submit" variant="contained" color="primary">
+									<Button type="submit" variant="contained" color="primary" sx={{ fontWeight: 600, letterSpacing:"2px"	}}>
 										Cadastrar
 									</Button>
 								</form>

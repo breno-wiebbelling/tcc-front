@@ -15,9 +15,9 @@ export const AppRoutes = () => {
       <Routes>
           <Route path="/var"        element={ <VariablePage/> } />
 
-          {/* <Route path="/"           element={ <RequireAuth> <Home/> </RequireAuth>} /> */}
+          <Route path="/"           element={ <RequireAuth> <Home/> </RequireAuth>} />
           {/* TODO: add require auth */}
-          <Route path="/"           element={ <Home/>} />
+          {/* <Route path="/"           element={ <Home/>} /> */}
           <Route path="/login"      element={ <LoginPage/>     } />
           <Route path="/registro"   element={ <CreationPage/>  } />
           <Route path="/s"          element={ <Simulation/>} />

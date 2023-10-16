@@ -26,7 +26,17 @@ export default ({ data }) => {
         <div onClick={ () => { setIsOptionsVisible(false); }} >
           <div 
             className='action_button left' 
-            onClick={ () => { data.click.addNode(nodeCRUDOperations.ADD_BELOW, data) } }  style={{ "left": (isOptionsVisible) ? "-70px" : "0px" }}
+            onClick={data.click.editNode}  
+            style={{ "left": (isOptionsVisible) ? "-70px" : "0px" }}
+          >
+            <IconButton className='action_button_element'>
+              <EditIcon/>
+            </IconButton>
+          </div>
+          <div 
+            className='action_button center'
+            onClick={ () => { data.click.addNode(nodeCRUDOperations.ADD_BELOW, data) } }
+            style={{ "top": (isOptionsVisible) ? "80px" : "0px" , "left": "75px" }} 
           >
             <IconButton className='action_button_element'>
               <AddIcon className='add_action'/>
@@ -35,13 +45,14 @@ export default ({ data }) => {
           </div>
           <div 
             className='action_button center'
-            onClick={data.click.editNode}  style={{ "top": (isOptionsVisible) ? "80px" : "0px" , "left": "75px" }}
+            onClick={ () => { data.click.addNode(nodeCRUDOperations.ADD_ABOVE, data) } }
+            style={{ "top": (isOptionsVisible) ? "-75px" : "0px" , "left": "75px" }} 
           >
-            <IconButton className='action_button_element'>
-              <EditIcon/>
+            <IconButton className='action_button_element add_above'>
+              <AddIcon className='add_action'/>
+              <ArrowBackIosIcon className='arrow_action'/>
             </IconButton>
           </div>
-
           <div  
             className='action_button rigth'
             onClick={ () => { data.click.deleteNode(data) } }  style={{ "right": (isOptionsVisible) ? "-70px" : "0px" }}
@@ -56,4 +67,3 @@ export default ({ data }) => {
     </ClickOutsideWrapper>
   );
 }
-

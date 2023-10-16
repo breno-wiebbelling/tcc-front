@@ -5,7 +5,6 @@ import { useState } from 'react';
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -36,18 +35,15 @@ export const LoginPage = () => {
     e.preventDefault();
 
     if( verifyLoginFields() ) { 
-        try{
-            await login(email, password)
-            .then(loginResponse => {
-                if( loginResponse === true ){ 
-                    navigate('/');
-                }
-            });
-        }
-        catch(e){
-          setErrorMessage(e.response.data.error ?? "Algo de errado aconteceu!");
-        }
-
+      try{
+        await login(email, password)
+        .then(loginResponse => {
+          if( loginResponse === true ){ navigate('/'); }
+        });
+      }
+      catch(e){
+        setErrorMessage(e.response.data.error ?? "Algo de errado aconteceu!");
+      }
     }
   };
 
@@ -82,7 +78,12 @@ export const LoginPage = () => {
             />
             <Button
               type="submit"
-              sx={{ mt: 3, mb: 1 }}
+              sx={{ 
+                mt: 3, 
+                mb: 1,
+                fontWeight: 600,
+                letterSpacing:"2px"
+              }}
               fullWidth
               variant="contained"
               onClick={handleSubmit}

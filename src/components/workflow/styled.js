@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { smokeWhite, smokeWhiteHover, smoke } from "../common/style";
+import { smokeWhite, smokeWhiteHover, smoke, smokeWhiteLight } from "../common/style";
 
 export default styled.div`
 
   position: relative;
-  background-color: ${smokeWhite};
+  background-color: ${smokeWhiteLight};
 
   height: 92vh;
   width: 100%;

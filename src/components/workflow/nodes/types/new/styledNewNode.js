@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { softGreen, smokeBlack } from "../../../../common/style";
+import { denseLightBlue, smokeBlack } from "../../../../common/style";
 
 export default styled.div`
     width: 200px;
@@ -25,7 +25,7 @@ export default styled.div`
         /* background: linear-gradient(to left, red 50%, blue 50%); */
 
         border-radius: 6px;
-        background-color: ${softGreen};
+        background-color: ${denseLightBlue};
         border: 1px solid ${smokeBlack};
         z-index: 2;
 
@@ -55,17 +55,5 @@ export default styled.div`
 
     .action_button *{
         cursor: pointer;
-    }
-
-    .add_above .arrow_action{
-        transform: rotate(+90deg);
-        position: absolute;
-        margin-bottom: 20px;
-        height: 18px;
-    }
-
-    .add_above .add_action{
-        position: absolute;
-        margin-top: 13px;
     }
 `

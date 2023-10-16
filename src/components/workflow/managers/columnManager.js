@@ -63,5 +63,9 @@ export default () => {
     return newColumnName;
   }
 
+  columnLibrary.reset = () => {
+    setColumns([]);
+  }
+
   return columnLibrary;
 }

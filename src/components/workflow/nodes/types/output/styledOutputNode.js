@@ -31,7 +31,7 @@ export default styled.div`
     background-color: ${smokeWhiteLight};
     border: 1px solid ${smokeBlack};
 
-    z-index: 2;
+    z-index: 4;
   }
 
   .action_button{
@@ -47,7 +47,7 @@ export default styled.div`
 
     transition-duration: .5s;
 
-    z-index: 1;
+    z-index: 3;
   }
 
   .action_button .action_button_element{
