@@ -14,8 +14,6 @@ export default styled.div`
   align-items: center;
   justify-content: center;
 
-  cursor: pointer;
-
   .worker{
     width: 100px;
     height: 100%;
@@ -31,7 +29,7 @@ export default styled.div`
     background-color: ${smokeWhiteLight};
     border: 1px solid ${smokeBlack};
 
-    z-index: 4;
+    z-index: 2;
   }
 
   .action_button{
@@ -46,8 +44,7 @@ export default styled.div`
     align-items: center;
 
     transition-duration: .5s;
-
-    z-index: 3;
+    z-index: 1;
   }
 
   .action_button .action_button_element{
@@ -58,9 +55,8 @@ export default styled.div`
 
   .handle_top{ margin-left: 25px; }
 
-  .action_button_element .arrow_action{
+  .action_button .action_button_element .arrow_action{
     transform: rotate(+90deg);
-    position: absolute;
     margin-bottom: 20px;
     height: 18px;
   }

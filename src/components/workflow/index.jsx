@@ -4,11 +4,11 @@ import 'reactflow/dist/style.css';
 import StyledSimulation from "./styled"
 import { white } from "../common/style/index"
 import useMainManager from "./managers/mainManager";
-import { reloadNodesAndAddGhostNodes, processNode } from "./managers/nodeManager";
+import { reloadNodesAndAddGhostNodes } from "./managers/nodeManager";
 
-export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents }) => {
+export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents, simulationId }) => {
 
-  const mainManager = useMainManager(initialNode, initialNodes, nodeClickEvents);
+  let mainManager = useMainManager(initialNode, initialNodes, nodeClickEvents, simulationId);
 
   useEffect(() => { 
     mainManager.nodeManagerInstance.processNode(initialNode, mainManager) 

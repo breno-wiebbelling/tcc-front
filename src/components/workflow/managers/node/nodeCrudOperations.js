@@ -7,55 +7,79 @@ import {
   updateNodesPositions, 
   updateGhostPositions 
 } from "../nodeManager";
+import { create } from "../../../../service/clients/nodeClient";
 
-const formatNewNode = (previousNode, mainManager) => {
-  let newNodeId = idGenerator();
+const processNewNode = async (previousNode, mainManager) => {
 
-  return {  
-    id: newNodeId, 
+  let baseNode = await create({  
+    name: "New Node",
+    simulation_id: mainManager.simulation_id,
     type: nodeKeys.NEW_KEY,
-    column: previousNode.column, 
-    line: mainManager.lineManagerInstance.process(previousNode.line),
     details: { 
       nextNode: previousNode.details.nextNode 
-    },
+    }
+  });
+
+  return { 
+    ...baseNode, 
+    column: previousNode.column, 
+    line: mainManager.lineManagerInstance.process(previousNode.line),
     data: { 
-      label: newNodeId, 
-      id:newNodeId, 
+      label: baseNode.name, 
+      id:baseNode['_id'], 
       click: mainManager.nodeManagerInstance.nodeClickEvents 
-    }, 
-  }
+    }
+  } 
 }
 
 export const addNodeBelow = (fromNodeInformation, mainManager) => {
 
-  mainManager.nodeManagerInstance.setNodes(latestNodes => {
-    let currentNode = latestNodes.find(node => node.id === fromNodeInformation.id);
-    let newNode = formatNewNode(currentNode, mainManager);
-    
-    latestNodes = latestNodes.map(node => {
-      if(node.id === fromNodeInformation.id) { 
-        node.details.nextNode = newNode.id; 
-      }
-      return node;
-    })
-    latestNodes = [...latestNodes, newNode];
-    latestNodes = reprocessNextNode(currentNode, latestNodes, mainManager);
+  mainManager.nodeManagerInstance.setNodes( function(latestNodes){
 
-    mainManager.edgeManagerInstance.updateSource(currentNode.id, newNode.details.nextNode, newNode.id);
-    mainManager.edgeManagerInstance.create(currentNode.id, newNode.id)
+    let currentNode = latestNodes.find(node => node.id === fromNodeInformation.id);
+
+    processNewNode(currentNode, mainManager)
+      .then(
+        newNode => {
+          newNode.id = newNode._id;
+          mainManager.nodeManagerInstance.setNodes(
+            latestNodes => {
+              latestNodes = latestNodes.map(node => {
+                if(node.id === fromNodeInformation.id) { 
+                  node.details.nextNode = newNode.id; 
+                }
+                return node;
+              })
+          
+              latestNodes = [...latestNodes, newNode];
+              latestNodes = reprocessNextNode(currentNode, latestNodes, mainManager);
+          
+              mainManager.edgeManagerInstance.updateSource(currentNode.id, newNode.details.nextNode, newNode.id);
+              mainManager.edgeManagerInstance.create(currentNode.id, newNode.id)
+              
+              console.log(latestNodes)
+
+              return latestNodes;
+            }
+          )
+        }
+      )
+      .then( 
+        () => {
+          updateGhostPositions(mainManager)
+          updateNodesPositions(mainManager)
+        }
+      )
 
     return latestNodes;
-  });
+  })
 
-  updateGhostPositions(mainManager)
-  updateNodesPositions(mainManager)
 }
 
 export const addNodeAbove = (fromNodeInformation, mainManager) => {
   mainManager.nodeManagerInstance.setNodes(latestNodes => {
     let currentNode = latestNodes.find(node => node.id === fromNodeInformation.id);
-    let newNode = formatNewNode({ ...currentNode, details: { nextNode: currentNode.id } }, mainManager)
+    let newNode = processNewNode({ ...currentNode, details: { nextNode: currentNode.id } }, mainManager)
 
     if(currentNode.type === nodeKeys.FINAL_KEY){
       let baseLine = mainManager.lineManagerInstance.getBaseLine(currentNode.line);
@@ -191,7 +215,7 @@ export const findNodeFrequencies  = (given_nodes) => {
   return nodeFrequencyRegistrator;
 }
 
-export const updateAfterFinish = (newNode, mainManager) => {
+export const updateAfterFinish = (mainManager) => {
   mainManager.nodeManagerInstance.setNodes(latestNodes => {
 
     latestNodes = latestNodes.map(node => {

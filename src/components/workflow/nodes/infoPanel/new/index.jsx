@@ -8,7 +8,7 @@ export default ({ setSelectedNode, updateAfterFinish  }) => {
     setSelectedNode(selectedNode => {
       
       selectedNode.data.label = "newNodeAdjusted";
-      updateAfterFinish(selectedNode);
+      updateAfterFinish();
 
       return selectedNode;
     })

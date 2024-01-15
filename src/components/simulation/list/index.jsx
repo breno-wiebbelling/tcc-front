@@ -1,24 +1,47 @@
-import React from 'react';
-import SimulationListStyled from "./style"
-import { getSimulationsByUser } from "../../../service/clients/simulationClient";
+import React, {useState} from 'react';
 import BasicTable from '../../common/list/list';
 import CreationModal from "../creation/index"
+import { getSimulationsByUser, deleteSimulationById } from "../../../service/clients/simulationClient";
+import SimulationListStyled from "./style"
+import PopperAlert from '../../../components/alert/index';
 
 export default () => {
+  const [errorMessage, setErrorMessage] = useState("");
   const [isCreationModalOpen, setIsCreationModalOpen] = React.useState(false);
   const listName = "Simulações"
   const elementName = "simulação"
+
+  const onElementClick = (simulation) => {
+    window.location.href=`/simulation/${simulation["_id"]}`
+  }
+
+  const deleteSimulation = async (simulation) => {
+    await deleteSimulationById(simulation['_id']);
+  }
+
   const elementFieldDetails = {
-    "keys": ["name", "description", "created_at", "updated_at"],
-    "names": ["Nome", "Descrição", "Data de Criação", "Última alteração"],
-    "sizes": ["18%", "40%", "15%", "15%"],
-    "tooltip": [false, true, false, false]
+    "keys": ["name", "description", "createdAt"],
+    "names": ["Nome", "Descrição", "Data de Criação"],
+    "sizes": ["18%", "40%", "15%"],
+    "tooltip": [false, true, false],
+    "actions": [ 
+      {
+        "name":"onElementClick",
+        "function": onElementClick
+      },
+      {
+        "name":"deleteElement",
+        "function": deleteSimulation
+      }
+    ]
   }; 
+  
   const [simulations, setSimulations] = React.useState([])
 
   return (
     <SimulationListStyled className='display_flex_center'>
-      <CreationModal open={isCreationModalOpen} setOpen={setIsCreationModalOpen} setSimulations={setSimulations}/>
+      {errorMessage && <PopperAlert message={errorMessage} setMessage={setErrorMessage} />}
+      <CreationModal open={isCreationModalOpen} setOpen={setIsCreationModalOpen} setSimulations={setSimulations} setErrorMessage={setErrorMessage}/>
       <BasicTable 
         elements={simulations}
         setElements={setSimulations}
@@ -26,6 +49,7 @@ export default () => {
         listName={listName} 
         elementName={elementName}
         elementFieldDetails={elementFieldDetails}
+        elementClick={onElementClick}
         addAction={ () => setIsCreationModalOpen(true) }
       />
     </SimulationListStyled>

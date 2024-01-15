@@ -18,9 +18,9 @@ export const AppRoutes = () => {
           <Route path="/"           element={ <RequireAuth> <Home/> </RequireAuth>} />
           {/* TODO: add require auth */}
           {/* <Route path="/"           element={ <Home/>} /> */}
-          <Route path="/login"      element={ <LoginPage/>     } />
-          <Route path="/registro"   element={ <CreationPage/>  } />
-          <Route path="/s"          element={ <Simulation/>} />
+          <Route path="/login"                        element={ <LoginPage/>     } />
+          <Route path="/registro"                     element={ <CreationPage/>  } />
+          <Route path="/simulation/:simulationId"    element={ <Simulation/>} />
       </Routes>
     </BrowserRouter>
   )

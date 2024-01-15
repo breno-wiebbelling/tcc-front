@@ -38,4 +38,24 @@ export default styled.div`
   .action_button .action_button_element{ background-color: ${smokeWhite}; }
   .action_button .action_button_element:hover{ background-color: ${smokeWhiteHover}; }
   .action_button .action_button_element:active{ background-color: ${smoke}; }
+
+  .worker p{
+    width: 90%;
+    display: block;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    text-align: center;
+    text-overflow: ellipsis;
+    text-transform: capitalize;
+
+    white-space: nowrap;
+    
+    font-size: 12px;
+  }
+
+  .action_button *{
+    cursor: pointer;
+  }
 `

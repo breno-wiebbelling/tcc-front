@@ -9,6 +9,8 @@ import Modal from '@mui/material/Modal';
 
 import { createSimulation } from "../../../service/clients/simulationClient";
 import { white, smokeWhite, smoke, smokeHover } from '../../common/style';
+import { createBasicInitialNodes } from '../../workflow/managers/nodeManager';
+
 const style = {
   width: '80%',
   height: '80%',
@@ -27,21 +29,27 @@ const style = {
   justifyContent:"center"
 };
 
-export default ({ open, setOpen, setSimulations }) => {
+export default ({ open, setOpen, setSimulations, setErrorMessage }) => {
 
   const handleClose = () => setOpen(false);
   const [name, setName] = React.useState("");
   const [nameError, setNameError] = React.useState("");
   const [description, setDescription] = React.useState("");
 
-  //TODO
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
 
-    if(name!==""){
-      createSimulation({ name: name, description: description})
+    //TODO
+    if(name!=="" && name.trim() !== ""){
+      return createSimulation({ 
+        name: name, 
+        description: description,
+      })
       .then(new_simulations => {
         setSimulations(new_simulations.list)
         handleClose()
+      })
+      .catch(e => {
+        setErrorMessage(e);
       });
     }else{
       setNameError("Este campo é obrigatório");
@@ -131,7 +139,7 @@ export default ({ open, setOpen, setSimulations }) => {
               variant="contained"
               onClick={ handleSubmit }
             >
-              Entrar
+              Salvar
             </Button>
           </div>
 

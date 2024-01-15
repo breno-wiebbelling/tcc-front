@@ -11,7 +11,6 @@ export default styled.div`
     display:flex;
     align-items: center;
     justify-content: center;
-    z-index: 2;
 
     .worker{
         width: 100%;
@@ -27,9 +26,8 @@ export default styled.div`
         border-radius: 6px;
         background-color: ${softGreen};
         border: 1px solid ${smokeBlack};
-        z-index: 2;
 
-        cursor: pointer;
+        z-index: 2;
     }
 
     .action_button{
@@ -44,8 +42,7 @@ export default styled.div`
         align-items: center;
 
         transition-duration: .5s;
-
-        z-index: -1;
+        z-index: 1;
     }
 
     .action_button .action_button_element{
@@ -53,19 +50,13 @@ export default styled.div`
         height: 100%;
     }
 
-    .action_button *{
-        cursor: pointer;
-    }
-
     .add_above .arrow_action{
-        transform: rotate(+90deg);
-        position: absolute;
+        transform: rotate(90deg);
         margin-bottom: 20px;
         height: 18px;
     }
 
     .add_above .add_action{
-        position: absolute;
         margin-top: 13px;
     }
 `

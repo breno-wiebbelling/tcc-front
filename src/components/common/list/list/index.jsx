@@ -5,13 +5,23 @@ import AddIcon from '@mui/icons-material/Add';
 import Tooltip from '@mui/material/Tooltip';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-
-import { smokeWhite } from "../../style/index"
+import DeleteIcon from '@mui/icons-material/Delete';
+import { smokeWhite, whiteHover } from '../../style';
 
 export default function BasicTable({ getWithPage, listName, elementName, elementFieldDetails, addAction, elements, setElements }) {
 
   const [page, setPage] = React.useState(1);
   const [count, setCount] = React.useState(0);
+
+  const elementClick = elementFieldDetails["actions"].filter(element => element.name === "onElementClick")[0]["function"];
+  const deleteElement = async (element) => {
+    let func = elementFieldDetails["actions"].filter(element => element.name === "deleteElement")[0]["function"];
+    
+    if(!func) { return null  }
+    
+    await func(element);
+    loadElements();
+  } 
   const loadElements = async () => {
     getWithPage(page)
     .then(clientResponse => {
@@ -67,17 +77,29 @@ export default function BasicTable({ getWithPage, listName, elementName, element
                     )
                   })
                 }
+                <div className='list_element_infos' style={{ "width": '2%' }}></div>
               </div>
               {
                 elements.map(element => {
                   return (
-                    <div className="list_element">
+                    <div 
+                      className="list_element"
+                    >
                       {
                         elementFieldDetails["keys"].map(elementKey => {
 
                           let index = elementFieldDetails["keys"].indexOf(elementKey);
+
+                          if(["createdAt", "updatedAt"].includes(elementKey)){
+                            element[elementKey] = element[elementKey].split("T")[0];
+                          }
+
                           return (
-                            <div className='list_element_infos' style={{ "width": `${elementFieldDetails["sizes"][index]}`}} >   
+                            <div 
+                              className='list_element_infos' 
+                              style={{ "width": `${elementFieldDetails["sizes"][index]}` }} 
+                              onClick={ () => { elementClick(element) } }
+                            >   
                               {
                                 (() => {
                                   if( elementFieldDetails["tooltip"][index] ){
@@ -97,6 +119,22 @@ export default function BasicTable({ getWithPage, listName, elementName, element
                           )
                         })
                       }
+                      
+                      <div className='list_element_infos' style={{ "width": '2%' }}>
+                        <DeleteIcon
+                          onClick={ () => { deleteElement(element) } }
+                          sx={{ 
+                            borderRadius: "50%",
+                            padding: "2px",
+                            margin: "0px 0px 0px -5px",
+                            color: smokeWhite,
+                            "&:hover": {
+                              backgroundColor: smokeWhite,
+                              color: whiteHover
+                            },
+                          }} 
+                        />
+                      </div>
                     </div>
                   )
                   return 

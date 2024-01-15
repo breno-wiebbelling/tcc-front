@@ -15,4 +15,17 @@ baseInstance.interceptors.request.use(function (config) {
   return config;
 });
 
+baseInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if(error.response.data.error){
+      return Promise.reject(error.response.data.error);
+    }
+
+    return Promise.reject(error.message);
+  }
+);
+
 export default baseInstance;

@@ -9,6 +9,7 @@ import {
   denseSmoke, 
   smokeBlack 
 } from "../../style/index";
+import { yellow } from "@mui/material/colors";
 
 export default styled.div`
 
@@ -149,6 +150,10 @@ export default styled.div`
 
     text-overflow: ellipsis;  
     color: ${denseSmoke};
+  }
+
+  .list_display .list_elements .list_element .list_element_infos .elementAction:hover{
+    background-color: ${yellow};
   }
 
   .list_display .list_elements .list_header .header_info{

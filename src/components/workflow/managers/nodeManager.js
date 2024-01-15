@@ -36,7 +36,7 @@ export const nodeCRUDOperations = {
   ADD_ABOVE:"new_node_above"
 }
 
-export default (initialNodes, mainManager, nodeClickEvents) => {
+export default (initialNodes, mainManager, nodeClickEvents, simulationId) => {
 
   const [nodes, setNodes] = useState([]);
   const [parentNode] = useState({ column: mainManager.columnManagerInstance.central_column_name, line: mainManager.columnManagerInstance.first_line_name });
@@ -84,16 +84,16 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
           break;
       }
       
-      nodeClickEvents.newNode((newNode) => { updateAfterFinish(newNode, mainManager) });
+      nodeClickEvents.newNode(() => { updateAfterFinish(mainManager) });
     },
     deleteNode: (nodeInformation) => { deleteNode(nodeInformation, mainManager) }
   }
 
   library.processNode = (currentNodeId, mainManager) => {
-    let currentNodeIndex = initialNodes.findIndex(node => node.id === currentNodeId);
-  
+    let currentNodeIndex = initialNodes.findIndex(node => node._id === currentNodeId);
+
     if( currentNodeIndex>=0 ){
-  
+      
       let currentNode = initialNodes[currentNodeIndex];
       switch (currentNode.type){
   
@@ -133,8 +133,12 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
           break;
       }
   
-      currentNode.data.id = currentNode.id
-      currentNode.data.click = library.nodeClickEvents;
+
+      currentNode.data = {
+        label:currentNode.name,
+        id:currentNode._id,
+        click:library.nodeClickEvents
+      }
       
       setNodes((latest) => { return [...latest, currentNode] })
       initialNodes.splice(currentNodeIndex, 1);

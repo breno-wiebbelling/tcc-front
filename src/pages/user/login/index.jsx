@@ -1,7 +1,6 @@
 import { LoginStyled } from "./styled"
 
-import * as React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
