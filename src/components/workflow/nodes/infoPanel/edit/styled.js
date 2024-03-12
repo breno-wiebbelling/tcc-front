@@ -4,7 +4,14 @@ import { smokeBlack } from "../../../../common/style/index";
 export default styled.div`
 
   width: 100%;
+  height: 100%;
   color: ${smokeBlack};
-
-  background-color: blue;
+  
+  .node_info_container{
+    height: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 `

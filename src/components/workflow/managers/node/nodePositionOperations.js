@@ -17,6 +17,7 @@ export const reprocessNextNode = (currentNode, currentNodes, mainManager) => {
 
   let nextNode = currentNodes.find(node => isNodeIdPresentOnNextNode(node.id, currentNode));
 
+  if(nextNode.type === nodeKeys.FINAL_KEY){ return currentNodes }
   nextNode.line = mainManager.lineManagerInstance.process(currentNode.line);
 
   if(nextNode.type === nodeKeys.CONDITIONAL_KEY){

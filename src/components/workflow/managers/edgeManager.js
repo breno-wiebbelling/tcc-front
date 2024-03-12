@@ -68,5 +68,9 @@ export default () => {
     });
   }
 
+  edgesLibrary.reset = async () => {
+    setEdges([]);
+  }
+
   return edgesLibrary;
 }

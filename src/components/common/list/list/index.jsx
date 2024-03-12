@@ -6,6 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { smokeWhite, whiteHover } from '../../style';
 
 export default function BasicTable({ getWithPage, listName, elementName, elementFieldDetails, addAction, elements, setElements }) {
@@ -14,6 +15,16 @@ export default function BasicTable({ getWithPage, listName, elementName, element
   const [count, setCount] = React.useState(0);
 
   const elementClick = elementFieldDetails["actions"].filter(element => element.name === "onElementClick")[0]["function"];
+  
+  const editElement = async (element) => {
+    let func = elementFieldDetails["actions"].filter(element => element.name === "editElement")[0]["function"];
+    
+    if(!func) { return null  }
+    
+    await func(element);
+    loadElements();
+  }
+
   const deleteElement = async (element) => {
     let func = elementFieldDetails["actions"].filter(element => element.name === "deleteElement")[0]["function"];
     
@@ -22,6 +33,7 @@ export default function BasicTable({ getWithPage, listName, elementName, element
     await func(element);
     loadElements();
   } 
+
   const loadElements = async () => {
     getWithPage(page)
     .then(clientResponse => {
@@ -121,13 +133,32 @@ export default function BasicTable({ getWithPage, listName, elementName, element
                       }
                       
                       <div className='list_element_infos' style={{ "width": '2%' }}>
+                        <EditIcon
+                          onClick={ () => { editElement(element) } }
+                          sx={{ 
+                            borderRadius: "50%",
+                            padding: "4px",
+                            margin: "0px 0px 0px -35px",
+                            color: smokeWhite,
+                            zIndex:1,
+                            height: "20px",
+                            width: "20px",
+                            "&:hover": {
+                              backgroundColor: smokeWhite,
+                              color: whiteHover
+                            },
+                          }} 
+                        />
                         <DeleteIcon
                           onClick={ () => { deleteElement(element) } }
                           sx={{ 
                             borderRadius: "50%",
-                            padding: "2px",
-                            margin: "0px 0px 0px -5px",
+                            padding: "4px",
+                            margin: "0px 0px 0px 5px",
                             color: smokeWhite,
+                            zIndex:1,
+                            height: "20px",
+                            width: "20px",
                             "&:hover": {
                               backgroundColor: smokeWhite,
                               color: whiteHover

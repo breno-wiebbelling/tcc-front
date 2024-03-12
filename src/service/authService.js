@@ -1,3 +1,5 @@
+import {login} from "./clients/userClient";
+
 const user_id_key = "user_id"
 
 export const storeToken = ( user_id ) => {
@@ -9,5 +11,10 @@ export const getToken = () => {
 }
 
 export const isLoggedIn = () => {
-    return ( sessionStorage.getItem( user_id_key ) !== null );
+  return login("breno@gmail.com", "Breno123*")
+    .then( any => {
+      return true;
+    })
+
+    // return ( sessionStorage.getItem( user_id_key ) !== null );
 }

@@ -1,7 +1,6 @@
 import baseClient from "./baseClient";
 
 const nodeURI = 'node';
-const nodesBySimulationId = "simulation"
 
 export const create = async (new_node) => {
   return (await baseClient.post(
@@ -10,10 +9,23 @@ export const create = async (new_node) => {
   ))["data"];
 }
 
-export const getInitialNodesBySimulationId = async (simulationId) => {
+export const updateNextNode = async (currentNodeId, newNextNode, previousNodeId) => {
   return (
     (
-      await baseClient.get( `/${nodeURI}/${nodesBySimulationId}/${simulationId}` )
+      await baseClient.patch(
+        `/${nodeURI}/nextNode`,
+        {
+          'currentNodeId': currentNodeId,
+          'newNextNode': newNextNode,
+          'previousNodeId': previousNodeId
+        }
+      )
     )["data"]
   );
+}
+
+export const deleteById = async (nodeId) => {
+  return (
+    await baseClient.delete(`/${nodeURI}/${nodeId}`)
+  ).data;
 }

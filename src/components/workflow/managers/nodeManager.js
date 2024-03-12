@@ -36,18 +36,17 @@ export const nodeCRUDOperations = {
   ADD_ABOVE:"new_node_above"
 }
 
-export default (initialNodes, mainManager, nodeClickEvents, simulationId) => {
+export default (initialNodes, mainManager, nodeClickEvents) => {
 
   const [nodes, setNodes] = useState([]);
-  const [parentNode] = useState({ column: mainManager.columnManagerInstance.central_column_name, line: mainManager.columnManagerInstance.first_line_name });
-
   const library = {};
 
   library.nodes = nodes;
   library.setNodes = setNodes;
-  library.parentNode = parentNode;
+  library.parentNode = { column: mainManager.columnManagerInstance.central_column_name, line: mainManager.lineManagerInstance.first_line_name };
+  library.initialNodes = initialNodes;
 
-  library.updateParentNode = ( newParentNode, mainManager ) => {
+  library.updateParentNode = ( newParentNode) => {
     library.parentNode.column = newParentNode.column;
     library.parentNode.line = newParentNode.line;
   }
@@ -89,50 +88,47 @@ export default (initialNodes, mainManager, nodeClickEvents, simulationId) => {
     deleteNode: (nodeInformation) => { deleteNode(nodeInformation, mainManager) }
   }
 
-  library.processNode = (currentNodeId, mainManager) => {
-    let currentNodeIndex = initialNodes.findIndex(node => node._id === currentNodeId);
+  library.processNode = async (currentNodeId, mainManager) => {
+    let currentNodeIndex = library.initialNodes.findIndex(node => node._id === currentNodeId);
 
     if( currentNodeIndex>=0 ){
-      
-      let currentNode = initialNodes[currentNodeIndex];
+      let currentNode = library.initialNodes[currentNodeIndex];
       switch (currentNode.type){
-  
-        case nodeKeys.START_KEY:
-          currentNode.column = mainManager.columnManagerInstance.central_column_name;
-          currentNode.line = mainManager.lineManagerInstance.first_line_name;
-        
-        case nodeKeys.TASK_KEY:
-          currentNode.column = parentNode.column;
-          currentNode.line = mainManager.lineManagerInstance.process(parentNode.line);
-  
-        case nodeKeys.START_KEY: case nodeKeys.TASK_KEY:
-          mainManager.edgeManagerInstance.create(currentNode.id, currentNode.details.nextNode);
-          library.updateParentNode(currentNode, mainManager);
-          library.processNode(currentNode.details.nextNode, mainManager);
-          break;
-  
-        case nodeKeys.CONDITIONAL_KEY:
-          let prev_parentNode = currentNode;
-          currentNode.column = parentNode.column;
-          currentNode.line = mainManager.lineManagerInstance.process(parentNode.line);
-  
-          currentNode.details.nextNode.forEach((conditionalLegId, index) => {
-            let columnNameForFollowingChild = mainManager.columnManagerInstance.create( index, currentNode.details.nextNode.length, currentNode.column );
-  
-            library.updateParentNode({ column: columnNameForFollowingChild, line: currentNode.line }, mainManager);
-            mainManager.edgeManagerInstance.create( prev_parentNode.id, conditionalLegId );
-            library.processNode(conditionalLegId, mainManager);
-          })
-          
-          library.updateParentNode(prev_parentNode, mainManager)
-          break;
-  
         case nodeKeys.FINAL_KEY:
           currentNode.column = mainManager.columnManagerInstance.central_column_name;
           currentNode.line = mainManager.lineManagerInstance.last_line_name;
           break;
-      }
+
+        case nodeKeys.START_KEY:
+          currentNode.column = mainManager.columnManagerInstance.central_column_name;
+          currentNode.line = mainManager.lineManagerInstance.first_line_name;
+        
+        case nodeKeys.TASK_KEY: case nodeKeys.NEW_KEY:
+          currentNode.column = library.parentNode.column;
+          currentNode.line = mainManager.lineManagerInstance.process(library.parentNode.line);
   
+        case nodeKeys.START_KEY: case nodeKeys.TASK_KEY: case nodeKeys.NEW_KEY:
+          mainManager.edgeManagerInstance.create(currentNode.id, currentNode.details.nextNode);
+          library.updateParentNode(currentNode, mainManager);
+          await library.processNode(currentNode.details.nextNode, mainManager);
+          break;
+  
+        case nodeKeys.CONDITIONAL_KEY:
+          let prev_parentNode = currentNode;
+          currentNode.column = library.parentNode.column;
+          currentNode.line = mainManager.lineManagerInstance.process(library.parentNode.line);
+  
+          currentNode.details.nextNode.forEach( async (conditionalLegId, index) => {
+            let columnNameForFollowingChild = mainManager.columnManagerInstance.create( index, currentNode.details.nextNode.length, currentNode.column );
+  
+            library.updateParentNode({ column: columnNameForFollowingChild, line: currentNode.line }, mainManager);
+            mainManager.edgeManagerInstance.create( prev_parentNode.id, conditionalLegId );
+            await library.processNode(conditionalLegId, mainManager);
+          })
+          
+          library.updateParentNode(prev_parentNode, mainManager)
+          break;
+      }
 
       currentNode.data = {
         label:currentNode.name,
@@ -141,9 +137,22 @@ export default (initialNodes, mainManager, nodeClickEvents, simulationId) => {
       }
       
       setNodes((latest) => { return [...latest, currentNode] })
-      initialNodes.splice(currentNodeIndex, 1);
+      library.initialNodes.splice(currentNodeIndex, 1);
     }
   } 
+
+  library.reset = async (newInitialNodes, mainManagerLibrary) => {
+    library.updateParentNode({ column: mainManagerLibrary.columnManagerInstance.central_column_name, line: mainManagerLibrary.lineManagerInstance.first_line_name })
+    
+    newInitialNodes.forEach(tempInitialNode => {
+      tempInitialNode.id = tempInitialNode["_id"];
+    })
+    library.initialNodes = newInitialNodes
+    library.setNodes([]);
+
+    await library.processNode(mainManagerLibrary.initialNode, mainManagerLibrary)
+    reloadNodesAndAddGhostNodes(mainManagerLibrary);
+  }
 
   return library;
 }

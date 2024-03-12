@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { smokeWhiteLight, smokeWhite, smokeBlack } from "../../../../common/style";
+import { smokeWhiteLightHover, smokeHover, smokeWhite, smokeBlack } from "../../../../common/style";
 
 export default styled.div`
   
@@ -28,8 +28,8 @@ export default styled.div`
     /* background: linear-gradient(to left, red 50%, blue 50%); */
 
     border-radius: 50%;
-    background-color: ${smokeWhiteLight};
-    border: 1px solid ${smokeBlack};
+    background-color: ${smokeWhiteLightHover};
+    border: 1px solid ${smokeHover};
 
     cursor: pointer;
     z-index: 2;

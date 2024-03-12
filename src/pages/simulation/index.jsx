@@ -7,11 +7,11 @@ import InfoPanel from "../../components/workflow/panel/index.jsx";
 import DescriptionIcon from '@mui/icons-material/Description';
 import IconButton from '@mui/material/IconButton';
 import SimulationInfo from "../../components/simulation/infoPanel/index.jsx";
-import NewNodeComponent from "../../components/workflow/nodes/infoPanel/new/index.jsx";
+import EditNodeComponent from "../../components/workflow/nodes/infoPanel/edit/index.jsx";
 
 import SimulationStyled from "./style";
 import { getSimulationById } from "../../service/clients/simulationClient";
-import { getInitialNodesBySimulationId } from "../../service/clients/nodeClient";
+import { getInitialNodesBySimulationId } from "../../service/clients/simulationClient.js";
 
 //TODO
 const nodeEventNames = { add: "addNode", edit:"editNode", delete: "deleteNode" }
@@ -38,25 +38,25 @@ export const Simulation = () => {
   const [isInfoPanelOpen, setIsInfoPanelOpen] = useState(false); 
   const [simulationInfo, setSimulationInfo] = useState(null);
   const [InfoPanelComponent, setInfoPanelComponent] = useState(()=> { return <SimulationInfo simulationInfo={simulationInfo}/> });
-  const [initialNodes, setInitianlNodes] = useState([{ "id": "0" }])
-  const [loaded, setLoaded] = useState(false)
+  const [initialNodes, setInitialNodes] = useState([{ "id": "0" }]);
+  const [loaded, setLoaded] = useState(false);
 
   //TODO
   const nodeClickEvents = {
-    editNode : (setSelectedNode) => { openModalWithNodeEvent(nodeEventNames.edit, setSelectedNode) },
+    editNode : (nodeInformation) => { openModalWithNodeEvent(nodeEventNames.edit, nodeInformation) },
     newNode: (updateAfterFinish) => { openModalWithNodeEvent(nodeEventNames.add, updateAfterFinish)}
   }
 
-  const openModalWithNodeEvent = (eventName, setSelectedNode, updateAfterFinish) => {
+  const openModalWithNodeEvent = (eventName, nodeInformation) => {
+    
     switch (eventName){
-
-      // case nodeEventNames.edit:
-      //   setInfoPanelComponent(() => { return <NodeInfo nodeInfo={node_information}/> });
-      //   break;
-
-      case nodeEventNames.add:
-        setInfoPanelComponent(() => { return <NewNodeComponent setSelectedNode={setSelectedNode} updateAfterFinish={updateAfterFinish} /> });
+      case nodeEventNames.edit:
+        setInfoPanelComponent(() => { return <EditNodeComponent nodeInfo={nodeInformation}/> });
         break;
+
+    //   case nodeEventNames.add:
+    //     setInfoPanelComponent(() => { return <NewNodeComponent setSelectedNode={setSelectedNode} updateAfterFinish={updateAfterFinish} /> });
+    //     break;
 
       default:
         break;
@@ -65,23 +65,29 @@ export const Simulation = () => {
     setIsInfoPanelOpen(true);
   }
 
-  useEffect(() => {
+  const loadInformation = async () => {
+    setLoaded(false);
     
-    getInitialNodesBySimulationId(simulationId).then(
-      initialNodesResponse => {
-        getSimulationById(simulationId).then(
-          simulation_info_response => {
-            setSimulationInfo(simulation_info_response);
-            setInitianlNodes(initialNodesResponse.map(initialNode => {
-              initialNode.id = initialNode["_id"];
-              return initialNode;
-            }));
-            setLoaded(true);
-          }
-        );
-      }
-    );
+    let localSimulation = await getSimulationById(simulationId);
+    setSimulationInfo(localSimulation);
 
+    let localInitialNodes = await searchInicialNodes();
+    setInitialNodes(
+      localInitialNodes.map(initialNode => {
+        initialNode.id = initialNode["_id"];
+        return initialNode;
+      })
+    );
+    
+    setLoaded(true);
+  }
+
+  const searchInicialNodes = () => {
+    return getInitialNodesBySimulationId(simulationId);
+  }
+
+  useEffect(() => {
+    loadInformation();
   }, [])
 
   return (
@@ -89,17 +95,20 @@ export const Simulation = () => {
       <Header/>
 
       <div className='container'>
-        { loaded &&
+        { 
+          loaded &&
           <SimulationFlow 
             initialNode={simulationInfo["id_start"]} 
             initialNodes={initialNodes} 
             isInfoPanelOpen={isInfoPanelOpen} 
             nodeClickEvents={nodeClickEvents}
             simulationId={simulationId}
+            searchInicialNodes={searchInicialNodes}
           />
         }
         
-        {!isInfoPanelOpen && 
+        {
+          !isInfoPanelOpen && 
           <IconButton className="openInfoPanel" onClick={ () => { setIsInfoPanelOpen(true)} } >
             <DescriptionIcon/>
           </IconButton>
@@ -107,7 +116,7 @@ export const Simulation = () => {
 
         <InfoPanel isOpen={isInfoPanelOpen} setIsOpen={setIsInfoPanelOpen}>
           { InfoPanelComponent }
-        </InfoPanel>
+        </InfoPanel> 
       </div>
      
     </SimulationStyled>

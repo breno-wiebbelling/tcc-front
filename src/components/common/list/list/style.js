@@ -1,12 +1,14 @@
 import styled from "styled-components";
 import { 
   white, 
+  whiteLight,
   whiteHover, 
   smokeWhiteLight, 
   smokeWhiteHover, 
   smoke, 
   smokeHover, 
   denseSmoke, 
+  denseSmokeBlack,
   smokeBlack 
 } from "../../style/index";
 import { yellow } from "@mui/material/colors";
@@ -27,15 +29,13 @@ export default styled.div`
   justify-content: center;
   flex-direction: column;
 
-  -webkit-box-shadow: 1px 10px 10px 3px ${smokeWhiteLight};
-  -moz-box-shadow: 1px 10px 10px 3px ${smokeWhiteLight};
-  box-shadow: 1px 10px 10px 3px ${smokeWhiteLight};
+  box-shadow: 1px 10px 10px 3px ${denseSmokeBlack};
 
   .list_top, .list_elements{
     width: 100%;
     display: flex;
   }
-  
+
   .list_top{
     height: 12%;
   }
@@ -123,7 +123,7 @@ export default styled.div`
   }
 
   .list_display .list_elements .list_element:hover{
-    background-color: ${whiteHover};
+    background-color: ${whiteLight};
   }
 
   .list_display .list_elements .list_element:active{

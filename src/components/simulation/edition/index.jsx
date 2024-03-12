@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from "@mui/material/Button";
 import CloseIcon from '@mui/icons-material/Close';
-import CreationModalStyled from "./styled";
+import EditionModalStyled from "./styled";
 import IconButton from '@mui/material/IconButton';
 import TextField from "@mui/material/TextField";
 import Modal from '@mui/material/Modal';
@@ -56,7 +56,7 @@ export default ({ open, setOpen, setSimulations, setErrorMessage }) => {
   }
 
   return (
-    <CreationModalStyled>
+    <EditionModalStyled>
       <Modal
         open={open}
         onClose={handleClose}
@@ -99,6 +99,7 @@ export default ({ open, setOpen, setSimulations, setErrorMessage }) => {
               height: "90%"
             }}
           >
+            <h3>Edição de Modal</h3>
             <TextField
               margin="normal"
               fullWidth
@@ -108,6 +109,7 @@ export default ({ open, setOpen, setSimulations, setErrorMessage }) => {
               onChange={(e) => { setName(e.target.value) }}
               autoFocus
             />
+
             <textarea
               placeholder="Descrição da simulação"
               onChange={ (event) => { setDescription(event.target.value) } }
@@ -143,6 +145,6 @@ export default ({ open, setOpen, setSimulations, setErrorMessage }) => {
           </div>
         </Box>
       </Modal>
-    </CreationModalStyled>
+    </EditionModalStyled>
   );
 }

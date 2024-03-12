@@ -58,4 +58,6 @@ export default styled.div`
   .action_button *{
     cursor: pointer;
   }
+  
+
 `

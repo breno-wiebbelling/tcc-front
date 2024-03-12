@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, Container } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import InfoStyled from './index';
-import { smokeWhiteHover, smokeWhite, smoke, smokeBlack } from "../../common/style/index"
+import InfoStyled from './styled';
+import { smokeWhiteHover, smokeWhite, smoke, smokeWhiteLightHover } from "../../common/style/index"
 import IconButton from '@mui/material/IconButton';
 
 export default ({ isOpen, setIsOpen, children }) => {
@@ -14,23 +14,24 @@ export default ({ isOpen, setIsOpen, children }) => {
   return (
     <InfoStyled>
       <div
-        style={{ 
-          "width": (isOpen) ? "30vw" : "0vw", 
+        style={{
+          "width": (isOpen) ? "30vw" : "0vw",
+          "minWidth": "500px",
           "height":"100%",
-          "overflow": "hidden" 
         }}
       >
 
         {isOpen &&
           <Container
             sx={{
-              "height":"100%"
+              "height":"100%",
+              "widht": "100%"
             }}
           >
             <IconButton 
               onClick={closePanel}
               sx={{ 
-                "backgroundColor": smokeWhite,
+                "backgroundColor": smokeWhiteLightHover,
                 "marginTop": "15px",
                 "marginBottom": "15px",
                 "&:hover": {
@@ -63,9 +64,7 @@ export default ({ isOpen, setIsOpen, children }) => {
             </Box>
           </Container>
         }
-
       </div>
-
     </InfoStyled>
   )
 }

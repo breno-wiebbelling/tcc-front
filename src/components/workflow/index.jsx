@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import ReactFlow, { Controls, Background } from 'reactflow';
 import 'reactflow/dist/style.css';
 import StyledSimulation from "./styled"
 import { white } from "../common/style/index"
 import useMainManager from "./managers/mainManager";
-import { reloadNodesAndAddGhostNodes } from "./managers/nodeManager";
 
-export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents, simulationId }) => {
+export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents, simulationId, searchInicialNodes}) => {
 
-  let mainManager = useMainManager(initialNode, initialNodes, nodeClickEvents, simulationId);
+  let mainManager = useMainManager(initialNode, initialNodes, nodeClickEvents, simulationId, searchInicialNodes);
 
-  useEffect(() => { 
-    mainManager.nodeManagerInstance.processNode(initialNode, mainManager) 
-    reloadNodesAndAddGhostNodes(mainManager);
+  useEffect(() => {
+    const fetchData = async () => {
+      await mainManager.loadNodes();
+    };
+  
+    fetchData();
   }, []);
 
   return (

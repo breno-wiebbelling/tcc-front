@@ -2,6 +2,7 @@ import React  from 'react';
 import Box from '@mui/material/Box';
 import Header from "../components/header/index";
 import SimulationList from "../components/simulation/list/index"
+import { blueBayoux } from "../components/common/style/index"
 
 export const Home = () => {
 
@@ -15,7 +16,7 @@ export const Home = () => {
                     "alignItems":"center",
                     "justifyContent":"center",
                     "height":"92vh",
-                    "backgroundColor":"#edf0f6"
+                    "backgroundColor": blueBayoux
                 }}
             >
                 <SimulationList />

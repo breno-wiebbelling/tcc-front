@@ -4,7 +4,7 @@ import { idGenerator } from '../../common/idManager'
 export default () => {
   const X_GAP = 300;
 
-  const [columns, setColumns]  = useState( [{name:"central", gap: 260 }] )
+  const [columns, setColumns]  = useState( [{name:"central", gap: 400 }] )
 
   let columnLibrary = {};
   columnLibrary.columns = columns;
@@ -63,8 +63,8 @@ export default () => {
     return newColumnName;
   }
 
-  columnLibrary.reset = () => {
-    setColumns([]);
+  columnLibrary.reset = async () => {
+    setColumns([{name:"central", gap: 400 }]);
   }
 
   return columnLibrary;

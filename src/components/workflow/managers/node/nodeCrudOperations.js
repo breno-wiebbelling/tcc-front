@@ -5,9 +5,13 @@ import {
   reprocessNextNode, 
   reprocessNodeColumns,
   updateNodesPositions, 
-  updateGhostPositions 
+  updateGhostPositions,
 } from "../nodeManager";
-import { create } from "../../../../service/clients/nodeClient";
+import {
+  create,
+  updateNextNode,
+  deleteById
+} from "../../../../service/clients/nodeClient";
 
 const processNewNode = async (previousNode, mainManager) => {
 
@@ -46,10 +50,11 @@ export const addNodeBelow = (fromNodeInformation, mainManager) => {
             latestNodes => {
               latestNodes = latestNodes.map(node => {
                 if(node.id === fromNodeInformation.id) { 
+                  node.details.nextNode = updateNextNode(node.id, newNode.id);
                   node.details.nextNode = newNode.id; 
                 }
                 return node;
-              })
+              });
           
               latestNodes = [...latestNodes, newNode];
               latestNodes = reprocessNextNode(currentNode, latestNodes, mainManager);
@@ -57,8 +62,6 @@ export const addNodeBelow = (fromNodeInformation, mainManager) => {
               mainManager.edgeManagerInstance.updateSource(currentNode.id, newNode.details.nextNode, newNode.id);
               mainManager.edgeManagerInstance.create(currentNode.id, newNode.id)
               
-              console.log(latestNodes)
-
               return latestNodes;
             }
           )
@@ -133,48 +136,23 @@ export const addConditionalLeg = (fromNodeInformation, mainManager) => {
 
     return latestNodes;
   })
-  // reloadNodesAndAddGhostNodes()
 }
 
-export const deleteNode = (nodeInformation, mainManager) => {
-  mainManager.nodeManagerInstance.setNodes(latestNodes => {
-    let removedNodeIndex = latestNodes.findIndex(node => node.id === nodeInformation.id);
-    let removedNode = latestNodes[removedNodeIndex];
-    let previousNodes = latestNodes.filter(node => isNodeIdPresentOnNextNode(nodeInformation.id, node));
+export const deleteNode = async (nodeInformation, mainManager) => {
+  let currentNodes;
 
-    if(removedNode){
-
-      mainManager.edgeManagerInstance.remove(removedNode.id, removedNode.details.nextNode);
-      latestNodes.splice(removedNodeIndex, 1);   
-      
-      previousNodes.forEach(previousNode => {
-        if(previousNode.type === nodeKeys.CONDITIONAL_KEY){
-          let nextNodes = previousNode.details.nextNode;
-          nextNodes[nextNodes.indexOf(removedNode.id)] = removedNode.details.nextNode;
-        }
-        else{
-          previousNode.details.nextNode = removedNode.details.nextNode;
-          mainManager.edgeManagerInstance.updateTarget(previousNode.id, removedNode.id, removedNode.details.nextNode);
-        }
-        latestNodes = reprocessNextNode(previousNode, latestNodes, mainManager)
-      })
-  
-    }
+  mainManager.nodeManagerInstance.setNodes((latestNodes) => {
+    currentNodes = latestNodes;
 
     return latestNodes;
-  })
+  });
+  nodeInformation = currentNodes.filter(node => node.id === nodeInformation.id)[0];
+  let parentNode = currentNodes.filter(node => isNodeIdPresentOnNextNode(nodeInformation.id, node))[0]
 
-  updateGhostPositions(mainManager);
-  mainManager.nodeManagerInstance.setNodes(latestNodes => {
-    mainManager.lineManagerInstance.lines.forEach(line => {
-      if( !latestNodes.find(node => node.line === line.name) && line.name !== mainManager.lineManagerInstance.first_line_name ){
-        mainManager.lineManagerInstance.remove(line.name);
-      }
-    })
+  await deleteById(nodeInformation.id);
 
-    return latestNodes;
-  })
-  updateNodesPositions(mainManager);
+  await updateNextNode(parentNode.id, nodeInformation.details.nextNode, nodeInformation.id);
+  await mainManager.reload();
 }
 
 export const findNodeFrequencies  = (given_nodes) => {
