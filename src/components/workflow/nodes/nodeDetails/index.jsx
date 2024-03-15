@@ -8,7 +8,8 @@ import NodeDetailsTypeEnum from "./types/detailsTypeEnum";
 import { MathDetailsComponent } from "./types/typeDetailsManager";
 
 const TypeSelector = () => {
-  const [nodeType, setNodeType] = React.useState({ value: NodeDetailsTypeEnum.NONE.code, label: NodeDetailsTypeEnum.NONE.name, key: NodeDetailsTypeEnum.NONE.code });
+  // const [nodeType, setNodeType] = React.useState({ value: NodeDetailsTypeEnum.NONE.code, label: NodeDetailsTypeEnum.NONE.name, key: NodeDetailsTypeEnum.NONE.code });
+  const [nodeType, setNodeType] = React.useState({ value: NodeDetailsTypeEnum.MATH.code, label: NodeDetailsTypeEnum.MATH.name, key: NodeDetailsTypeEnum.MATH.code });
   const [typeDetailsComponent, setTypeDetailsComponent] = React.useState(<></>);
   const options = [
     { value: NodeDetailsTypeEnum.MATH.code, label: NodeDetailsTypeEnum.MATH.name, key: NodeDetailsTypeEnum.MATH.code },

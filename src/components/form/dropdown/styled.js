@@ -4,9 +4,9 @@ import {
   smokeWhite,
   smokeHover,
   whiteLightHover,
-  smokeWhiteLight,
   smokeWhiteLightHover,
-  whiteHover
+  whiteHover,
+  smoke,
 } from "../../common/style";
 
 export default styled.div`
@@ -89,6 +89,11 @@ export default styled.div`
   
   .dropdown-options .dropdown-option:hover{
     background-color: ${whiteHover};
+  }
+
+  .dropdown-options .no_options_available{
+    color: ${smokeHover};
+    background-color: ${smokeWhiteLightHover};
   }
 
 `;

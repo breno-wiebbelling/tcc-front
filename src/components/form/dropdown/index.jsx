@@ -49,14 +49,21 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
                 style={{ rotate: (isOptionsOpen) ? "90deg" : "-90deg" }}
               />
               { hasNewValueOption &&
-                <AddIcon className='dropdown-add-icon' onClick={()=>{ setIsOptionOpen(latest => !latest) }} />
+                <AddIcon 
+                  className='dropdown-add-icon' 
+                  onClick={()=>{ 
+                    onNewValueOptionClick();
+                    setIsOptionOpen(latest => !latest) 
+                  }} 
+                />
               }
             </div>
           </div>
           {
-            isOptionsOpen &&
+            isOptionsOpen && 
             <div className="dropdown-options">
               {
+                options.length > 0 &&
                 options.map((option) => (
                   <div 
                     className="dropdown-option"  
@@ -66,13 +73,25 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
                       setIsOptionOpen(false)
                     }}
                     style={{
-                      borderBottomLeftRadius: (option.isLastOne) ? "0px" : "8px",
-                      borderBottomRightRadius: (option.isLastOne) ? "0px" : "8px",
+                      borderBottomLeftRadius: (option.isLastOne) ? "8px" : "0px",
+                      borderBottomRightRadius: (option.isLastOne) ? "8px" : "0px",
                     }}  
                   >
                     {option.label}
                   </div>
                 ))
+              }
+              {
+                options.length <= 0 &&
+                (
+                  <div 
+                    className="dropdown-option no_options_available"  
+                    key="no_options_available"
+                    style={{ borderBottomLeftRadius: "8px", borderBottomRightRadius: "8px" }}  
+                  >
+                    Nenhuma opção disponível!
+                  </div>
+                )
               }
             </div>
           }

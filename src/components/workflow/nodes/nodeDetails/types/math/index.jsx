@@ -19,8 +19,7 @@ export default ({  }) => {
   ]
 
   const onMathSelection = (newMathValue) => {
-    console.log(newMathValue)
-    // setMathOperation(newMathValue)
+    setMathOperation(newMathValue)
   }
 
   return (
@@ -29,7 +28,7 @@ export default ({  }) => {
       <h2>Detalhes Matemáticos</h2>
       <ValueSelector value={firstValue} valueType={firstValueType}  setValueType={setFirstValueType}  setValue={setFirstValue}/>
       <div className="dropdown-math-operation">
-        <Dropdown placeholder="Operação Matemática" options={mathOptions} value={mathOperation}  onChange={onMathSelection} />
+        <Dropdown placeholder="Operação Matemática" options={mathOptions} value={mathOperation} onChange={onMathSelection}/>
       </div>
       <ValueSelector value={secondValue} valueType={secondValueType} setValueType={setSecondValueType} setValue={setSecondValue}/>
       <div className="node-details-line"></div>
