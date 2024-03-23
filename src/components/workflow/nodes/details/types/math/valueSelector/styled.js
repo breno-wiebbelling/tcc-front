@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { white, smokeHover, smokeWhiteLight } from "../../../../../../common/style";
+import { white, smokeHover, smokeWhiteLight, blueBayoux } from "../../../../../../common/style";
 
 export default styled.div`
   width: 100%;

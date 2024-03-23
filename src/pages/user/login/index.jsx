@@ -14,7 +14,9 @@ import { PassInput } from "../../../components/form/input/index";
 import { validateLoginCredentials } from "../../../service/validators/userValidator";
 
 export const LoginPage = () => {
-  const [errorMessage, setErrorMessage] = useState("");
+	const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: ''});
+  const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: ''}); }
+
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -41,14 +43,15 @@ export const LoginPage = () => {
         });
       }
       catch(e){
-        setErrorMessage(e.response.data.error ?? "Algo de errado aconteceu!");
+        setAlertInfo({ msg: (e.response.data.error ?? "Algo de errado aconteceu!"), mode: 'error' });
       }
     }
   };
 
   return (
     <LoginStyled className="base_page">
-      {errorMessage && <PopperAlert message={errorMessage} setMessage={setErrorMessage} />}
+			{alertInfo.msg != "" && <PopperAlert message={alertInfo.msg} mode={'error'} resetMessage={resetErrorMessage} />}	
+
       <Container component="main" maxWidth="xs" className="login" sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }} >
           <Typography

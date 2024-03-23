@@ -25,7 +25,7 @@ export default () => {
     let middlePosition  = Math.ceil((totalLength/2))
     let currentPosition = currentIndex+1;
   
-    if( currentPosition <  middlePosition){ 
+    if( currentPosition < middlePosition){
       return -Math.abs(X_GAP); 
     }
     else if( currentPosition === middlePosition ){

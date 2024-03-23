@@ -5,7 +5,7 @@ const pageURI = 'page';
 const nodesURI = 'nodes'
 
 export const getSimulationsByUser = async (page) => {
-  return (await baseClient.get(`/${simulationURI}/${pageURI}/${parseInt(page)-1}`)).data;
+  return (await baseClient.get(`/${simulationURI}/${pageURI}=${parseInt(page)-1}`)).data;
 }
 
 export const getInitialNodesBySimulationId = async (simulationId) => {

@@ -26,7 +26,7 @@ export default ({ data }) => {
         <div onClick={ () => { setIsOptionsVisible(false); }} >
           <div 
             className='action_button left' 
-            onClick={data.click.editNode}  
+            onClick={()=>{ data.click.editNode(data) }}
             style={{ "left": (isOptionsVisible) ? "-70px" : "0px" }}
           >
             <IconButton className='action_button_element'>

@@ -5,9 +5,9 @@ import StyledSimulation from "./styled"
 import { white } from "../common/style/index"
 import useMainManager from "./managers/mainManager";
 
-export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeClickEvents, simulationId, searchInicialNodes}) => {
+export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeEventClicks, simulationId, searchInicialNodes}) => {
 
-  let mainManager = useMainManager(initialNode, initialNodes, nodeClickEvents, simulationId, searchInicialNodes);
+  let mainManager = useMainManager(initialNode, initialNodes, nodeEventClicks, simulationId, searchInicialNodes);
 
   useEffect(() => {
     const fetchData = async () => {

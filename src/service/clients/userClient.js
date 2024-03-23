@@ -1,5 +1,9 @@
 import baseClient from "./baseClient";
-import { storeToken } from "../authService"
+import { storeToken } from "../authService";
+
+const APP_HOST = 'restmup.shop';
+const DOT = '.';
+const HTTP = 'https://'
 
 export const createUser = async (user) => {
     return await baseClient
@@ -32,5 +36,10 @@ const performLogin = ( data ) => {
         return true;
     } 
     return false;
+}
+
+export const getUserHost = async () => {
+    let name = 'name';
+    return `${HTTP}${name}${DOT}${APP_HOST}`
 }
 

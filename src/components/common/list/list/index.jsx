@@ -83,7 +83,7 @@ export default function BasicTable({ getWithPage, listName, elementName, element
 
                     let index = elementFieldDetails["names"].indexOf(elementFieldName);
                     return (
-                      <div className='list_element_info' style={{ "width": `${elementFieldDetails["sizes"][index]}`}} >
+                      <div className='list_element_info' style={{ "width": `${elementFieldDetails["sizes"][index]}`}} key={`header${index}`} >
                         <p className='header_info'>{elementFieldName}</p>
                       </div>
                     )
@@ -95,11 +95,11 @@ export default function BasicTable({ getWithPage, listName, elementName, element
                 elements.map(element => {
                   return (
                     <div 
-                      className="list_element"
+                      className={"list_element"}
+                      key={element['_id']}
                     >
                       {
                         elementFieldDetails["keys"].map(elementKey => {
-
                           let index = elementFieldDetails["keys"].indexOf(elementKey);
 
                           if(["createdAt", "updatedAt"].includes(elementKey)){
@@ -111,18 +111,19 @@ export default function BasicTable({ getWithPage, listName, elementName, element
                               className='list_element_infos' 
                               style={{ "width": `${elementFieldDetails["sizes"][index]}` }} 
                               onClick={ () => { elementClick(element) } }
+                              key={elementKey}
                             >   
                               {
                                 (() => {
                                   if( elementFieldDetails["tooltip"][index] ){
                                     return (
-                                      <Tooltip title={element[elementKey]}>
+                                      <Tooltip title={element[elementKey]} key={`body${index}`}>
                                         <p>{element[elementKey]}</p>
                                       </Tooltip>
                                     )
                                   }else{
                                     return ( 
-                                      <p>{element[elementKey]}</p> 
+                                      <p key={`body${index}`} >{element[elementKey]}</p>
                                     )
                                   }
                                 })()

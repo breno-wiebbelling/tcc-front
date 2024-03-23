@@ -11,9 +11,7 @@ export const validateDangerousChars = (value, setError) => {
 }
 
 export const validateStringValue = (value, setError, errorMessage) => {
-	setError("");
-
-	if (value === "" && value.trim() === "") {
+	if (typeof value === 'undefined' || value === "" || value.trim() === "" ) {
 		setError(errorMessage);
 		return false;
 	}

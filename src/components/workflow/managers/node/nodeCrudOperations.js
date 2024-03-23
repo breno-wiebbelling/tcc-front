@@ -16,22 +16,25 @@ import {
 const processNewNode = async (previousNode, mainManager) => {
 
   let baseNode = await create({  
-    name: "New Node",
+    name: "Nova tarefa!",
     simulation_id: mainManager.simulation_id,
     type: nodeKeys.NEW_KEY,
-    details: { 
-      nextNode: previousNode.details.nextNode 
+    details: {
+      nextNode: previousNode.details.nextNode
     }
   });
 
-  return { 
+  return {
     ...baseNode, 
-    column: previousNode.column, 
+    column: previousNode.column,
     line: mainManager.lineManagerInstance.process(previousNode.line),
     data: { 
       label: baseNode.name, 
-      id:baseNode['_id'], 
-      click: mainManager.nodeManagerInstance.nodeClickEvents 
+      id: baseNode['_id'],
+      simulationId: mainManager.simulation_id,
+      click: mainManager.nodeManagerInstance.nodeClickEvents,
+      details: baseNode.details,
+      reload: mainManager.reload
     }
   } 
 }
@@ -43,36 +46,35 @@ export const addNodeBelow = (fromNodeInformation, mainManager) => {
     let currentNode = latestNodes.find(node => node.id === fromNodeInformation.id);
 
     processNewNode(currentNode, mainManager)
-      .then(
-        newNode => {
-          newNode.id = newNode._id;
-          mainManager.nodeManagerInstance.setNodes(
-            latestNodes => {
-              latestNodes = latestNodes.map(node => {
-                if(node.id === fromNodeInformation.id) { 
-                  node.details.nextNode = updateNextNode(node.id, newNode.id);
-                  node.details.nextNode = newNode.id; 
-                }
-                return node;
-              });
-          
-              latestNodes = [...latestNodes, newNode];
-              latestNodes = reprocessNextNode(currentNode, latestNodes, mainManager);
-          
-              mainManager.edgeManagerInstance.updateSource(currentNode.id, newNode.details.nextNode, newNode.id);
-              mainManager.edgeManagerInstance.create(currentNode.id, newNode.id)
-              
-              return latestNodes;
-            }
-          )
-        }
-      )
-      .then( 
-        () => {
+      .then(newNode => {
+        newNode.id = newNode._id;
+        mainManager.nodeManagerInstance.setNodes(
+          latestNodes => {
+            latestNodes = latestNodes.map(node => {
+              if(node.id === fromNodeInformation.id) {
+                node.details.nextNode = updateNextNode(node.id, newNode.id);
+                node.details.nextNode = newNode.id;
+              }
+              return node;
+            });
+
+            latestNodes = [...latestNodes, newNode];
+            latestNodes = reprocessNextNode(currentNode, latestNodes, mainManager);
+
+            mainManager.edgeManagerInstance.updateSource(currentNode.id, newNode.details.nextNode, newNode.id);
+            mainManager.edgeManagerInstance.create(currentNode.id, newNode.id)
+
+            return latestNodes;
+          }
+        )
+
+        return newNode;
+      })
+      .then((newNode) => {
           updateGhostPositions(mainManager)
           updateNodesPositions(mainManager)
-        }
-      )
+          mainManager.nodeManagerInstance.nodeClickEvents.editNode(newNode['data']);
+      })
 
     return latestNodes;
   })

@@ -2,7 +2,10 @@ import React from "react";
 import StyledDropdown from "./styled";
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ClickOutsideWrapper from '../../workflow/nodes/types/ClickOutsideElement'; 
+import ClickOutsideWrapper from '../../workflow/nodes/types/ClickOutsideElement';
+import Tooltip from "@mui/material/Tooltip";
+import {white, smokeWhiteLightHover, smokeWhite, smoke, smokeHover} from "../../common/style/index";
+import IconButton from "@mui/material/IconButton";
 
 const isThisTheLastOfArray = (array, element) => {
   let lastIndex = array.length-1;
@@ -11,7 +14,7 @@ const isThisTheLastOfArray = (array, element) => {
   return lastIndex === currentIndex;
 }
 
-export default ({ options, value, onChange, placeholder, hasNewValueOption, onNewValueOptionClick }) => {
+export default ({ options, value, onChange, placeholder, hasNewValueOption, onNewValueOptionClick, isEnabled, tooltipTitle}) => {
   const [isOptionsOpen, setIsOptionOpen] = React.useState(false);
   const [display, setDisplay] = React.useState("");
  
@@ -23,76 +26,90 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
   },[])
 
   React.useEffect(() => {
-    setDisplay((value!= null && value!=="" && value.label!="") ? value.label : placeholder);
+    setDisplay(
+      value instanceof Object &&
+      value !== "" &&
+      value.label !== undefined &&
+      value.label !== ""
+        ? value.label
+        : placeholder
+    );
   }, [value])
 
   return (
     <StyledDropdown 
       value={value} 
-      style={{
-        borderBottomLeftRadius: (isOptionsOpen) ? "0px" : "8px",
-        borderBottomRightRadius: (isOptionsOpen) ? "0px" : "8px"
-      }}  
+      style={{ backgroundColor: ((isEnabled) ? white : smokeWhiteLightHover ) , borderBottomLeftRadius: (isOptionsOpen && isEnabled) ? "0px" : "8px", borderBottomRightRadius: (isOptionsOpen && isEnabled) ? "0px" : "8px" }}
     >
-      <ClickOutsideWrapper 
-        className="wrapper" 
+      <ClickOutsideWrapper
+        className="wrapper"
         onOutsideClick={ () => { setIsOptionOpen(false); } }
       >
-          <div 
-            className="dropdown-label-display" 
+        <Tooltip title={(!isEnabled || !isOptionsOpen) ? tooltipTitle : ""}>
+          <div
+            className="dropdown-label-display"
             onClick={()=>{ setIsOptionOpen(latest => !latest) }}
           >
             <p className="dropdown-placeholder">{display}</p>
-            <div className="dropdown-buttons">
-              <ArrowBackIosIcon
-                className='dropdown-drop-icon'
-                style={{ rotate: (isOptionsOpen) ? "90deg" : "-90deg" }}
-              />
-              { hasNewValueOption &&
-                <AddIcon 
-                  className='dropdown-add-icon' 
-                  onClick={()=>{ 
-                    onNewValueOptionClick();
-                    setIsOptionOpen(latest => !latest) 
-                  }} 
-                />
-              }
-            </div>
+            { isEnabled &&
+              (
+                <div className="dropdown-buttons">
+                  <IconButton className={`dropdown-drop-icon`} sx={{ backgroundColor: smokeWhite, color: white,  rotate: (isOptionsOpen) ? "90deg" : "-90deg", "&:hover": {backgroundColor: smoke},  "&:active": {backgroundColor: smokeHover} }}>
+                    <ArrowBackIosIcon style={{ width: "20px", height: "20px" }} />
+                  </IconButton>
+                  {hasNewValueOption &&
+                    <IconButton
+                      className='dropdown-add-icon'
+                      onClick={() => {
+                        onNewValueOptionClick();
+                        setIsOptionOpen(latest => !latest)
+                      }}
+                    >
+                      <AddIcon/>
+                    </IconButton>
+                  }
+                </div>
+              )
+            }
           </div>
-          {
-            isOptionsOpen && 
-            <div className="dropdown-options">
-              {
-                options.length > 0 &&
-                options.map((option) => (
-                  <div 
-                    className="dropdown-option"  
-                    key={option.key}
-                    onClick={() => { 
+        </Tooltip>
+        {
+          isOptionsOpen && isEnabled &&
+          <div className="dropdown-options">
+            {
+              options.length > 0 &&
+              options.map((option) => (
+                <Tooltip title={option.value} key={option.key}>
+                  <div
+                    className="dropdown-option"
+                    onClick={() => {
                       onChange(option);
                       setIsOptionOpen(false)
                     }}
                     style={{
                       borderBottomLeftRadius: (option.isLastOne) ? "8px" : "0px",
                       borderBottomRightRadius: (option.isLastOne) ? "8px" : "0px",
-                    }}  
+                    }}
                   >
-                    {option.label}
+                      <p>{option.label}</p>
                   </div>
+                  </Tooltip>
+
                 ))
               }
               {
                 options.length <= 0 &&
                 (
-                  <div 
-                    className="dropdown-option no_options_available"  
+                  <div
+                    className="dropdown-option no_options_available"
                     key="no_options_available"
-                    style={{ borderBottomLeftRadius: "8px", borderBottomRightRadius: "8px" }}  
+                    style={{ borderBottomLeftRadius: "8px", borderBottomRightRadius: "8px" }}
                   >
                     Nenhuma opção disponível!
                   </div>
                 )
               }
+
             </div>
           }
       </ClickOutsideWrapper>

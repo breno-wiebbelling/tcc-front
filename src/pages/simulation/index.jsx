@@ -12,6 +12,7 @@ import EditNodeComponent from "../../components/workflow/nodes/infoPanel/edit/in
 import SimulationStyled from "./style";
 import { getSimulationById } from "../../service/clients/simulationClient";
 import { getInitialNodesBySimulationId } from "../../service/clients/simulationClient.js";
+import PopperAlert from "../../components/alert";
 
 //TODO
 const nodeEventNames = { add: "addNode", edit:"editNode", delete: "deleteNode" }
@@ -40,29 +41,38 @@ export const Simulation = () => {
   const [InfoPanelComponent, setInfoPanelComponent] = useState(()=> { return <SimulationInfo simulationInfo={simulationInfo}/> });
   const [initialNodes, setInitialNodes] = useState([{ "id": "0" }]);
   const [loaded, setLoaded] = useState(false);
+  const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: ''});
+  const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: ''}); }
 
-  //TODO
-  const nodeClickEvents = {
-    editNode : (nodeInformation) => { openModalWithNodeEvent(nodeEventNames.edit, nodeInformation) },
-    newNode: (updateAfterFinish) => { openModalWithNodeEvent(nodeEventNames.add, updateAfterFinish)}
+  const nodeEventClicks = {
+    editNode : (nodeInformation) => {
+      openModalWithNodeEvent(nodeEventNames.edit, nodeInformation)
+    },
+    newNode: (updateAfterFinish) => { openModalWithNodeEvent(nodeEventNames.edit, updateAfterFinish)}
   }
 
   const openModalWithNodeEvent = (eventName, nodeInformation) => {
-    
+
+    nodeInformation['simulationId'] = simulationId;
+
     switch (eventName){
       case nodeEventNames.edit:
-        setInfoPanelComponent(() => { return <EditNodeComponent nodeInfo={nodeInformation}/> });
+        setInfoPanelComponent(() => {
+          return (
+            <EditNodeComponent
+              nodeInfo={nodeInformation}
+              setIsInfoPanelOpen={setIsInfoPanelOpen}
+              setAlertInfo={setAlertInfo}
+              loadInformation={loadInformation}
+            />
+          )
+        });
+        setIsInfoPanelOpen(true);
         break;
-
-    //   case nodeEventNames.add:
-    //     setInfoPanelComponent(() => { return <NewNodeComponent setSelectedNode={setSelectedNode} updateAfterFinish={updateAfterFinish} /> });
-    //     break;
-
       default:
         break;
     }
       
-    setIsInfoPanelOpen(true);
   }
 
   const loadInformation = async () => {
@@ -93,6 +103,7 @@ export const Simulation = () => {
   return (
     <SimulationStyled>
       <Header/>
+      {alertInfo.msg !== "" && <PopperAlert message={alertInfo.msg} mode={alertInfo.mode} resetMessage={resetErrorMessage} />}
 
       <div className='container'>
         { 
@@ -100,8 +111,8 @@ export const Simulation = () => {
           <SimulationFlow 
             initialNode={simulationInfo["id_start"]} 
             initialNodes={initialNodes} 
-            isInfoPanelOpen={isInfoPanelOpen} 
-            nodeClickEvents={nodeClickEvents}
+            isInfoPanelOpen={isInfoPanelOpen}
+            nodeEventClicks={nodeEventClicks}
             simulationId={simulationId}
             searchInicialNodes={searchInicialNodes}
           />

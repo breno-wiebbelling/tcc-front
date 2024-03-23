@@ -1,12 +1,12 @@
 import styled from "styled-components";
-import { denseLightBlue, smokeBlack } from "../../../../common/style";
+import { denseLightBlue, smokeBlack, whiteLight } from "../../../../common/style";
 
 export default styled.div`
     width: 200px;
     height: 60px;
 
     font-weight: bold;
-    color: ${smokeBlack};
+    color: ${whiteLight};
 
     display:flex;
     align-items: center;

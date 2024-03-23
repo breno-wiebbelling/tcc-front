@@ -3,30 +3,29 @@ import Box from "@mui/material/Box";
 import Snackbar from '@mui/material/Snackbar';
 import CloseIcon from '@mui/icons-material/Close';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-// import LinearProgress from '@mui/material/LinearProgress';
+import AddTaskIcon from '@mui/icons-material/AddTask';
+import { smoke, vividRed, vividGreen } from "../common/style/index";
 
-const PopperAlert = ({ message, setMessage }) => {
+const PopperAlert = ({ message, mode, resetMessage }) => {
   const [open, setOpen] = useState(true);
+  let alertColor;
+
+  switch (mode){
+    case 'error':
+      alertColor = vividRed;
+      break;
+    case "ok":
+      alertColor = vividGreen;
+      break;
+    default: 
+      alertColor = smoke;
+      break;
+  }
 
   const handleClose = (event, reason) => {
     setOpen(false);
-    setMessage("")
+    resetMessage();
   };
-
-  //TODO
-  // const [progress, setProgress] = React.useState(0);
-
-  // React.useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     setProgress((prevProgress) =>
-  //       prevProgress >= 100 ? 100 : prevProgress + (100 / (6 * 1000 / 100))
-  //     );
-  //   }, 60);
-
-  //   return () => {
-  //     clearInterval(timer);
-  //   };
-  // }, []);
   
   return (
     <Snackbar
@@ -44,26 +43,40 @@ const PopperAlert = ({ message, setMessage }) => {
           borderRadius:"6px",
           padding:"0px 10px",
 
-          backgroundColor: '#f44336',
-
           display:"flex",
           alignItems:"center",
           justifyContent:"space-evenly",
-
+          
+          backgroundColor: alertColor,
           color: '#e8fffa',
           fontFamily:"Montserrat",
           fontSize:"13px",
           fontWeight:"500",
           whiteSpace:"nowrap",
         }}
-      > 
-        <ErrorOutlineIcon 
-          fontSize="inherit" 
-          sx={{ 
-            fontSize:"20px",
-            margin:"0% 6px",
-          }} 
-        />
+      >
+        {
+          mode === 'ok' && (
+            <AddTaskIcon
+              fontSize="inherit"
+              sx={{
+                fontSize:"20px",
+                margin:"0% 6px",
+              }}
+            />
+          )
+        }
+        {
+          mode !== 'ok' && (
+            <ErrorOutlineIcon
+              fontSize="inherit"
+              sx={{
+                fontSize:"20px",
+                margin:"0% 6px",
+              }}
+            />
+          )
+        }
         {message}
         <CloseIcon 
           onClick={handleClose}
@@ -78,7 +91,6 @@ const PopperAlert = ({ message, setMessage }) => {
             },
           }} 
         />
-        {/* <LinearProgress variant="determinate" value={progress} /> */}
       </Box>
     </Snackbar>
   );

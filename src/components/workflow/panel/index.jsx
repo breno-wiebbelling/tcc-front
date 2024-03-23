@@ -7,19 +7,17 @@ import IconButton from '@mui/material/IconButton';
 
 export default ({ isOpen, setIsOpen, children }) => {
 
-  const closePanel = () => {
-    setIsOpen(false);
-  }
+  const closePanel = () => { setIsOpen(false); }
 
   return (
-    <InfoStyled>
-      <div
-        style={{
-          "width": (isOpen) ? "30vw" : "0vw",
-          "minWidth": "500px",
-          "height":"100%",
-        }}
-      >
+    <InfoStyled
+      style={{
+        "width": (isOpen) ? "30vw" : "0vw",
+        "maxWidth": (isOpen) ? "30vw" : "0vw",
+        "minWidth": (isOpen) ? "500px" : "0vw",
+        "height":"100%",
+      }}
+    >
 
         {isOpen &&
           <Container
@@ -55,16 +53,15 @@ export default ({ isOpen, setIsOpen, children }) => {
             <Box 
               sx={{
                 "display": "flex",
-                "alignItems": "center",
-                "justifyContent": "center",
-                "height":"80%",
+                "flexDirection": "column",
+                "justifyContent": "start",
+                "minHeight":"80%",
               }}
             >
               {children}
             </Box>
           </Container>
         }
-      </div>
     </InfoStyled>
   )
 }

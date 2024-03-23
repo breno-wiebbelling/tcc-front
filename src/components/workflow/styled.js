@@ -1,15 +1,14 @@
 import styled from "styled-components";
-import { smokeWhite, smokeWhiteHover, smoke, smokeWhiteLight } from "../common/style";
+import { smokeWhite, smokeWhiteHover, smoke, smokeWhiteLight, blueBayoux } from "../common/style";
 
 export default styled.div`
 
   position: relative;
-  background-color: ${smokeWhiteLight};
+  background-color: ${blueBayoux};
 
   height: 92vh;
   width: 100%;
   padding: 1%;
-
   box-sizing: border-box;
 
   .react-flow__controls{ box-shadow: none; }

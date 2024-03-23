@@ -1,7 +1,4 @@
 import styled from "styled-components";
-import { 
-  smoke
-} from "../../../../../common/style/index";
 
 export default styled.div`
 

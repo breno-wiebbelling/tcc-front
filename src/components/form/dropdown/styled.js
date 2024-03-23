@@ -6,7 +6,6 @@ import {
   whiteLightHover,
   smokeWhiteLightHover,
   whiteHover,
-  smoke,
 } from "../../common/style";
 
 export default styled.div`
@@ -20,7 +19,6 @@ export default styled.div`
   font-size: 16px;
   border: 1px solid ${smokeWhite};
   border-radius: 8px;
-  background-color: white;
   
   .dropdown-label-display,
   .dropdown-lable-display .dropdown-buttons,
@@ -52,7 +50,9 @@ export default styled.div`
   }
 
   .dropdown-label-display .dropdown-drop-icon {
-    padding-left: 6px;
+    padding-left: 15px;
+    padding-top: 31.5%;
+
     box-sizing: border-box;
   }
 
@@ -94,6 +94,28 @@ export default styled.div`
   .dropdown-options .no_options_available{
     color: ${smokeHover};
     background-color: ${smokeWhiteLightHover};
+  }
+
+  .dropdown-options {
+    max-height: 185px; 
+    overflow-x: auto; 
+    border-radius: 5px; 
+    margin-bottom: 30px;
+  }
+
+  .dropdown-options::-webkit-scrollbar {
+    width: 5px;  
+    border-radius: 5px;   
+  }
+
+  .dropdown-options::-webkit-scrollbar-track {
+    background-color: ${whiteLightHover};
+  }  
+
+  .dropdown-options::-webkit-scrollbar-thumb {
+    background-color: ${smokeHover};
+    border-radius: 5px;   
+    border: none;   
   }
 
 `;

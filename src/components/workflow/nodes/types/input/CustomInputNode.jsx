@@ -10,22 +10,42 @@ import { nodeCRUDOperations } from '../../../managers/nodeManager';
 
 const YourComponent = ({ data }) => {
   const [isOptionsVisible, setIsOptionsVisible] = React.useState(false);
+  React.useEffect(() => { data.click.editNode(data) })
 
   return (
     <ClickOutsideWrapper onOutsideClick={ () => { setIsOptionsVisible(false); } }>
       <InputNodeStyled>
         <div
           className="worker"
-          style={{ border: isOptionsVisible ? '2px solid black' : '1px solid black' }}
-          onClick={ () => { setIsOptionsVisible(true); }}
+          style={{border: isOptionsVisible ? '2px solid black' : '1px solid black'}}
+          onClick={() => {
+            setIsOptionsVisible(true);
+          }}
         >
-          <p onClick={ () => { setIsOptionsVisible(true); }} >{data.label}</p>
+          <p onClick={() => {setIsOptionsVisible(true);}}>
+            {data.label}
+          </p>
         </div>
-        <div onClick={ () => { setIsOptionsVisible(false); }}>
-          <div 
-            className='action_button left' 
-            onClick={ () => { data.click.addNode(nodeCRUDOperations.ADD_BELOW, data) } }  
-            style={{ "top": (isOptionsVisible) ? "120px" : "0px" , "left": "75px" }}
+
+        <div
+          className='action_button left'
+          onClick={() => { data.click.editNode(data)  }}
+          style={{"left": (isOptionsVisible) ? "-15px" : "50px"}}
+        >
+          <IconButton className='action_button_element'>
+            <EditIcon/>
+          </IconButton>
+        </div>
+
+        <div onClick={() => {
+          setIsOptionsVisible(false);
+        }}>
+          <div
+            className='action_button left'
+            onClick={() => {
+              data.click.addNode(nodeCRUDOperations.ADD_BELOW, data)
+            }}
+            style={{"top": (isOptionsVisible) ? "120px" : "0px", "left": "75px"}}
           >
             <IconButton className='action_button_element'>
               <AddIcon className='add_action'/>
@@ -33,7 +53,7 @@ const YourComponent = ({ data }) => {
             </IconButton>
           </div>
         </div>
-      <Handle className="handle_bottom" type="source" position={Position.Bottom} />
+        <Handle className="handle_bottom" type="source" position={Position.Bottom}/>
       </InputNodeStyled>
     </ClickOutsideWrapper>
   );

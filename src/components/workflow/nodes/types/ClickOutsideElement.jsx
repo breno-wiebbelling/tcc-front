@@ -11,12 +11,13 @@ const ClickOutsideWrapper = ({ onOutsideClick, children }) => {
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside);
+
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
   }, [onOutsideClick]);
 
-  return <div 
+  return <div
     ref={wrapperRef}
     style={{
       width:"100%",

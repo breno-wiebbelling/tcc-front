@@ -56,8 +56,7 @@ const getInputType = (type) => {
 	}
 }
 
-export default ({ isOpen, setIsOpen, onClose, onCreate }) => {
-	const handleClose = () => setIsOpen(false);
+export default ({ isOpen, close, onCreate, simulationId }) => {
 
 	const [name, setName] = React.useState("");
 	const [type, setType] = React.useState({ key: VariableTypeEnum.NONE.code, value: VariableTypeEnum.NONE.code, label: VariableTypeEnum.NONE.name });
@@ -68,24 +67,25 @@ export default ({ isOpen, setIsOpen, onClose, onCreate }) => {
 	const [typeError, setTypeError] = React.useState("");
 	const [valueError, setValueError] = React.useState("");
 	const [descriptionError, setDescriptionError] = React.useState("");
-	const [errorMessage, setErrorMessage] = React.useState("");
+	const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: ''});
 
 	const handleValueChange = (event) => { setValue(event.target.value); }
+	const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: ''}); }
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		if (validateFields()) {
-			console.log("ok")
-			createVariable({
-				"name": name,
-				"type": type.value,
-				"value": value,
-				"description": description
-			});
+			try{
+				await createVariable({ "name": name, "type": type.value, "value": value, "description": description, "simulationId": simulationId });
+				setAlertInfo({ msg:'Variável criada com sucesso!', mode: 'ok' })
+				onCreate();
+			}
+			catch(e){
+				setAlertInfo({ msg:e, mode: 'error' })
+			}
 		}
 	}
 
 	const validateFields = () => {
-
 		return (
 			validateStringValue(name, setNameError, "Insira um nome") &&
 			validateTypeError(type, setTypeError) &&
@@ -96,33 +96,19 @@ export default ({ isOpen, setIsOpen, onClose, onCreate }) => {
 
 	return (
 		<div>
-			{errorMessage && <PopperAlert message={errorMessage} setMessage={setErrorMessage} />}
+			{alertInfo.msg != "" && <PopperAlert message={alertInfo.msg} mode={alertInfo.mode} resetMessage={resetErrorMessage} />}	
+
 			<Modal
 				open={isOpen}
-				onClose={handleClose}
-				aria-labelledby="modal-modal-title"
-				aria-describedby="modal-modal-description"
+				onClose={close} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description"
 				className='modal'
 			>
 				<Box sx={style}>
 					<div style={{ width: "100%", height: "10%" }}>
 						<IconButton
 							className='display_flex_center'
-							onClick={onClose}
-							sx={{
-								width: "40px",
-								height: "40px",
-								backgroundColor: smokeWhite,
-								borderRadius: "50%",
-								color: white,
-								cursor: "pointer",
-								"&:hover": {
-									backgroundColor: smoke
-								},
-								"&:active": {
-									backgroundColor: smokeHover
-								}
-							}}
+							onClick={close}
+							sx={{ width: "40px", height: "40px", backgroundColor: smokeWhite, borderRadius: "50%", color: white, cursor: "pointer", "&:hover": { backgroundColor: smoke }, "&:active": { backgroundColor: smokeHover } }}
 						>
 							<CloseIcon />
 						</IconButton>
@@ -136,7 +122,7 @@ export default ({ isOpen, setIsOpen, onClose, onCreate }) => {
 							error={nameError}
 						/>
 						<div className="dropdown-variable-type" style={{ height: "45px", marginBottom: "8px" }}>
-							<Dropdown placeholder="Tipo de Variável" options={variableTypesOptions} value={type} onChange={setType} />
+							<Dropdown placeholder="Tipo de Variável" options={variableTypesOptions} value={type} onChange={setType} isEnabled={true} />
 						</div>
 						{
 							type.key !== VariableTypeEnum.NONE.code &&

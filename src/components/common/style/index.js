@@ -1,12 +1,12 @@
 export const fontFamily = "Poppins"
 
-export const softGreen = "#7cd38d";
 
 export const white = "#ffffff";
 export const whiteLight = "#f8f8f8";
 
 export const whiteLightHover = "#dcdcdc";
 export const whiteHover = "#efefef";
+export const creamWhite = "#a6ffc9";
 
 export const smokeWhiteLight = "#c5c5c5"
 export const smokeWhiteLightHover = "#dfdfdf"
@@ -19,7 +19,13 @@ export const denseSmoke = "#4d4d4d";
 export const denseSmokeBlack = "#1d2d3d";
 export const smokeBlack = "#1d1d1d";
 
-export const denseLightBlue = "#4b4bbb";
+export const denseLightBlue = "#0074eb";
 export const blueBayoux = "#475F76";
+
+export const vividRed = "#f44336";
+
+export const vividGreen = "#5cb85c";
+export const lightVividGreen = "#7be27b";
+export const softGreen = "#7cd38d";
 
 export const headerHeight = '8vh';

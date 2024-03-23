@@ -52,10 +52,10 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
   }
 
   library.nodeTypes = { 
-    conditional:ConditionalNode, 
-    start:InputNode, 
+    conditional:ConditionalNode,
+    start:InputNode,
     task:DefaultNode,
-    final:OutputNode, 
+    final:OutputNode,
     ghost:GhostNode,
     conditional_ghost:GhostNode,
     new_node:NewNode
@@ -82,8 +82,6 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
         default:
           break;
       }
-      
-      nodeClickEvents.newNode(() => { updateAfterFinish(mainManager) });
     },
     deleteNode: (nodeInformation) => { deleteNode(nodeInformation, mainManager) }
   }
@@ -131,9 +129,12 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
       }
 
       currentNode.data = {
-        label:currentNode.name,
-        id:currentNode._id,
-        click:library.nodeClickEvents
+        label: currentNode.name,
+        id: currentNode._id,
+        type: currentNode.type,
+        details: currentNode.details,
+        click: library.nodeClickEvents,
+        reload: mainManager.reload
       }
       
       setNodes((latest) => { return [...latest, currentNode] })

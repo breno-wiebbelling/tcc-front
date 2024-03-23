@@ -24,6 +24,17 @@ export const updateNextNode = async (currentNodeId, newNextNode, previousNodeId)
   );
 }
 
+export const updateNode = async (node) => {
+  return (
+    (
+      await baseClient.patch(
+        nodeURI,
+        { 'node': node }
+      )
+    )["data"]
+  );
+}
+
 export const deleteById = async (nodeId) => {
   return (
     await baseClient.delete(`/${nodeURI}/${nodeId}`)

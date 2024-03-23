@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import BasicTable from '../../common/list/list';
 import CreationModal from "../creation/index"
 import EditionModal from "../edition/index"
@@ -6,58 +6,49 @@ import { getSimulationsByUser, deleteSimulationById } from "../../../service/cli
 import SimulationListStyled from "./style"
 import PopperAlert from '../../../components/alert/index';
 
+const LIST_NAME = "Simulações"
+const ELEMENT_NAME = "simulação"
+const onSimulationClick = (simulation) => { window.location.href = `/simulation/${simulation["_id"]}` }
+const deleteSimulation = async (simulation) => { await deleteSimulationById(simulation['_id']); }
+let simulationFieldsDetails = { "keys": ["name", "description", "createdAt"], "names": ["Nome", "Descrição", "Data de Criação"], "sizes": ["28%", "52%", "17%"], "tooltip": [false, true, false], "actions": [{ "name": "onElementClick", "function": onSimulationClick }, { "name": "deleteElement", "function": deleteSimulation }] }
+
+const popAlertError = (e, setAlertInfo) => {
+  if (e.message) {
+    setAlertInfo({ msg: (e.message ?? "Algo de errado aconteceu!"), mode: 'error' });
+  }
+  else {
+    setAlertInfo({ msg: (e ?? "Algo de errado aconteceu!"), mode: 'error' });
+  }
+}
+
 export default () => {
-  const [errorMessage, setErrorMessage] = useState("");
+  const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: '' });
   const [isCreationModalOpen, setIsCreationModalOpen] = React.useState(false);
   const [isEditionModalOpen, setIsEditionModalOpen] = React.useState(false);
-  const listName = "Simulações"
-  const elementName = "simulação"
-
-  const onElementClick = (simulation) => {
-    window.location.href=`/simulation/${simulation["_id"]}`
-  }
-
-  const deleteSimulation = async (simulation) => {
-    await deleteSimulationById(simulation['_id']);
-  }
-
-  const elementFieldDetails = {
-    "keys": ["name", "description", "createdAt"],
-    "names": ["Nome", "Descrição", "Data de Criação"],
-    "sizes": ["28%", "52%", "17%"],
-    "tooltip": [false, true, false],
-    "actions": [ 
-      {
-        "name":"onElementClick",
-        "function": onElementClick
-      },
-      {
-        "name":"deleteElement",
-        "function": deleteSimulation
-      },
-      {
-        "name":"editElement",
-        "function": () => { setIsEditionModalOpen(true) }
-      }
-    ]
-  }; 
-  
   const [simulations, setSimulations] = React.useState([])
+
+  const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: '' }); }
+  const popError = (e) => { popAlertError(e, setAlertInfo); }
+
+  simulationFieldsDetails["actions"].push({
+    "name": "editElement", "function": () => { setIsEditionModalOpen(true) }
+  })
 
   return (
     <SimulationListStyled className='display_flex_center'>
-      {errorMessage && <PopperAlert message={errorMessage} setMessage={setErrorMessage} />}
-      <CreationModal  open={isCreationModalOpen} setOpen={setIsCreationModalOpen} setSimulations={setSimulations} setErrorMessage={setErrorMessage}/>
-      <EditionModal   open={isEditionModalOpen}  setOpen={setIsEditionModalOpen}  setSimulations={setSimulations} setErrorMessage={setErrorMessage}/>
-      <BasicTable 
+      {alertInfo.msg != "" && <PopperAlert message={alertInfo.msg} mode={'error'} resetMessage={resetErrorMessage} />}
+
+      <CreationModal open={isCreationModalOpen} setOpen={setIsCreationModalOpen} setSimulations={setSimulations} setErrorMessage={popError} />
+      <EditionModal open={isEditionModalOpen} setOpen={setIsEditionModalOpen} setSimulations={setSimulations} setErrorMessage={popError} />
+      <BasicTable
         elements={simulations}
         setElements={setSimulations}
-        getWithPage={getSimulationsByUser} 
-        listName={listName} 
-        elementName={elementName}
-        elementFieldDetails={elementFieldDetails}
-        elementClick={onElementClick}
-        addAction={ () => setIsCreationModalOpen(true) }
+        getWithPage={getSimulationsByUser}
+        listName={LIST_NAME}
+        elementName={ELEMENT_NAME}
+        elementFieldDetails={simulationFieldsDetails}
+        elementClick={onSimulationClick}
+        addAction={() => setIsCreationModalOpen(true)}
       />
     </SimulationListStyled>
   );
