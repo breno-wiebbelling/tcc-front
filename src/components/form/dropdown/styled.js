@@ -9,24 +9,28 @@ import {
 } from "../../common/style";
 
 export default styled.div`
-  position: relative;
-  
-  width: 100%;
-  height: 100%;
-  padding: 0px 10px 0px 10px;
-  box-sizing: border-box;
-  
-  font-size: 16px;
-  border: 1px solid ${smokeWhite};
-  border-radius: 8px;
-  
-  .dropdown-label-display,
-  .dropdown-lable-display .dropdown-buttons,
-  .dropdown-options .dropdown-option{
-    display: flex;
-    align-items: center;
-  }
-  
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+    padding: 0px 10px 0px 10px;
+    box-sizing: border-box;
+
+    font-size: 16px;
+    border: 1px solid ${smokeWhite};
+    border-radius: 8px;
+
+    .dropdown-label-display,
+    .dropdown-label-display .dropdown-buttons,
+    .dropdown-options .dropdown-option {
+        display: flex;
+        align-items: center;
+    }
+    
+    .dropdown-label-display .dropdown-buttons{
+        width: fit-content;    
+    }
+
   .dropdown-label-display .dropdown-add-icon, 
   .dropdown-label-display .dropdown-drop-icon{
     width: 25px;
@@ -35,13 +39,13 @@ export default styled.div`
     
     background-color: ${smokeWhiteLightHover};
     color: ${smokeHover};
-    
     justify-content: center;
   }
-  
+    
   .dropdown-label-display{
     width: 100%;
     height: 100%;
+    display: flex;
     justify-content: space-between;
   }
 
@@ -51,9 +55,9 @@ export default styled.div`
 
   .dropdown-label-display .dropdown-drop-icon {
     padding-left: 15px;
-    padding-top: 31.5%;
 
     box-sizing: border-box;
+    display: flex;
   }
 
   .dropdown-label-display .dropdown-placeholder{

@@ -118,12 +118,12 @@ export const Simulation = () => {
           />
         }
         
-        {
-          !isInfoPanelOpen && 
-          <IconButton className="openInfoPanel" onClick={ () => { setIsInfoPanelOpen(true)} } >
-            <DescriptionIcon/>
-          </IconButton>
-        }
+        {/*{*/}
+        {/*  !isInfoPanelOpen && */}
+        {/*  <IconButton className="openInfoPanel" onClick={ () => { setIsInfoPanelOpen(true)} } >*/}
+        {/*    <DescriptionIcon/>*/}
+        {/*  </IconButton>*/}
+        {/*}*/}
 
         <InfoPanel isOpen={isInfoPanelOpen} setIsOpen={setIsInfoPanelOpen}>
           { InfoPanelComponent }

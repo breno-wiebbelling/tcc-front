@@ -22,11 +22,27 @@ export default ({ data }) => {
         >
           <p onClick={ () => { setIsOptionsVisible(true); }} >{data.label}</p>
         </div>
-        <div onClick={ () => { setIsOptionsVisible(false); }}>
-          <div 
-            className='action_button left' 
-            onClick={ () => { data.click.addNode(nodeCRUDOperations.ADD_ABOVE, data) } }  
-            style={{ "top": (isOptionsVisible) ? "-70px" : "0px" , "left": "75px" }}
+        <div onClick={() => {
+          setIsOptionsVisible(false);
+        }}>
+          <div
+            className='action_button left'
+            onClick={() => {
+              data.click.editNode(data)
+            }}
+            style={{"left": (isOptionsVisible) ? "-15px" : "50px"}}
+          >
+            <IconButton className='action_button_element'>
+              <EditIcon/>
+            </IconButton>
+          </div>
+
+          <div
+            className='action_button left'
+            onClick={() => {
+              data.click.addNode(nodeCRUDOperations.ADD_ABOVE, data)
+            }}
+            style={{"top": (isOptionsVisible) ? "-70px" : "0px", "left": "75px"}}
           >
             <IconButton className='action_button_element'>
               <AddIcon className='add_action'/>

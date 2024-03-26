@@ -2,7 +2,11 @@ import React, { useRef } from "react";
 import StyledNodeDetailsTypeComponent from "./styled";
 import Dropdown from "../../../form/dropdown/index"
 import NodeDetailsTypeEnum from "./types/typeDetailsEnum";
-import { MathDetailsComponent, InputDetailsComponent } from "./types/typeDetailsManager";
+import {
+  MathDetailsComponent,
+  InputDetailsComponent,
+  OutputDetailsComponent
+} from "./types/typeDetailsManager";
 
 const options = [
   { value: NodeDetailsTypeEnum.MATH.code, label: NodeDetailsTypeEnum.MATH.name, key: NodeDetailsTypeEnum.MATH.code },
@@ -28,18 +32,20 @@ const TypeSelector = ({ nodeInfo, setNodeDetails, setNodeType, nodeType, nodeDet
       case NodeDetailsTypeEnum.START.code:
         DetailsComponent = InputDetailsComponent;
         break;
+      case NodeDetailsTypeEnum.END.code:
+        DetailsComponent = OutputDetailsComponent;
+        break;
       default:
         DetailsComponent = () => <div></div>;
         break;
     }
 
     return <DetailsComponent className="details-component" nodeInfo={nodeInfo} setNodeDetails={setNodeDetails} nodeDetails={nodeDetails} />
-
   };
 
   React.useEffect(() => {
     setTypeDetailsComponent(parseTypeAndReturnComponent());
-    setIsTypeChangeAvailable((nodeType.key !== NodeDetailsTypeEnum.START.code))
+    setIsTypeChangeAvailable(![NodeDetailsTypeEnum.START.code, NodeDetailsTypeEnum.END.code].includes(nodeType.key))
   },[nodeType])
 
   return (
@@ -47,7 +53,7 @@ const TypeSelector = ({ nodeInfo, setNodeDetails, setNodeType, nodeType, nodeDet
       id={'TypeSelectorComponent'}
       style={{height: (nodeType.value !== undefined && nodeType.value === NodeDetailsTypeEnum.MATH.code) ? '520px' : '100%' }}
     >
-      <div className="dropdown-nodetype">
+      <div style={{ height: '45px' }}>
         <Dropdown options={options} value={nodeType} onChange={handleTypeChange} placeholder={nodeType.label} isEnabled={isTypeChangeAvailable} tooltipTitle={"Tipo da Tarefa"}/>
       </div>
       {

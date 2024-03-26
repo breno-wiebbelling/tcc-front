@@ -109,8 +109,8 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
         <Dropdown options={variables} value={resultVariable} placeholder={"Variável Destino"} tooltipTitle={"Variável Destino"} onChange={setResultVariable} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={() => { setVariableCreationModalOpen(true) }} isEnabled={true}  />
       </div>
 
-      <div className="node-details-line"></div>
       <VariableCreationModal isOpen={variableCreationModalOpen} close={closeVariableCreationModal} onCreate={handleVariableCreation} simulationId={nodeInfo['simulationId']} />
+      <div className="node-details-line"></div>
     </MathSelectorStyled>
   )
 }

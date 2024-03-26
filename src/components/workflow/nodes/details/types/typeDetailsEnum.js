@@ -13,6 +13,10 @@ const typeDetailsValues = {
     code: nodeKeys.START_KEY,
     name: "Entrada"
   },
+  END:{
+    code: nodeKeys.FINAL_KEY,
+    name: "Saída"
+  },
   NONE: {
     code:"none",
     name:"Tipo"
@@ -27,6 +31,8 @@ const getOptionType = (code) => {
       return typeDetailsValues.COND
     case typeDetailsValues.START.code:
       return typeDetailsValues.START
+    case typeDetailsValues.END.code:
+      return typeDetailsValues.END
     default:
       return typeDetailsValues.NONE
   }

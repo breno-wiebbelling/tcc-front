@@ -23,6 +23,8 @@ export const denseLightBlue = "#0074eb";
 export const blueBayoux = "#475F76";
 
 export const vividRed = "#f44336";
+export const vividRedHover = "#c22219";
+export const vividRedHoverActive = "#cb5650";
 
 export const vividGreen = "#5cb85c";
 export const lightVividGreen = "#7be27b";

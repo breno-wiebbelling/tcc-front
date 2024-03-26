@@ -10,7 +10,6 @@ import { nodeCRUDOperations } from '../../../managers/nodeManager';
 
 const YourComponent = ({ data }) => {
   const [isOptionsVisible, setIsOptionsVisible] = React.useState(false);
-  React.useEffect(() => { data.click.editNode(data) })
 
   return (
     <ClickOutsideWrapper onOutsideClick={ () => { setIsOptionsVisible(false); } }>

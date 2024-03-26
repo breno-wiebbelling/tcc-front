@@ -77,6 +77,9 @@ export default ({ isOpen, close, onCreate, simulationId }) => {
 			try{
 				await createVariable({ "name": name, "type": type.value, "value": value, "description": description, "simulationId": simulationId });
 				setAlertInfo({ msg:'Variável criada com sucesso!', mode: 'ok' })
+				setName('');
+				setType({ key: VariableTypeEnum.NONE.code, value: VariableTypeEnum.NONE.code, label: VariableTypeEnum.NONE.name });
+				setDescription('');
 				onCreate();
 			}
 			catch(e){
