@@ -12,7 +12,7 @@ export const isNodeIdPresentOnNextNode = (nodeId, nodeToVerify) => {
   )
 }
 
-export const reprocessNextNode = (currentNode, currentNodes, mainManager) => {
+export const reprocessNextNodePosition = (currentNode, currentNodes, mainManager) => {
   if(currentNode.type === nodeKeys.FINAL_KEY){ return currentNodes }
 
   let nextNode = currentNodes.find(node => isNodeIdPresentOnNextNode(node.id, currentNode));
@@ -26,13 +26,13 @@ export const reprocessNextNode = (currentNode, currentNodes, mainManager) => {
       let conditionalGhostNode = reprocessNodeOnNextPosition( {...nextNode, column:nextConditionalNode.column }, currentNodes, mainManager)
 
       nextConditionalNode.line = mainManager.lineManagerInstance.process(conditionalGhostNode.line);
-      currentNodes = reprocessNextNode(nextConditionalNode, currentNodes, mainManager);
+      currentNodes = reprocessNextNodePosition(nextConditionalNode, currentNodes, mainManager);
     })
     
     return currentNodes
   }
 
-  return reprocessNextNode(nextNode, currentNodes, mainManager);
+  return reprocessNextNodePosition(nextNode, currentNodes, mainManager);
 }
 
 export const reprocessNodeColumns = (mainManager, currentNodeId, latestNodes, updateParentNode) => {  
@@ -97,7 +97,7 @@ export const updateGhostPositions = (mainManager) => {
 
     let conditionalGhosts = latestNodes.filter(node => node.type === nodeKeys.CONDITIONAL_GHOST)
     conditionalGhosts.forEach(conditionalGhost => { 
-      latestNodes = reprocessNextNode(conditionalGhost, latestNodes, mainManager) 
+      latestNodes = reprocessNextNodePosition(conditionalGhost, latestNodes, mainManager) 
     })
 
     let ghostNodes = latestNodes.filter(node => node.type === nodeKeys.GHOST );
@@ -118,7 +118,7 @@ export const updateGhostPositions = (mainManager) => {
     })
 
     ghostNodes.forEach(ghostNode => { ghostNode.line = correctGhost.line; })
-    latestNodes = reprocessNextNode(correctGhost, latestNodes, mainManager)
+    latestNodes = reprocessNextNodePosition(correctGhost, latestNodes, mainManager)
 
     return latestNodes;
   })

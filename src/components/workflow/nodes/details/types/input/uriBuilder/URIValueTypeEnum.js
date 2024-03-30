@@ -1,5 +1,3 @@
-import {getBezierPath} from "reactflow";
-
 const uriValueTypesOptions = {
   PATH: {
     code:"path",

@@ -8,10 +8,10 @@ import GhostNode from '../nodes/types/ghost/CustomeGhostNode';
 import NewNode from '../nodes/types/new/CustomNewNode';
 
 import { deleteNode, addNodeBelow, addNodeAbove, addConditionalLeg, updateAfterFinish, findNodeFrequencies } from './node/nodeCrudOperations';
-import { reprocessNextNode, reprocessNodeColumns, updateGhostPositions, isNodeIdPresentOnNextNode, updateNodesPositions, reloadNodesAndAddGhostNodes } from './node/nodePositionOperations';
+import { reprocessNextNodePosition, reprocessNodeColumns, updateGhostPositions, isNodeIdPresentOnNextNode, updateNodesPositions, reloadNodesAndAddGhostNodes } from './node/nodePositionOperations';
 
 export {
-  reprocessNextNode, 
+  reprocessNextNodePosition, 
   updateGhostPositions, 
   isNodeIdPresentOnNextNode, 
   updateNodesPositions, 

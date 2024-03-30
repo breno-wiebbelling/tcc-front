@@ -13,7 +13,7 @@ export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeEventClicks, s
     const fetchData = async () => {
       await mainManager.loadNodes();
     };
-  
+
     fetchData();
   }, []);
 

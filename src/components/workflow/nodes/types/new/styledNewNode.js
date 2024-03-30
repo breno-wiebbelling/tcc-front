@@ -14,8 +14,8 @@ export default styled.div`
     z-index: 2;
 
     .worker{
-        width: 100%;
         height: 100%;
+        width: 100%;
 
         position: relative;
 

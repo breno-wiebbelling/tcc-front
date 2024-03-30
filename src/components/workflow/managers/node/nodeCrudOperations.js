@@ -1,10 +1,10 @@
 import { idGenerator } from "../../../common/idManager";
-import { 
-  nodeKeys, 
-  isNodeIdPresentOnNextNode, 
-  reprocessNextNode, 
+import {
+  nodeKeys,
+  isNodeIdPresentOnNextNode,
+  reprocessNextNodePosition,
   reprocessNodeColumns,
-  updateNodesPositions, 
+  updateNodesPositions,
   updateGhostPositions,
 } from "../nodeManager";
 import {
@@ -15,7 +15,7 @@ import {
 
 const processNewNode = async (previousNode, mainManager) => {
 
-  let baseNode = await create({  
+  let baseNode = await create({
     name: "Nova tarefa!",
     simulation_id: mainManager.simulation_id,
     type: nodeKeys.NEW_KEY,
@@ -25,98 +25,99 @@ const processNewNode = async (previousNode, mainManager) => {
   });
 
   return {
-    ...baseNode, 
+    ...baseNode,
     column: previousNode.column,
     line: mainManager.lineManagerInstance.process(previousNode.line),
-    data: { 
-      label: baseNode.name, 
+    data: {
+      label: baseNode.name,
       id: baseNode['_id'],
       simulationId: mainManager.simulation_id,
       click: mainManager.nodeManagerInstance.nodeClickEvents,
       details: baseNode.details,
       reload: mainManager.reload
     }
-  } 
+  }
 }
 
-export const addNodeBelow = (fromNodeInformation, mainManager) => {
-
-  mainManager.nodeManagerInstance.setNodes( function(latestNodes){
-
-    let currentNode = latestNodes.find(node => node.id === fromNodeInformation.id);
-
-    processNewNode(currentNode, mainManager)
-      .then(newNode => {
-        newNode.id = newNode._id;
-        mainManager.nodeManagerInstance.setNodes(
-          latestNodes => {
-            latestNodes = latestNodes.map(node => {
-              if(node.id === fromNodeInformation.id) {
-                node.details.nextNode = updateNextNode(node.id, newNode.id);
-                node.details.nextNode = newNode.id;
-              }
-              return node;
-            });
-
-            latestNodes = [...latestNodes, newNode];
-            latestNodes = reprocessNextNode(currentNode, latestNodes, mainManager);
-
-            mainManager.edgeManagerInstance.updateSource(currentNode.id, newNode.details.nextNode, newNode.id);
-            mainManager.edgeManagerInstance.create(currentNode.id, newNode.id)
-
-            return latestNodes;
-          }
-        )
-
-        return newNode;
-      })
-      .then((newNode) => {
-          updateGhostPositions(mainManager)
-          updateNodesPositions(mainManager)
-          mainManager.nodeManagerInstance.nodeClickEvents.editNode(newNode['data']);
-      })
-
+export const addNodeBelow = async (fromNodeInformation, mainManager) => {
+  let localNodes = []
+  mainManager.nodeManagerInstance.setNodes(latestNodes => {
+    localNodes = latestNodes;
     return latestNodes;
   })
 
-}
+  let currentNode = localNodes.find(node => node.id === fromNodeInformation.id);
+  let newNodeBelow = await processNewNode(currentNode, mainManager)
+  newNodeBelow.id = newNodeBelow._id;
 
-export const addNodeAbove = (fromNodeInformation, mainManager) => {
-  mainManager.nodeManagerInstance.setNodes(latestNodes => {
-    let currentNode = latestNodes.find(node => node.id === fromNodeInformation.id);
-    let newNode = processNewNode({ ...currentNode, details: { nextNode: currentNode.id } }, mainManager)
-
-    if(currentNode.type === nodeKeys.FINAL_KEY){
-      let baseLine = mainManager.lineManagerInstance.getBaseLine(currentNode.line);
-      newNode.line = mainManager.lineManagerInstance.process(baseLine.name);
-    }else{
-      currentNode.line = mainManager.lineManagerInstance.process(currentNode.line);
+  localNodes = await Promise.all(localNodes.map(async node => {
+    if (node.id === fromNodeInformation.id) {
+      node.details.nextNode = await updateNextNode(node.id, newNodeBelow.id);
+      node.details.nextNode = newNodeBelow.id;
     }
+    return node;
+  }));
 
-    latestNodes = latestNodes.map(node => {
-      if(isNodeIdPresentOnNextNode(currentNode.id, node)){
-        mainManager.edgeManagerInstance.updateTarget(node.id, currentNode.id, newNode.id);
+  localNodes = [...localNodes, newNodeBelow];
+  localNodes = reprocessNextNodePosition(currentNode, localNodes, mainManager);
 
-        if( node.type === nodeKeys.CONDITIONAL_KEY ){
-          let indexOfNextNode = node.details.nextNode.indexOf(currentNode.id);
-          node.details.nextNode[indexOfNextNode] = newNode.id;
-        }
-        else{
-          node.details.nextNode = newNode.id;
-        }
-      }
-      
-      return node;
-    });
-    latestNodes = [...latestNodes, newNode];
-    latestNodes = reprocessNextNode(newNode, latestNodes, mainManager);
-
-    mainManager.edgeManagerInstance.create(newNode.id, currentNode.id)
-    return latestNodes;
-  });
+  mainManager.edgeManagerInstance.updateSource(currentNode.id, newNodeBelow.details.nextNode, newNodeBelow.id);
+  mainManager.edgeManagerInstance.create(currentNode.id, newNodeBelow.id)
+  mainManager.nodeManagerInstance.setNodes(localNodes);
 
   updateGhostPositions(mainManager)
   updateNodesPositions(mainManager)
+  // mainManager.nodeManagerInstance.nodeClickEvents.editNode(newNode['data']);
+
+  return localNodes;
+}
+
+export const addNodeAbove = async (fromNodeInformation, mainManager) => {
+  let localNodes = [];
+  mainManager.nodeManagerInstance.setNodes(latestNodes => {
+    localNodes = latestNodes;
+    return latestNodes;
+  });
+
+  let currentNode = localNodes.find(node => node.id === fromNodeInformation.id);
+  let newNode = await processNewNode({ ...currentNode, details: { nextNode: currentNode.id } }, mainManager)
+  newNode.id = newNode._id;
+
+  if (currentNode.type === nodeKeys.FINAL_KEY) {
+    let baseLine = mainManager.lineManagerInstance.getBaseLine(currentNode.line);
+    newNode.line = mainManager.lineManagerInstance.process(baseLine.baseLine);
+  } else {
+    let baseLine = mainManager.lineManagerInstance.getBaseLine(currentNode.line);
+    newNode.line = mainManager.lineManagerInstance.process(baseLine.name);
+    // currentNode.line = mainManager.lineManagerInstance.process(currentNode.line);
+  } 
+
+  localNodes.map(async node => {
+    if (isNodeIdPresentOnNextNode(currentNode.id, node)) {
+      if (node.type === nodeKeys.CONDITIONAL_KEY) {
+        //TODO p1: add logic for conditional
+        let indexOfNextNode = node.details.nextNode.indexOf(currentNode.id);
+        node.details.nextNode[indexOfNextNode] = newNode.id;
+        return node;
+      }
+      else {
+        await updateNextNode(node.id, newNode.id);
+        node.details.nextNode = newNode.id;
+      }
+    }
+
+    return node;
+  })
+
+  localNodes = [...localNodes, newNode];
+  localNodes = reprocessNextNodePosition(newNode, localNodes, mainManager);
+  // mainManager.edgeManagerInstance.create(newNode.id, currentNode.id);
+
+  mainManager.nodeManagerInstance.setNodes(localNodes);
+
+  updateGhostPositions(mainManager)
+  updateNodesPositions(mainManager)
+  // mainManager.nodeManagerInstance.nodeClickEvents.editNode(newNode['data']);
 }
 
 export const addConditionalLeg = (fromNodeInformation, mainManager) => {
@@ -129,7 +130,7 @@ export const addConditionalLeg = (fromNodeInformation, mainManager) => {
     let currentNode = latestNodes.find(node => node.id === fromNodeInformation.id);
     let newNodeId = idGenerator();
     //TODO
-    let newNode = { id: newNodeId, type: nodeKeys.NEW_KEY, data: { label: newNodeId, id:newNodeId, click: mainManager.nodeManagerInstancenodeClickEvents }, details: { nextNode: final_node.id }, line: mainManager.lineManagerInstance.process(currentNode.line) }
+    let newNode = { id: newNodeId, type: nodeKeys.NEW_KEY, data: { label: newNodeId, id: newNodeId, click: mainManager.nodeManagerInstancenodeClickEvents }, details: { nextNode: final_node.id }, line: mainManager.lineManagerInstance.process(currentNode.line) }
 
     currentNode.details.nextNode.push(newNode.id);
     latestNodes.push(newNode)
@@ -157,7 +158,7 @@ export const deleteNode = async (nodeInformation, mainManager) => {
   await mainManager.reload();
 }
 
-export const findNodeFrequencies  = (given_nodes) => {
+export const findNodeFrequencies = (given_nodes) => {
   let processedNodes = [];
   let nodeFrequencyRegistrator = [];
 
@@ -168,12 +169,12 @@ export const findNodeFrequencies  = (given_nodes) => {
     nodeWasNotProcessed = !processedNodes.includes(nodeId)
     nodeIsNotOnNodeFrequency = !nodeFrequencyRegistrator.includes(nodeId);
 
-    if( nodeWasNotProcessed ){
+    if (nodeWasNotProcessed) {
       processedNodes.push(nodeId);
       return;
     }
 
-    if( nodeIsNotOnNodeFrequency ){
+    if (nodeIsNotOnNodeFrequency) {
       nodeFrequencyRegistrator.push(nodeId);
       return;
     }
@@ -181,15 +182,15 @@ export const findNodeFrequencies  = (given_nodes) => {
 
   given_nodes.forEach(node => {
 
-    if([nodeKeys.CONDITIONAL_GHOST, nodeKeys.GHOST].includes(node.type)){ return }
+    if ([nodeKeys.CONDITIONAL_GHOST, nodeKeys.GHOST].includes(node.type)) { return }
 
-    if(node.type === nodeKeys.CONDITIONAL_KEY){
+    if (node.type === nodeKeys.CONDITIONAL_KEY) {
       node.details.nextNode.forEach(nextNodeId => { verifyAndProcessNodeFrequency(nextNodeId) });
 
       return;
     }
 
-    verifyAndProcessNodeFrequency(node.details.nextNode)    
+    verifyAndProcessNodeFrequency(node.details.nextNode)
   });
 
   return nodeFrequencyRegistrator;
@@ -199,7 +200,7 @@ export const updateAfterFinish = (mainManager) => {
   mainManager.nodeManagerInstance.setNodes(latestNodes => {
 
     latestNodes = latestNodes.map(node => {
-      if(node.type === nodeKeys.NEW_KEY){
+      if (node.type === nodeKeys.NEW_KEY) {
         node.type = nodeKeys.TASK_KEY;
       }
 
@@ -210,6 +211,6 @@ export const updateAfterFinish = (mainManager) => {
   })
 
   updateNodesPositions(mainManager);
-  
+
   return
 }

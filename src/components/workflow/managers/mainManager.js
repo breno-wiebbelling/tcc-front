@@ -28,7 +28,6 @@ export default (initialNode, initialNodes, nodeEventClicks, simulationId, search
     await mainManagerLibrary.edgeManagerInstance.reset();
     await mainManagerLibrary.lineManagerInstance.reset();
     await mainManagerLibrary.nodeManagerInstance.reset(newInitialNodes, mainManagerLibrary);
-
   }
 
   return mainManagerLibrary;

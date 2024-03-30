@@ -36,6 +36,7 @@ export const updateNode = async (node) => {
 }
 
 export const deleteById = async (nodeId) => {
+  console.log(`Deleting node ${nodeId}`)
   return (
     await baseClient.delete(`/${nodeURI}/${nodeId}`)
   ).data;
