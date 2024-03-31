@@ -13,9 +13,20 @@ import {
 } from "../../../../../../form/formValidators";
 import Dropdown from "../../../../../../form/dropdown";
 import Input from "../../../../../../form/rawInput/index";
-import {formatUri, formatURIInfo} from "./uriBuilderManager";
+import {formatUriDisplay, formatURIInfo} from "./uriBuilderManager";
 
 const style = { width: '40%', minWidth: '600px', height: '80%', p: 4, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, borderRadius: "15px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", outline: "none" };
+
+const handleUriDisplayChange = (newDisplayValue, setNewUriInfo) => {
+  setNewUriInfo(latest => {
+    return {
+      ...latest,
+      value: {
+        display: newDisplayValue
+      }
+    };
+  })
+}
 
 const handlePathUriDisplayChange = (newDisplayValue, setNewUriInfo) => {
   setNewUriInfo(latest => {
@@ -38,15 +49,6 @@ const handlePathUriVariableChange = (newVariable, setNewUriInfo) => {
         variable: newVariable
       }
     }
-  })
-}
-
-const setUriValue = (newValue, setNewUriInfo) => {
-  setNewUriInfo( latest => {
-    return {
-      ...latest,
-      value: newValue
-    };
   })
 }
 
@@ -85,11 +87,21 @@ export default ({ isOpen, close, onComplete, onDelete, simulationId, uriInfo, va
     onDelete(newUriInfo.index)
   }
 
+  const setUriValue = (newValue) => {
+    setNewUriInfo( latest => {
+      return {
+        ...latest,
+        value: newValue
+      };
+    })
+    setFormattedURI(formatUriDisplay(newUriInfo));
+  }
+
   React.useEffect(() => {
-    setFormattedURI(formatUri(newUriInfo));
+    setFormattedURI(formatUriDisplay(newUriInfo));
   }, [newUriInfo])
 
-  const resetUriInfoFields = () => {
+  const resetUriInfoFields = (uriInfo) => {
     setUriType(URIValueTypeEnum.getOptionByCode(uriInfo['raw']['type']), setNewUriInfo);
     setUriValue(
       (
@@ -104,7 +116,7 @@ export default ({ isOpen, close, onComplete, onDelete, simulationId, uriInfo, va
 
   React.useEffect(()=>{
     if(typeof uriInfo['raw'] != 'undefined'){
-      resetUriInfoFields();
+      resetUriInfoFields(uriInfo);
     }
   },[uriInfo])
 
@@ -126,11 +138,22 @@ export default ({ isOpen, close, onComplete, onDelete, simulationId, uriInfo, va
               {
                 newUriInfo.type.value === URIValueTypeEnum.URI.code &&
                 (
-                  <Input onChange={(event)=>{ setUriValue(event.target.value.split(" ").join(""), setNewUriInfo) }} value={newUriInfo.value} type={"text"} tooltipTitle={"Valor do Caminho URI"} placeholder={"Valor do Caminho URI"} error={uriValueError} />
+                  <Input onChange={(event)=>{ handleUriDisplayChange(event.target.value.split(" ").join(""), setNewUriInfo) }} value={newUriInfo.value.display} type={"text"} tooltipTitle={"Valor do Caminho URI"} placeholder={"Valor do Caminho URI"} error={uriValueError} />
                 )
               }
               {
                 newUriInfo.type.value === URIValueTypeEnum.PATH.code &&
+                (
+                  <div>
+                    <Input onChange={(event)=>{ handlePathUriDisplayChange(event.target.value.split(" ").join(""), setNewUriInfo) }} value={newUriInfo.value.display} type={"text"} tooltipTitle={"Valor do path parameter"} placeholder={"Valor do path parameter"} error={uriValueError} />
+                    <div style={{ height: '45px', display: 'flex' }}>
+                      <Dropdown options={variables} value={newUriInfo.value.variable} placeholder={"Variável Destino"} tooltipTitle={"Variável Destino"} onChange={(selectedVariable)=>{ handlePathUriVariableChange(selectedVariable, setNewUriInfo) }} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={() => { openVariableCreationModal() }} isEnabled={true}  />
+                    </div>
+                  </div>
+                )
+              }
+              {
+                newUriInfo.type.value === URIValueTypeEnum.QUERY.code &&
                 (
                   <div>
                     <Input onChange={(event)=>{ handlePathUriDisplayChange(event.target.value.split(" ").join(""), setNewUriInfo) }} value={newUriInfo.value.display} type={"text"} tooltipTitle={"Valor do path parameter"} placeholder={"Valor do path parameter"} error={uriValueError} />

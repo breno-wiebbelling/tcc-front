@@ -12,7 +12,7 @@ import EditUriDetailsModal from "./uriBuilder/editUriDetailsModal";
 import { getVariablesByUserAndSimulationId } from "../../../../../../service/clients/variableClient";
 import VariableTypeEnum from "../../../../../variable/VariableTypeEnum";
 import VariableCreationModal from "../../../../../variable/creation/variableCreationModal";
-import {formatURIInfo} from "./uriBuilder/uriBuilderManager";
+import {formatUriDisplay, formatURIInfo} from "./uriBuilder/uriBuilderManager";
 
 const HTTP_METHOD_KEY = 'httpMethod';
 const URI_ELEMENT_CLASS = "uri-element-close-icon-button";
@@ -54,32 +54,33 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
     setIsUriEditModalOpen(true);
   }
   const openUriEditModal = (uriInfo, isNew) => {
+    setNewUriInfo(uriInfo);
     setIsNewUri(isNew);
     setIsUriEditModalOpen(true);
-    setNewUriInfo(uriInfo);
   }
+
   const handleUriEdit = (newUriInfo) => {
     let newUriIndex = newUriInfo['raw']['index'];
+    let formatedUri = { display: formatUriDisplay(newUriInfo['raw']), type: newUriInfo['raw']['type']['value'], value: newUriInfo['raw']['value'] }
 
     setNodeDetails(latest => {
       let simpleUriInfo = latest['uriInfo'];
 
       if(newUriIndex === simpleUriInfo.length){
-        simpleUriInfo.push({type: newUriInfo['raw']['type']['value'], value: newUriInfo['raw']['value'] });
+        simpleUriInfo.push(formatedUri);
       }
       else{
         simpleUriInfo = simpleUriInfo.map((uriElement, index) => {
           return (index === newUriIndex)
-            ? {type: newUriInfo['raw']['type']['value'], value: newUriInfo['raw']['value'] }
+            ? formatedUri
             : uriElement;
         })
-      }
-
+      } 
       latest['uriInfo'] = simpleUriInfo;
       return latest;
     });
 
-    uriElements[newUriIndex] = newUriInfo;
+    uriElements[newUriIndex] = formatedUri;
     closeUriEditModalOpen();
   }
 
