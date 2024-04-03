@@ -1,18 +1,30 @@
 import { validateStringValue } from "../../components/form/formValidators";
 import NodeDetailsTypeEnum from "../../components/workflow/nodes/details/types/typeDetailsEnum";
 import MathOperationEnum from "../../components/workflow/nodes/details/types/math/MathOperationEnum";
+
 const validateMathTypeDetails = (nodeInformation, setError) => {
   if(nodeInformation.details.mathOperation === MathOperationEnum.NONE.code){
     setError('Selecione uma operação matemática!')
     return false;
   }
 
-  if(typeof  nodeInformation.details.resultVariable == 'undefined'){
+  if(typeof nodeInformation.details.resultVariable == 'undefined'){
     setError('Selecione a variável destino!')
     return false;
   }
 
   return true
+}
+
+const validateInputTypeDetails = (nodeInformation, setError) => {
+
+  if(nodeInformation['details']['uriInfo'].length == 0){
+    setError('Adicione informações URI!');
+    
+    return false;
+  }
+
+  return true;
 }
 
 const validateType = (nodeInformation, setError) => {
@@ -25,7 +37,11 @@ const validateType = (nodeInformation, setError) => {
   if(nodeInformation.type === NodeDetailsTypeEnum.MATH.code && !validateMathTypeDetails(nodeInformation, setError)){
     return false;
   }
-
+  
+  if(nodeInformation.type === NodeDetailsTypeEnum.START.code && !validateInputTypeDetails(nodeInformation, setError)){
+    return false;
+  }
+  
   if(nodeInformation.type === NodeDetailsTypeEnum.COND.code && true){
     return false
   }

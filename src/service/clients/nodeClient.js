@@ -1,6 +1,7 @@
 import baseClient from "./baseClient";
 
 const nodeURI = 'node';
+const uriElement = 'uri'
 
 export const create = async (new_node) => {
   return (await baseClient.post(
@@ -36,8 +37,15 @@ export const updateNode = async (node) => {
 }
 
 export const deleteById = async (nodeId) => {
-  console.log(`Deleting node ${nodeId}`)
   return (
     await baseClient.delete(`/${nodeURI}/${nodeId}`)
   ).data;
+}
+
+export const validateNewUriInfo = async (newUriInfo) => {
+  // return (await baseClient.post(
+  //   `${nodeURI}/${uriElement}`, 
+  //   { "newUriInfo":newUriInfo }
+  // ))["data"]
+  return false;
 }

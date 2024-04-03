@@ -1,18 +1,18 @@
 import React from 'react';
-import InputDetailsStyled from "./styled";
-import { user_host_key } from "../../../../../../service/authService";
 import { creamWhite, denseSmoke, smoke, smokeHover, smokeWhite, smokeWhiteLight, white, whiteHover } from "../../../../../common/style/index";
+import InputDetailsStyled from "./styled";
 import Dropdown from "../../../../../form/dropdown";
-import HttpOperationEnum from "./HttpOperationEnum";
-import CloseIcon from '@mui/icons-material/Close';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import AddIcon from '@mui/icons-material/Add';
+import PopperAlert from '../../../../../alert/index';
 import {IconButton} from "@mui/material";
-import EditUriDetailsModal from "./uriBuilder/editUriDetailsModal";
-import { getVariablesByUserAndSimulationId } from "../../../../../../service/clients/variableClient";
-import VariableTypeEnum from "../../../../../variable/VariableTypeEnum";
 import VariableCreationModal from "../../../../../variable/creation/variableCreationModal";
-import {formatUriDisplay, formatURIInfo} from "./uriBuilder/uriBuilderManager";
+import EditUriDetailsModal from "./uriBuilder/editUriDetailsModal";
+import URIValueTypeEnum from './uriBuilder/URIValueTypeEnum';
+import HttpOperationEnum from "./HttpOperationEnum";
+import { user_host_key } from "../../../../../../service/authService";
+import { getVariablesByUserAndSimulationId } from "../../../../../../service/clients/variableClient";
+import { validateNewUriInfo } from "../../../../../../service/clients/nodeClient"
 
 const HTTP_METHOD_KEY = 'httpMethod';
 const URI_ELEMENT_CLASS = "uri-element-close-icon-button";
@@ -37,60 +37,134 @@ const loadUserVariables = (simulationId, setVariables) => {
     })
 }
 
+const formatEndUri = (uriElements) => {
+  let formatedUri = "";
+
+  uriElements.forEach(ue => {
+    formatedUri+=ue.uiDisplay;
+  })
+
+  return formatedUri;
+}
+
+const getUrisByType = (uriElements, type) => {
+  return uriElements
+    .filter(ue => ue.raw.type === type)
+    .sort((a, b) => a.index + b.index);
+}
+
+const mapFirstQuery = (uriElements) => {
+
+  if(uriElements.length > 0 && uriElements[0]['uiDisplay'].includes('&')){
+    let firstDisplay = uriElements[0]['uiDisplay'].split('&');
+    firstDisplay[0] = "?";
+    uriElements[0]['uiDisplay'] = firstDisplay.join('')
+  }
+
+  return uriElements;
+}
+
+const sortUriElements = (uriElements) => {
+  let queryElements = getUrisByType(uriElements, URIValueTypeEnum.QUERY.code);
+  queryElements = mapFirstQuery(queryElements);
+
+  let sortedUris = [
+    ...getUrisByType(uriElements, URIValueTypeEnum.URI.code),
+    ...getUrisByType(uriElements, URIValueTypeEnum.PATH.code),
+    ...queryElements
+  ];
+
+  if(sortedUris.length > 1){
+    sortedUris.forEach((e, i) => e.index = i)
+  }
+
+  return sortedUris;
+}
+
 export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
   const [httpMethod, setHttpMethod] = React.useState(obtainHttpMethod(nodeDetails));
   const [uriElements, setUriElements] = React.useState([]);
+  const [endURI, setEndUri] = React.useState("");
   const [variables, setVariables] = React.useState([]);
 
   const [isUriEditModalOpen, setIsUriEditModalOpen] = React.useState(false);
   const [isNewUri, setIsNewUri] = React.useState(true);
 
+  const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: ''});
+  const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: ''}); }
+  const setError = (errMsg) => { setAlertInfo({ mode: 'error', msg: errMsg }) }
+  const setWarning = (wrnMsg) => { setAlertInfo({ mode: 'warn', msg: wrnMsg }) }
+
   const closeUriEditModalOpen = () => { setIsUriEditModalOpen(false); }
-  const [newUriInfo, setNewUriInfo] = React.useState({})
+  const [newUriInfo, setNewUriInfo] = React.useState({ "uiDisplay": "/", "raw": { "value": { "label": "", "variable" : "" }, "type": "" }, "index": 0 })
   const [variableCreationModalOpen, setVariableCreationModalOpen] = React.useState(false);
+
   const handleVariableCreation = () => {
     setVariableCreationModalOpen(false);
     loadUserVariables(nodeInfo['simulationId'], setVariables);
     setIsUriEditModalOpen(true);
   }
+
   const openUriEditModal = (uriInfo, isNew) => {
     setNewUriInfo(uriInfo);
     setIsNewUri(isNew);
     setIsUriEditModalOpen(true);
   }
 
+  const openUriEditModalNew = () => {
+    setNewUriInfo(latest => {
+      return {
+        ...latest,
+        index: uriElements.length
+      }
+    })
+    setIsNewUri(true);
+    setIsUriEditModalOpen(true);
+  }
+
+  const changeUriElements = (newUriElements) => {
+    let sortedUriElements = sortUriElements(newUriElements);
+    setUriElements(sortedUriElements)
+    setEndUri(formatEndUri(sortedUriElements));
+  }
+
   const handleUriEdit = (newUriInfo) => {
-    let newUriIndex = newUriInfo['raw']['index'];
-    let formatedUri = { display: formatUriDisplay(newUriInfo['raw']), type: newUriInfo['raw']['type']['value'], value: newUriInfo['raw']['value'] }
+    let newUriIndex = newUriInfo['index'];
+
+    if(!validateNewUriInfo(newUriInfo)){
+      setWarning("Esse input já existe em outra simulação!");
+    }
 
     setNodeDetails(latest => {
       let simpleUriInfo = latest['uriInfo'];
-
       if(newUriIndex === simpleUriInfo.length){
-        simpleUriInfo.push(formatedUri);
+        simpleUriInfo.push(newUriInfo);
       }
       else{
         simpleUriInfo = simpleUriInfo.map((uriElement, index) => {
           return (index === newUriIndex)
-            ? formatedUri
+            ? newUriInfo
             : uriElement;
         })
       } 
       latest['uriInfo'] = simpleUriInfo;
+      changeUriElements(simpleUriInfo)
+
       return latest;
     });
 
-    uriElements[newUriIndex] = formatedUri;
     closeUriEditModalOpen();
   }
 
   const handleUriDelete = (index) => {
+    uriElements.splice(index, 1);
+
     setNodeDetails(latest => {
-      latest['uriInfo'].splice(index, 1);
+      latest['uriInfo']=uriElements;
       return latest;
     });
+    changeUriElements(uriElements)
 
-    uriElements.splice(index, 1)
     closeUriEditModalOpen();
   }
 
@@ -104,15 +178,21 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
     setIsUriEditModalOpen(true);
   }
 
+  const validateNewQueryElement = (newUriElement, setError) => {
+    let localQueryElementNames = getUrisByType(uriElements, URIValueTypeEnum.QUERY.code).map(qe => qe.raw.label);
+    
+    if(localQueryElementNames.includes(newUriElement)){
+      setError('URI já cadastrada!')
+    }
+  }
+
   React.useEffect(() => {
     loadUserVariables(nodeInfo['simulationId'], setVariables);
   }, [nodeInfo['simulationId']]);
 
   React.useEffect(()=> {
     setHttpMethod(obtainHttpMethod(nodeDetails));
-    setUriElements(nodeInfo['details']['uriInfo'].map((uriInfo, index) => {
-      return formatURIInfo(uriInfo , index)
-    }));
+    changeUriElements(nodeInfo['details']['uriInfo'])
   },[nodeInfo])
 
   React.useEffect(() => {
@@ -126,6 +206,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
 
   return (
     <InputDetailsStyled>
+      {alertInfo.msg !== "" && <PopperAlert message={alertInfo.msg} mode={alertInfo.mode} resetMessage={resetErrorMessage} />}
       <div className="node-details-line"></div>
       <h3>Detalhes de Entrada</h3>
       <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
@@ -134,6 +215,14 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
         </p>
         <a href={getUserHost()} target={"_blank"} style={{fontSize: "15px"}}>
           {getUserHost()}
+        </a>
+      </div>
+      <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+        <p style={{backgroundColor: creamWhite, padding: "2px 7px", borderRadius: "5px", marginRight: "10px"}}>
+          URI:
+        </p>
+        <a href={getUserHost()+endURI} target={"_blank"} style={{fontSize: "15px"}}>
+          {endURI}
         </a>
       </div>
       <div className="dropdown-http-operation">
@@ -147,7 +236,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
               uriElements.map((uriElement, index) => {
                 return (
                   <div className={"uri-element"}  onMouseEnter={() => setOpacity(true, document, index)} onMouseLeave={() => setOpacity(false, document, index)} key={index}>
-                    <p>{ uriElement.display }</p>
+                    <p>{ uriElement.uiDisplay }</p>
                     <IconButton className={`display_flex_center`} id={`${URI_ELEMENT_CLASS}${index}`} onClick={()=>{ openUriEditModal(uriElement, false) }} sx={{ width: "20px",  height: "20px",  backgroundColor: smokeWhite,  borderRadius: "50%",  color: white,  opacity: 0,  "&:hover": {backgroundColor: smoke},  "&:active": {backgroundColor: smokeHover} }}>
                       <MoreHorizIcon sx={{width: "15px", height: "16px"}} className={"closeicon-uri-element"}/>
                     </IconButton>
@@ -155,7 +244,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
                 );
               })
             }
-            <IconButton className={`display_flex_center`} onClick={()=>{ openUriEditModal({ raw: { index: uriElements.length } }, true) }} sx={{ width: "25px",  height: "25px", borderRadius: "50%",  color: denseSmoke, position: "absolute", bottom: '10px', right: '10px', backgroundColor: white, "&:hover": {backgroundColor: whiteHover}, "&:active": {backgroundColor: smokeWhiteLight} }}>
+            <IconButton className={`display_flex_center`} onClick={()=>{ openUriEditModalNew() }} sx={{ width: "25px",  height: "25px", borderRadius: "50%",  color: denseSmoke, position: "absolute", bottom: '10px', right: '10px', backgroundColor: white, "&:hover": {backgroundColor: whiteHover}, "&:active": {backgroundColor: smokeWhiteLight} }}>
               <AddIcon sx={{width: "18px", height: "18px"}} />
             </IconButton>
           </div>
@@ -174,6 +263,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
         onComplete={handleUriEdit}
         onDelete={handleUriDelete}
         simulationId={nodeInfo['simulationId']}
+        validateNewQueryElement={validateNewQueryElement}
         uriInfo={newUriInfo}
         isNewUri={isNewUri}
         variables={variables}

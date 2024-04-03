@@ -2,16 +2,16 @@ import URIValueTypeEnum from "./URIValueTypeEnum";
 
 export const formatUriDisplay = (uriInfo) => {
   try{
-    console.log(uriInfo)
-    let uriType = (typeof uriInfo.type.key == "undefined" ? uriInfo.type : uriInfo.type.key);
-    let displayValue = (typeof uriInfo.value.display == "undefined") ? "" : uriInfo.value.display; 
+    let uriType = (typeof uriInfo.raw.type.key == "undefined" ? uriInfo.raw.type : uriInfo.raw.type.key);
+    let displayValue = (typeof uriInfo.raw.value.label == "undefined") 
+      ? ""  
+      : uriInfo.raw.value.label; 
 
     switch (uriType) {
       case URIValueTypeEnum.QUERY.code:
-        let querySeparator = (uriInfo.index > 0) ? "?" : "&";
-        let variableName = (typeof uriInfo.value.variable.label == "undefined") ? "" : uriInfo.value.variable.label;
+        let variableName = (uriInfo.raw.value.variable == "") ? "" : uriInfo.raw.value.variable.label;
 
-        return `${querySeparator}${displayValue}=<${variableName}>`;
+        return `&${displayValue}=<${variableName}>`;
       case URIValueTypeEnum.PATH.code:
         return `/{${displayValue}}`;
       default:
@@ -24,7 +24,25 @@ export const formatUriDisplay = (uriInfo) => {
 
 export const formatURIInfo = (uriInfo, index) => {
   return {
-    display: formatUriDisplay(uriInfo),
-    raw: {...uriInfo, index: index}
+    uiDisplay: formatUriDisplay(uriInfo),
+    raw: {
+      type: uriInfo.raw.type.value,
+      value: formatUriValue(uriInfo),
+    },
+    index: index
   }
+}
+
+export const formatUriValue = (uriInfo) => {
+  let variableValue = {}
+
+  if(typeof uriInfo.raw.value != "undefined" && typeof uriInfo.raw.value.label != "undefined"){
+    variableValue['label'] = uriInfo.raw.value.label ;
+  }
+
+  if(typeof uriInfo.raw.value != "undefined" && typeof uriInfo.raw.value.variable != "undefined" && typeof uriInfo.raw.value.variable.key != "undefined"){
+    variableValue['variable'] = uriInfo.raw.value.variable.key;
+  } 
+
+  return variableValue;
 }

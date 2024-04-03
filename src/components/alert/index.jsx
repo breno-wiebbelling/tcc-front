@@ -4,7 +4,8 @@ import Snackbar from '@mui/material/Snackbar';
 import CloseIcon from '@mui/icons-material/Close';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import AddTaskIcon from '@mui/icons-material/AddTask';
-import { smoke, vividRed, vividGreen } from "../common/style/index";
+import WarningIcon from '@mui/icons-material/Warning';
+import { smoke, vividRed, vividGreen, easyOrange } from "../common/style/index";
 
 const PopperAlert = ({ message, mode, resetMessage }) => {
   const [open, setOpen] = useState(true);
@@ -16,6 +17,9 @@ const PopperAlert = ({ message, mode, resetMessage }) => {
       break;
     case "ok":
       alertColor = vividGreen;
+      break;
+    case "warn":
+      alertColor = easyOrange;
       break;
     default: 
       alertColor = smoke;
@@ -57,23 +61,19 @@ const PopperAlert = ({ message, mode, resetMessage }) => {
       >
         {
           mode === 'ok' && (
-            <AddTaskIcon
-              fontSize="inherit"
-              sx={{
-                fontSize:"20px",
-                margin:"0% 6px",
-              }}
+            <AddTaskIcon fontSize="inherit" sx={{ fontSize:"20px", margin:"0% 6px"}}
             />
           )
         }
         {
-          mode !== 'ok' && (
-            <ErrorOutlineIcon
-              fontSize="inherit"
-              sx={{
-                fontSize:"20px",
-                margin:"0% 6px",
-              }}
+          mode === 'error' && (
+            <ErrorOutlineIcon fontSize="inherit" sx={{ fontSize:"20px", margin:"0% 6px"}}
+            />
+          )
+        }
+        {
+          mode === 'warn' && (
+            <WarningIcon fontSize="inherit" sx={{ fontSize:"20px", margin:"0% 6px"}}
             />
           )
         }
@@ -81,15 +81,7 @@ const PopperAlert = ({ message, mode, resetMessage }) => {
         <CloseIcon 
           onClick={handleClose}
           fontSize="inherit" 
-          sx={{ 
-            fontSize:"20px",
-            margin:"0% 6px",
-            padding:"4px",
-            borderRadius:"50%",
-            "&:hover": {
-              backgroundColor: '#00000027'
-            },
-          }} 
+          sx={{ fontSize:"20px", margin:"0% 6px", padding:"4px", borderRadius:"50%", "&:hover": { backgroundColor: '#00000027' }} } 
         />
       </Box>
     </Snackbar>

@@ -36,11 +36,7 @@ export default Object.freeze({
     let typeEnum = getByCode(code);
     return {key: typeEnum.code, value: typeEnum.code, label: typeEnum.name};
   },
-  getValuePresetByCode: (code) => {
-    if( code === uriValueTypesOptions.URI.code) {
-      return "";
-    }
-
-    return { display: "", variable : ""};
+  getValuePresetByCode: () => {
+    return { label: "", variable : ""};
   }
 });

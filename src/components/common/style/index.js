@@ -30,4 +30,6 @@ export const vividGreen = "#5cb85c";
 export const lightVividGreen = "#7be27b";
 export const softGreen = "#7cd38d";
 
+export const easyOrange = "#FFA500"
+
 export const headerHeight = '8vh';
