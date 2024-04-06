@@ -3,6 +3,7 @@ import MathOperationEnum from "../../components/workflow/nodes/details/types/mat
 
 import { validateStringValue } from "../../components/form/formValidators";
 import { validateNewUriInfo } from "../clients/nodeClient";
+import URIValueTypeEnum from "../../components/workflow/nodes/details/types/input/uriBuilder/URIValueTypeEnum";
 
 const validateMathTypeDetails = (nodeInformation, setError) => {
   if(nodeInformation.details.mathOperation === MathOperationEnum.NONE.code){
@@ -19,11 +20,11 @@ const validateMathTypeDetails = (nodeInformation, setError) => {
 }
 
 const validateInputTypeDetails = async (nodeInformation, setError) => {
-  if(nodeInformation['details']['uriInfo'].length == 0){
+  if(nodeInformation['details']['uriInfo'].length === 0){
     setError('Adicione informações URI!');
     return false;
   }
-  
+
   if(!(await validateNewUriInfo(nodeInformation))){
     setError('Você já possui uma simulação com essa URI!');
     return false;
@@ -46,12 +47,8 @@ const validateType = async (nodeInformation, setError) => {
   if(nodeInformation.type === NodeDetailsTypeEnum.START.code && !(await validateInputTypeDetails(nodeInformation, setError)) ){
     return false;
   }
-  
-  if(nodeInformation.type === NodeDetailsTypeEnum.COND.code && true){
-    return false
-  }
 
-  return true;
+  return nodeInformation.type !== NodeDetailsTypeEnum.COND.code;
 }
 
 const nameValidator = (nodeInformation, setError) => {
