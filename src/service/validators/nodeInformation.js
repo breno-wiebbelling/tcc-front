@@ -1,6 +1,8 @@
-import { validateStringValue } from "../../components/form/formValidators";
 import NodeDetailsTypeEnum from "../../components/workflow/nodes/details/types/typeDetailsEnum";
 import MathOperationEnum from "../../components/workflow/nodes/details/types/math/MathOperationEnum";
+
+import { validateStringValue } from "../../components/form/formValidators";
+import { validateNewUriInfo } from "../clients/nodeClient";
 
 const validateMathTypeDetails = (nodeInformation, setError) => {
   if(nodeInformation.details.mathOperation === MathOperationEnum.NONE.code){
@@ -16,18 +18,21 @@ const validateMathTypeDetails = (nodeInformation, setError) => {
   return true
 }
 
-const validateInputTypeDetails = (nodeInformation, setError) => {
-
+const validateInputTypeDetails = async (nodeInformation, setError) => {
   if(nodeInformation['details']['uriInfo'].length == 0){
     setError('Adicione informações URI!');
-    
+    return false;
+  }
+  
+  if(!(await validateNewUriInfo(nodeInformation))){
+    setError('Você já possui uma simulação com essa URI!');
     return false;
   }
 
   return true;
 }
 
-const validateType = (nodeInformation, setError) => {
+const validateType = async (nodeInformation, setError) => {
 
   if(nodeInformation.type === NodeDetailsTypeEnum.NONE.code){
     setError('Selecione um tipo!');
@@ -38,7 +43,7 @@ const validateType = (nodeInformation, setError) => {
     return false;
   }
   
-  if(nodeInformation.type === NodeDetailsTypeEnum.START.code && !validateInputTypeDetails(nodeInformation, setError)){
+  if(nodeInformation.type === NodeDetailsTypeEnum.START.code && !(await validateInputTypeDetails(nodeInformation, setError)) ){
     return false;
   }
   
@@ -58,7 +63,7 @@ const nameValidator = (nodeInformation, setError) => {
   return validateStringValue(nodeInformation.name, setError, 'Adicione um nome!')
 }
 
-export const validateNodeInformation = (nodeInformation, setError) => {
+export const validateNodeInformation = async (nodeInformation, setError) => {
 
-  return nameValidator(nodeInformation, setError) && validateType(nodeInformation, setError);
+  return nameValidator(nodeInformation, setError) && (await validateType(nodeInformation, setError));
 }

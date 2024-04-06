@@ -46,3 +46,9 @@ export const formatUriValue = (uriInfo) => {
 
   return variableValue;
 }
+
+export const getUrisByType = (uriElements, type) => {
+  return uriElements
+    .filter(ue => ue.raw.type === type)
+    .sort((a, b) => a.index + b.index);
+}

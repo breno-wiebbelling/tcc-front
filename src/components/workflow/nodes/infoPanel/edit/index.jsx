@@ -26,7 +26,7 @@ export default ({ nodeInfo, setIsInfoPanelOpen, setAlertInfo, loadInformation })
     setNodeName(newName);
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     nodeInfo = {
       ...nodeInfo,
       "name":nodeName,
@@ -36,7 +36,7 @@ export default ({ nodeInfo, setIsInfoPanelOpen, setAlertInfo, loadInformation })
       "details": nodeDetails,
     };
 
-    if (validateNodeInformation(nodeInfo, setError)) {
+    if (await validateNodeInformation(nodeInfo, setError)) {
       try{
         updateNode(nodeInfo).then((any) => {
           nodeInfo.reload();

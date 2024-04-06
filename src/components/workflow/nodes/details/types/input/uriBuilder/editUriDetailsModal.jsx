@@ -78,7 +78,7 @@ const getVariableById = (uriInformation, variables) => {
   return ""
 }
 
-export default ({ isOpen, close, onComplete, onDelete, validateNewQueryElement, uriInfo, variables, openVariableCreationModal, isNewUri }) => {
+export default ({ isOpen, close, onComplete, onDelete, validateNewQueryElement, uriInfo, variables, openVariableCreationModal, isNewUri, httpMethod }) => {
   const [newUriInfo, setNewUriInfo] = React.useState({ "uiDisplay": "/", "raw": { "value": { "label": "", "variable" : "" }, "type": "" } , "index": 0 });
 
   const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: ''});
@@ -86,13 +86,21 @@ export default ({ isOpen, close, onComplete, onDelete, validateNewQueryElement, 
   const setError = (errMsg) => { setAlertInfo({ mode: 'error', msg: errMsg }) }
 
   const handleSubmit = () => { 
+    if(
+      (newUriInfo.raw.type == URIValueTypeEnum.QUERY.code || newUriInfo.raw.type.key == URIValueTypeEnum.QUERY.code) 
+      && !validateNewQueryElement(newUriInfo.raw.value.label)
+    )
+    {
+      return;
+    }
+
     onComplete(formatURIInfo(newUriInfo, newUriInfo.index)); 
   }
   const handleDelete = () => { onDelete(newUriInfo.index) }
 
   const handleQueryUriDisplayChange = (newDisplayValue) => {
     validateStringValue(newDisplayValue, setError);
-    validateNewQueryElement(newDisplayValue, setError);
+    validateNewQueryElement(newDisplayValue);
     handleLabelChange(newDisplayValue, setNewUriInfo);
   }
   
@@ -107,8 +115,8 @@ export default ({ isOpen, close, onComplete, onDelete, validateNewQueryElement, 
           type: URIValueTypeEnum.getOptionByCode(newInfo['raw']['type']),
           value: {
             ...latest.raw.value,
-            label: newUriInfo.raw.value.label,
-            variable: getVariableById(uriInfo, variables)
+            label: newInfo.raw.value.label,
+            variable: getVariableById(newInfo, variables)
           }
         }
       };
@@ -118,7 +126,7 @@ export default ({ isOpen, close, onComplete, onDelete, validateNewQueryElement, 
   }
 
   React.useEffect(()=>{
-    console.log(uriInfo)
+
     resetUriInfoFields(uriInfo);
   },[uriInfo])
 
@@ -139,7 +147,7 @@ export default ({ isOpen, close, onComplete, onDelete, validateNewQueryElement, 
           <div className="content" style={{width: "60%", height: "90%"}}>
             <h3>Edição de URI</h3>
             <div style={{ height: "45px", marginTop: "10px" }}>
-              <Dropdown className={'uri-type-selector-dropdown'} value={newUriInfo.raw.type} tooltipTitle={'Tipo de URI'} hasNewValueOption={false} options={URIValueTypeEnum.dropdownOptions} isEnabled={true} onChange={(newValue)=>{ setUriTypeAndValue(newValue, setNewUriInfo) }} />
+              <Dropdown className={'uri-type-selector-dropdown'} value={newUriInfo.raw.type} tooltipTitle={'Tipo de URI'} hasNewValueOption={false} options={URIValueTypeEnum.getOptionsByMethodHttp(httpMethod.key)} isEnabled={true} onChange={(newValue)=>{ setUriTypeAndValue(newValue, setNewUriInfo) }} />
             </div>
               {
                 newUriInfo.raw.type.value === URIValueTypeEnum.URI.code &&

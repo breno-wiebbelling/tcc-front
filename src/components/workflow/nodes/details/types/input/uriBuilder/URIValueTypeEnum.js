@@ -1,3 +1,5 @@
+import HttpOperationEnum from "../HttpOperationEnum";
+
 const uriValueTypesOptions = {
   PATH: {
     code:"path",
@@ -27,11 +29,20 @@ const getByCode = (code) => {
 export default Object.freeze({
   ...uriValueTypesOptions,
   getByCode,
-  dropdownOptions:[
-    {key: uriValueTypesOptions.PATH.code,   value: uriValueTypesOptions.PATH.code,   label: uriValueTypesOptions.PATH.name},
-    {key: uriValueTypesOptions.QUERY.code,  value: uriValueTypesOptions.QUERY.code,  label: uriValueTypesOptions.QUERY.name},
-    {key: uriValueTypesOptions.URI.code,    value: uriValueTypesOptions.URI.code,    label: uriValueTypesOptions.URI.name}
-  ],
+  getOptionsByMethodHttp: (httpMethod) => {
+    if(httpMethod == HttpOperationEnum.POST.code){
+      return [
+        {key: uriValueTypesOptions.URI.code,    value: uriValueTypesOptions.URI.code,    label: uriValueTypesOptions.URI.name}
+      ]
+    }
+    else{
+      return [
+        {key: uriValueTypesOptions.PATH.code,   value: uriValueTypesOptions.PATH.code,   label: uriValueTypesOptions.PATH.name},
+        {key: uriValueTypesOptions.QUERY.code,  value: uriValueTypesOptions.QUERY.code,  label: uriValueTypesOptions.QUERY.name},
+        {key: uriValueTypesOptions.URI.code,    value: uriValueTypesOptions.URI.code,    label: uriValueTypesOptions.URI.name}
+      ]
+    }
+  },
   getOptionByCode: (code)=> {
     let typeEnum = getByCode(code);
     return {key: typeEnum.code, value: typeEnum.code, label: typeEnum.name};

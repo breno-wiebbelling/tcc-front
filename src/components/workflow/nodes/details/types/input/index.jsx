@@ -13,6 +13,8 @@ import HttpOperationEnum from "./HttpOperationEnum";
 import { user_host_key } from "../../../../../../service/authService";
 import { getVariablesByUserAndSimulationId } from "../../../../../../service/clients/variableClient";
 import { validateNewUriInfo } from "../../../../../../service/clients/nodeClient"
+import { getUrisByType } from "./uriBuilder/uriBuilderManager";
+import VariableTypeEnum from '../../../../../variable/VariableTypeEnum';
 
 const HTTP_METHOD_KEY = 'httpMethod';
 const URI_ELEMENT_CLASS = "uri-element-close-icon-button";
@@ -22,16 +24,22 @@ const obtainHttpMethod = (nodeDetails) => {
     ? HttpOperationEnum.getDropdownOptionByCode(nodeDetails[HTTP_METHOD_KEY])
     : HttpOperationEnum.getDropdownOptionByCode(HttpOperationEnum.GET.code) ;
 }
+
 const getUserHost = ()=>{ return sessionStorage.getItem(user_host_key); }
 const setOpacity = (state, document, index) => { document.getElementById(`${URI_ELEMENT_CLASS}${index}`).style.opacity = (state) ? 1 : 0; }
 
-const loadUserVariables = (simulationId, setVariables) => {
+const loadUserVariables = (simulationId, setVariables, setJsonVariables) => {
   getVariablesByUserAndSimulationId(0, simulationId)
     .then(userVariables => {
       let filteredVariables = userVariables.list.map(v => {
         return {key: v['_id'], label:v['name'], value:v['value']}
       });
 
+      let filteredJsonVariables = userVariables.list
+        .filter((v)=>{ return v.type == VariableTypeEnum.JSON.code })
+        .map((v)=>{ return {key: v['_id'], label:v['name'], value:v['value']} });
+
+      setJsonVariables(filteredJsonVariables)
       setVariables(filteredVariables)
       return filteredVariables;
     })
@@ -45,12 +53,6 @@ const formatEndUri = (uriElements) => {
   })
 
   return formatedUri;
-}
-
-const getUrisByType = (uriElements, type) => {
-  return uriElements
-    .filter(ue => ue.raw.type === type)
-    .sort((a, b) => a.index + b.index);
 }
 
 const mapFirstQuery = (uriElements) => {
@@ -71,12 +73,15 @@ const sortUriElements = (uriElements) => {
   let sortedUris = [
     ...getUrisByType(uriElements, URIValueTypeEnum.URI.code),
     ...getUrisByType(uriElements, URIValueTypeEnum.PATH.code),
-    ...queryElements
   ];
+  let lastUriOrPathElementIndex = sortedUris.length;
+  sortedUris = [ ...sortedUris, ...queryElements]
 
-  if(sortedUris.length > 1){
-    sortedUris.forEach((e, i) => e.index = i)
+  for(let i = lastUriOrPathElementIndex; i< sortedUris.length; i++){
+    sortedUris[i]['index'] = i;
   }
+
+  sortedUris.sort((a, b) => a.index - b.index);
 
   return sortedUris;
 }
@@ -86,6 +91,8 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
   const [uriElements, setUriElements] = React.useState([]);
   const [endURI, setEndUri] = React.useState("");
   const [variables, setVariables] = React.useState([]);
+  const [jsonVariables, setJsonVariables] = React.useState([]);
+  const [postInputVariable, setPostInputVariable] = React.useState({});
 
   const [isUriEditModalOpen, setIsUriEditModalOpen] = React.useState(false);
   const [isNewUri, setIsNewUri] = React.useState(true);
@@ -101,11 +108,24 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
 
   const handleVariableCreation = () => {
     setVariableCreationModalOpen(false);
-    loadUserVariables(nodeInfo['simulationId'], setVariables);
-    setIsUriEditModalOpen(true);
+    loadUserVariables(nodeInfo['simulationId'], setVariables, setJsonVariables);
+    // setIsUriEditModalOpen(true);
   }
 
-  const openUriEditModal = (uriInfo, isNew) => {
+  const handleInputVariableChange = (newVariable) => {
+    setPostInputVariable(newVariable);
+    setNodeDetails(latest => {
+      return {
+        ...latest,
+        details:{
+          ...latest.details,
+          inputVariable: newVariable
+        }
+      }
+    })
+  }
+
+  const openUriEditModal = (uriInfo, isNew) =>{
     setNewUriInfo(uriInfo);
     setIsNewUri(isNew);
     setIsUriEditModalOpen(true);
@@ -115,6 +135,11 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
     setNewUriInfo(latest => {
       return {
         ...latest,
+        "uiDisplay": "/", 
+        "raw": { 
+          "value": { "label": "", "variable" : "" }, 
+          "type": "" 
+        },
         index: uriElements.length
       }
     })
@@ -128,12 +153,9 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
     setEndUri(formatEndUri(sortedUriElements));
   }
 
-  const handleUriEdit = (newUriInfo) => {
+  const handleUriEdit = async (newUriInfo) => {
     let newUriIndex = newUriInfo['index'];
-
-    if(!validateNewUriInfo(newUriInfo)){
-      setWarning("Esse input já existe em outra simulação!");
-    }
+    let tempNode;
 
     setNodeDetails(latest => {
       let simpleUriInfo = latest['uriInfo'];
@@ -150,14 +172,25 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
       latest['uriInfo'] = simpleUriInfo;
       changeUriElements(simpleUriInfo)
 
+      tempNode = {
+        ...nodeInfo,
+        details: latest
+      }
+
       return latest;
     });
+
+    if(!(await validateNewUriInfo(tempNode))){
+      setWarning("Essa URI já existe em outra simulação!");
+    }
 
     closeUriEditModalOpen();
   }
 
   const handleUriDelete = (index) => {
     uriElements.splice(index, 1);
+
+    uriElements.forEach((ue, i)=> ue.index = i);
 
     setNodeDetails(latest => {
       latest['uriInfo']=uriElements;
@@ -178,16 +211,19 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
     setIsUriEditModalOpen(true);
   }
 
-  const validateNewQueryElement = (newUriElement, setError) => {
-    let localQueryElementNames = getUrisByType(uriElements, URIValueTypeEnum.QUERY.code).map(qe => qe.raw.label);
-    
+  const validateNewQueryElement = (newUriElement) => {
+    let localQueryElementNames = getUrisByType(uriElements, URIValueTypeEnum.QUERY.code).map(qe => qe.raw.value.label);
+
     if(localQueryElementNames.includes(newUriElement)){
-      setError('URI já cadastrada!')
+      setError('Nome da query path já cadastrado!')
+      return false;
     }
+
+    return true;
   }
 
   React.useEffect(() => {
-    loadUserVariables(nodeInfo['simulationId'], setVariables);
+    loadUserVariables(nodeInfo['simulationId'], setVariables, setJsonVariables);
   }, [nodeInfo['simulationId']]);
 
   React.useEffect(()=> {
@@ -197,9 +233,16 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
 
   React.useEffect(() => {
     setNodeDetails(latestDetails => {
+      let newUriDetails = uriElements;
+      if(httpMethod.key === HttpOperationEnum.POST.code){
+        newUriDetails = getUrisByType(uriElements, URIValueTypeEnum.URI.code);
+        changeUriElements(newUriDetails)
+      }
+
       return {
         ...latestDetails,
-        "httpMethod": httpMethod.value
+        "httpMethod": httpMethod.value,
+        "uriInfo": newUriDetails
       }
     });
   }, [httpMethod])
@@ -229,27 +272,30 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
         <Dropdown placeholder="Método HTTP" tooltipTitle={"Método HTTP recebido"} options={HttpOperationEnum.dropdownOptions} value={httpMethod} onChange={setHttpMethod} isEnabled={true}/>
       </div>
       {
-        httpMethod.value === HttpOperationEnum.GET.code &&
-        (
-          <div className={"get-request-http-details"} style={{ position: "relative" }}>
-            {
-              uriElements.map((uriElement, index) => {
-                return (
-                  <div className={"uri-element"}  onMouseEnter={() => setOpacity(true, document, index)} onMouseLeave={() => setOpacity(false, document, index)} key={index}>
-                    <p>{ uriElement.uiDisplay }</p>
-                    <IconButton className={`display_flex_center`} id={`${URI_ELEMENT_CLASS}${index}`} onClick={()=>{ openUriEditModal(uriElement, false) }} sx={{ width: "20px",  height: "20px",  backgroundColor: smokeWhite,  borderRadius: "50%",  color: white,  opacity: 0,  "&:hover": {backgroundColor: smoke},  "&:active": {backgroundColor: smokeHover} }}>
-                      <MoreHorizIcon sx={{width: "15px", height: "16px"}} className={"closeicon-uri-element"}/>
-                    </IconButton>
-                  </div>
-                );
-              })
-            }
-            <IconButton className={`display_flex_center`} onClick={()=>{ openUriEditModalNew() }} sx={{ width: "25px",  height: "25px", borderRadius: "50%",  color: denseSmoke, position: "absolute", bottom: '10px', right: '10px', backgroundColor: white, "&:hover": {backgroundColor: whiteHover}, "&:active": {backgroundColor: smokeWhiteLight} }}>
-              <AddIcon sx={{width: "18px", height: "18px"}} />
-            </IconButton>
+        httpMethod.key === HttpOperationEnum.POST.code
+        && (
+          <div style={{ height: '45px', display: 'flex' }}>
+            <Dropdown options={jsonVariables} value={postInputVariable} placeholder={"Payload de Entrada (JSON)"} tooltipTitle={"Variável JSON que armazenará informações recebidas via POST"} onChange={(selectedVariable)=>{ handleInputVariableChange(selectedVariable) }} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={() => { openVariableCreationModal() }} isEnabled={true}  />
           </div>
         )
       }
+      <div className={"get-request-http-details"} style={{ position: "relative" }}>
+        {
+          uriElements.map((uriElement, index) => {
+            return (
+              <div className={"uri-element"}  onMouseEnter={() => setOpacity(true, document, index)} onMouseLeave={() => setOpacity(false, document, index)} key={index}>
+                <p>{ uriElement.uiDisplay }</p>
+                <IconButton className={`display_flex_center`} id={`${URI_ELEMENT_CLASS}${index}`} onClick={()=>{ openUriEditModal(uriElement, false) }} sx={{ width: "20px",  height: "20px",  backgroundColor: smokeWhite,  borderRadius: "50%",  color: white,  opacity: 0,  "&:hover": {backgroundColor: smoke},  "&:active": {backgroundColor: smokeHover} }}>
+                  <MoreHorizIcon sx={{width: "15px", height: "16px"}} className={"closeicon-uri-element"}/>
+                </IconButton>
+              </div>
+            );
+          })
+        }
+        <IconButton className={`display_flex_center`} onClick={()=>{ openUriEditModalNew() }} sx={{ width: "25px",  height: "25px", borderRadius: "50%",  color: denseSmoke, position: "absolute", bottom: '10px', right: '10px', backgroundColor: white, "&:hover": {backgroundColor: whiteHover}, "&:active": {backgroundColor: smokeWhiteLight} }}>
+          <AddIcon sx={{width: "18px", height: "18px"}} />
+        </IconButton>
+      </div>
       <div className="node-details-line"></div>
       <VariableCreationModal
         isOpen={variableCreationModalOpen}
@@ -267,6 +313,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
         uriInfo={newUriInfo}
         isNewUri={isNewUri}
         variables={variables}
+        httpMethod={httpMethod}
         openVariableCreationModal={openVariableCreationModal}
       />
     </InputDetailsStyled>

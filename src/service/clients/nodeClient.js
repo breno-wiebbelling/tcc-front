@@ -43,9 +43,8 @@ export const deleteById = async (nodeId) => {
 }
 
 export const validateNewUriInfo = async (newUriInfo) => {
-  // return (await baseClient.post(
-  //   `${nodeURI}/${uriElement}`, 
-  //   { "newUriInfo":newUriInfo }
-  // ))["data"]
-  return false;
+  return (await baseClient.post(
+    `${nodeURI}/${uriElement}`, 
+    { "newNode":newUriInfo }
+  ))["data"]
 }
