@@ -13,6 +13,10 @@ const typeDetailsValues = {
     code: nodeKeys.START_KEY,
     name: "Entrada"
   },
+  TEXT:{
+    code: nodeKeys.TEXT_KEY,
+    name: "Texto"
+  },
   END:{
     code: nodeKeys.FINAL_KEY,
     name: "Saída"
@@ -31,6 +35,8 @@ const getOptionType = (code) => {
       return typeDetailsValues.COND
     case typeDetailsValues.START.code:
       return typeDetailsValues.START
+    case typeDetailsValues.TEXT.code:
+      return typeDetailsValues.TEXT
     case typeDetailsValues.END.code:
       return typeDetailsValues.END
     default:

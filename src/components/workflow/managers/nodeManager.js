@@ -3,6 +3,7 @@ import { useState } from 'react';
 import ConditionalNode from '../nodes/types/conditional/CustomConditionalNode'; 
 import InputNode from '../nodes/types/input/CustomInputNode'; 
 import DefaultNode from '../nodes/types/default/CustomDefaultNode'; 
+import TextNode from '../nodes/types/text/CustomTextNode'; 
 import OutputNode from '../nodes/types/output/CustomOutputNode';
 import GhostNode from '../nodes/types/ghost/CustomeGhostNode';
 import NewNode from '../nodes/types/new/CustomNewNode';
@@ -25,6 +26,7 @@ export const nodeKeys = {
   FINAL_KEY:"final",
   TASK_KEY:"task",
   START_KEY:"start",
+  TEXT_KEY: "text",
   CONDITIONAL_KEY:"conditional",
   CONDITIONAL_GHOST:"conditional_ghost",
   NEW_KEY:"new_node"
@@ -55,6 +57,7 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
     conditional:ConditionalNode,
     start:InputNode,
     task:DefaultNode,
+    text:TextNode,
     final:OutputNode,
     ghost:GhostNode,
     conditional_ghost:GhostNode,
@@ -101,11 +104,11 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
           currentNode.column = mainManager.columnManagerInstance.central_column_name;
           currentNode.line = mainManager.lineManagerInstance.first_line_name;
         
-        case nodeKeys.TASK_KEY: case nodeKeys.NEW_KEY:
+        case nodeKeys.TASK_KEY: case nodeKeys.TEXT_KEY: case nodeKeys.NEW_KEY:
           currentNode.column = library.parentNode.column;
           currentNode.line = mainManager.lineManagerInstance.process(library.parentNode.line);
   
-        case nodeKeys.START_KEY: case nodeKeys.TASK_KEY: case nodeKeys.NEW_KEY:
+        case nodeKeys.START_KEY: case nodeKeys.TEXT_KEY: case nodeKeys.TASK_KEY: case nodeKeys.NEW_KEY:
           mainManager.edgeManagerInstance.create(currentNode.id, currentNode.details.nextNode);
           library.updateParentNode(currentNode, mainManager);
           await library.processNode(currentNode.details.nextNode, mainManager);

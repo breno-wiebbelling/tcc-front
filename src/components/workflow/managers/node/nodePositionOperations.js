@@ -178,7 +178,7 @@ export const updateNodesPositions = (mainManager) => {
 
       if(node.type === nodeKeys.START_KEY) { node.position.y -= 100 }
       if(node.type === nodeKeys.CONDITIONAL_KEY) { node.position.y -= 50 }
-      if(node.type === nodeKeys.TASK_KEY || node.type === nodeKeys.NEW_KEY) { node.position.y -= 50 }
+      if(node.type === nodeKeys.TASK_KEY || node.type === nodeKeys.NEW_KEY || node.type === nodeKeys.TEXT_KEY) { node.position.y -= 50 }
       if(node.type === nodeKeys.FINAL_KEY && anyGhostNode ) { node.position.y -= 50 }
 
       return node
