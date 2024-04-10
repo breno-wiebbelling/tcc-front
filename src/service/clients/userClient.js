@@ -38,8 +38,18 @@ const performLogin = ( data ) => {
     return false;
 }
 
+export const validateHostEligibility = async (hostName) => {
+    return ( 
+        await baseClient.post( 
+            '/user/host', 
+            { "host":hostName }
+        )
+    )['data'];
+}
+
 export const getUserHost = async () => {
-    let name = 'name';
-    return `${HTTP}${name}${DOT}${APP_HOST}`
+    let userHost = (await baseClient.get('/user/host'))['data'];
+
+    return `${HTTP}${userHost}${DOT}${APP_HOST}`
 }
 

@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { login } from "../../../service/clients/userClient";
 import { PassInput } from "../../../components/form/input/index";
 import { validateLoginCredentials } from "../../../service/validators/userValidator";
+import { logout } from "../../../service/authService";
 
 export const LoginPage = () => {
 	const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: ''});
@@ -47,6 +48,10 @@ export const LoginPage = () => {
       }
     }
   };
+
+  React.useEffect(()=>{
+    logout();
+  }, []);
 
   return (
     <LoginStyled className="base_page">

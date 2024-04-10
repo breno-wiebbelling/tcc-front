@@ -21,7 +21,7 @@ export const CreationStyled = styled.div`
         box-shadow: 0px 0px 28px -3px rgba(153,153,153,1);
     }
 
-    .creation form{
+    .creation .form-items{
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -29,7 +29,8 @@ export const CreationStyled = styled.div`
         width: 100%;
     }
 
-    .creation form button{
+    .creation .form-items button{
         margin-top: 30px;
     }
+
 `

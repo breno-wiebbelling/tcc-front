@@ -6,11 +6,10 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
 import { useNavigate } from 'react-router-dom';
 import { PassInput } from "../../../components/form/input/index";
-// import { Alert } from "../"
-
-import { createUser } from "../../../service/clients/userClient";
+import { createUser, validateHostEligibility } from "../../../service/clients/userClient";
 import { verifyUserAndEmailEligibility, validateAndComparePasswords } from "../../../service/validators/userValidator"
 
 export const CreationPage = () => {
@@ -21,12 +20,14 @@ export const CreationPage = () => {
 	const [password, setPassword] = useState('');
 	const [passwordConfirmation, setPasswordConfirmation] = useState('');
 	const [formStep, setFormStep] = useState(1);
+	const [host, setHost] = useState("");
 
 	const [formErrors, setFormErrors] = useState({
 		name: '',
 		email: '',
 		password: '',
 		passwordConfirmation: '',
+		host: ''
 	});
 
 	const setValidationResult = (result) => {
@@ -59,22 +60,37 @@ export const CreationPage = () => {
 		e.preventDefault();
 
 		if (await validateSecondStep()) {
-
-			let userCreationResponse = await createUser({
-				"username": username,
-				"email": email,
-				"password": password
-			});
-
-			if (userCreationResponse == true) {
-				navigate('/');
-			}
-			else {
-				alert(userCreationResponse)
-				// <Alert severity="error">This is an error message!</Alert>
-			}
+			setFormStep(3)
 		}
 	};
+
+	const handleThirdStep = async () => {
+		console.log((await validateHostEligibility(host)))
+
+		if( !(await validateHostEligibility(host)) ){
+			setFormErrors(latest => {
+				return {
+					...latest,
+					"host": "Host não disponível"
+				}
+			})
+			return 
+		}
+
+		let userCreationResponse = await createUser({
+			"username": username,
+			"email": email,
+			"password": password,
+			"host": host
+		});
+
+		if (userCreationResponse == true) {
+			navigate('/');
+		}
+		else{
+			alert(userCreationResponse)
+		}
+	}
 
 	return (
 		<CreationStyled className="base_page">
@@ -109,9 +125,10 @@ export const CreationPage = () => {
 						</Typography>
 					</Box>
 					<Box sx={{ mt: '30px', width: '100%' }} >
-						{formStep === 1
-							? (
-								<form onSubmit={handleFirstStep}>
+						{ 
+							formStep === 1 && 
+							(	
+								<div className="form-items">
 									<TextField
 										label="Nome"
 										value={username}
@@ -132,7 +149,7 @@ export const CreationPage = () => {
 										margin="normal"
 									/>
 									<Button
-										type="submit"
+										onClick={handleFirstStep}
 										variant="contained"
 										fullWidth
 										color="primary"
@@ -141,11 +158,15 @@ export const CreationPage = () => {
 											letterSpacing:"2px"
 										}}
 									>
-										Próximo
+										Avançar
 									</Button>
-								</form>
-							) : (
-								<form onSubmit={handleSecondStep}>
+								</div>
+							)
+						}
+						{ 
+							formStep === 2 && 
+							(
+								<div className="form-items">
 									<PassInput
 										label="Senha"
 										error={formErrors.password}
@@ -156,10 +177,35 @@ export const CreationPage = () => {
 										error={formErrors.passwordConfirmation}
 										onChange={(e) => { setPasswordConfirmation(e.target.value) }}
 									/>
-									<Button type="submit" variant="contained" color="primary" sx={{ fontWeight: 600, letterSpacing:"2px"	}}>
+									<Button onClick={handleSecondStep} variant="contained" color="primary" sx={{ fontWeight: 600, letterSpacing:"2px"	}}>
 										Cadastrar
 									</Button>
-								</form>
+								</div>
+							)
+						}
+						{ 
+							formStep === 3 && 
+							(
+								<div className="form-items">
+									<Tooltip title={"Este será o subdmínio das suas simulações"}>
+										<TextField
+											label="Host"
+											type="text"
+											value={host}
+											onChange={(e) => setHost(e.target.value)}
+											error={!!formErrors.host}
+											helperText={formErrors.host}
+											fullWidth
+											margin="normal"
+										/>
+									</Tooltip>
+									<div>
+										
+									</div>
+									<Button onClick={handleThirdStep} variant="contained" color="primary" sx={{ fontWeight: 600, letterSpacing:"2px"	}}>
+										Avançar
+									</Button>
+								</div>
 							)
 						}
 					</Box>
