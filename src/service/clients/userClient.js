@@ -1,7 +1,7 @@
 import baseClient from "./baseClient";
 import { storeToken } from "../authService";
 
-const APP_HOST = 'restmup.shop';
+const APP_HOST = 'restmup.site';
 const DOT = '.';
 const HTTP = 'https://'
 
