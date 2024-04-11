@@ -32,7 +32,7 @@ const getUserNodes = () => {
   ];
 }
 
-export const Simulation = () => {
+export default () => {
 
   const { simulationId } = useParams();
 

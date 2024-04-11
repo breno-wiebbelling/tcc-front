@@ -2,25 +2,28 @@ import React  from 'react';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { RequireAuth } from '../components/auth';
 
-import { Home } from '../pages/home';
-import { VariablePage} from "../pages/variavel/index";
-import { Simulation } from "../pages/simulation/index"
-
-import { LoginPage }   from "../pages/user/login/index";
-import { CreationPage }   from "../pages/user/creation/index";
+import Home from '../pages/home';
+import Simulation from "../pages/simulation/index"
+import LoginPage from "../pages/user/login/index";
+import CreationPage from "../pages/user/creation/index";
+import UserProfile from '../pages/user/profile/index';
+import NotFoundPage from "../pages/notFound/index";
 
 export const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-          <Route path="/var"        element={ <VariablePage/> } />
+          {/* <Route path="/var"        element={ <VariablePage/> } /> */}
 
           <Route path="/"           element={ <RequireAuth> <Home/> </RequireAuth>} />
-          {/* TODO: add require auth */}
-          {/* <Route path="/"           element={ <Home/>} /> */}
-          <Route path="/login"                        element={ <LoginPage/>    } />
-          <Route path="/logout"                       element={ <LoginPage/>    } />
-          <Route path="/registro"                     element={ <CreationPage/> } />
+
+          <Route path="/perfil"     element={ <UserProfile/>  } />
+          <Route path="/login"      element={ <LoginPage/>    } />
+          <Route path="/logout"     element={ <LoginPage/>    } />
+          <Route path="/registro"   element={ <CreationPage/> } />
+
+          <Route path="*"           element={ <NotFoundPage/> }/>
+
           <Route path="/simulation/:simulationId"     element={ <Simulation/>   } />
       </Routes>
     </BrowserRouter>

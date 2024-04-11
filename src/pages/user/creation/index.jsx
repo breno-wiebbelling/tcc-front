@@ -12,7 +12,7 @@ import { PassInput } from "../../../components/form/input/index";
 import { createUser, validateHostEligibility } from "../../../service/clients/userClient";
 import { verifyUserAndEmailEligibility, validateAndComparePasswords } from "../../../service/validators/userValidator"
 
-export const CreationPage = () => {
+export default () => {
 	const navigate = useNavigate();
 
 	const [username, setUsername] = useState('');

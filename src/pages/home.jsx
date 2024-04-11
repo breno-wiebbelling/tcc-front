@@ -4,7 +4,7 @@ import Header from "../components/header/index";
 import SimulationList from "../components/simulation/list/index"
 import { blueBayoux } from "../components/common/style/index"
 
-export const Home = () => {
+export default () => {
 
     return (
         <Box>

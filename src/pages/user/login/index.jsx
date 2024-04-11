@@ -14,7 +14,7 @@ import { PassInput } from "../../../components/form/input/index";
 import { validateLoginCredentials } from "../../../service/validators/userValidator";
 import { logout } from "../../../service/authService";
 
-export const LoginPage = () => {
+export default () => {
 	const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: ''});
   const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: ''}); }
 

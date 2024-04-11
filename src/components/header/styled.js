@@ -11,6 +11,7 @@ export default styled.div`
   display:flex;
   align-items: center;
   justify-content: space-between;
+  background-color: white;
   
   .left_box{
     width: 75%;
