@@ -20,9 +20,11 @@ const processNewNode = async (previousNode, mainManager, name) => {
     simulation_id: mainManager.simulation_id,
     type: nodeKeys.NEW_KEY,
     details: {
-      nextNode: previousNode.details.nextNode
+      nextNode: processNextNodeForNewNode(previousNode, mainManager)
     }
   });
+
+  baseNode.details.nextNode = previousNode.details.nextNode;
 
   return {
     ...baseNode,
@@ -37,6 +39,19 @@ const processNewNode = async (previousNode, mainManager, name) => {
       reload: mainManager.reload
     }
   }
+}
+
+const processNextNodeForNewNode = (previousNode, mainManager) => {
+  let nextNode = previousNode.details.nextNode;
+
+  if(nextNode.includes('ghost')){
+    mainManager.nodeManagerInstance.setNodes(ln => {
+      nextNode = (ln.find(n => n.id === nextNode)).details.nextNode
+      return ln;
+    });
+  }
+
+  return nextNode;
 }
 
 export const addNodeBelow = async (fromNodeInformation, mainManager) => {
@@ -146,10 +161,9 @@ export const deleteNode = async (nodeInformation, mainManager) => {
     return latestNodes;
   });
 
-  let parentNode = currentNodes.filter(node => isNodeIdPresentOnNextNode(nodeInformation.id, node))[0]
-  nodeInformation = currentNodes.filter(node => node.id === nodeInformation.id)[0];
-  let newParentNode;
-  
+  let parentNode = currentNodes.find(node => isNodeIdPresentOnNextNode(nodeInformation.id, node));
+  nodeInformation = currentNodes.find(node => node.id === nodeInformation.id);
+  /*
   if (nodeInformation.type === nodeKeys.CONDITIONAL_KEY) {
     let conditionalClosure = getConditionalClosure(nodeInformation.id, currentNodes);
     newParentNode = currentNodes.find(cn => cn.id === conditionalClosure.details.nextNode)
@@ -177,12 +191,39 @@ export const deleteNode = async (nodeInformation, mainManager) => {
       await updateNextNode(parentNode.id, parentNode.details.nextNode);
     }
     else{
-      await updateNextNode(parentNode.id, nodeInformation.details.nextNode, nodeInformation.id);
+      // await updateNextNode(parentNode.id, nodeInformation.details.nextNode);
     }
-    await deleteById(nodeInformation.id);
+    // await deleteById(nodeInformation.id);
   }
-  
+  */
+  await deleteById(nodeInformation.id);
+  let newNextNode = processNextNodeForNewNode(nodeInformation, mainManager);
+
+  //TODO: delete all nodes until cond. closure
+  if (nodeInformation.type === nodeKeys.CONDITIONAL_KEY) {
+    let conditionalClosure = getConditionalClosure(nodeInformation.id, currentNodes);
+    newNextNode = (currentNodes.find(cn => cn.id === conditionalClosure.details.nextNode)).id
+  }
+
+  if (parentNode.type === nodeKeys.CONDITIONAL_KEY) {
+    let previousIndex = parentNode.details.nextNode.indexOf(nodeInformation.id);
+    let nextNode = currentNodes.find(gn => gn.id === nodeInformation.details.nextNode);
+
+    if(nextNode.type === nodeKeys.GHOST){
+      if (parentNode.details.conditionalDetails.type === 'boolean') {
+        let newNode = await processNewNode({ ...nodeInformation, details: { nextNode: nextNode.details.nextNode } }, mainManager, "Tarefa temporária!");
+        parentNode.details.nextNode[previousIndex] = newNode['_id'];
+        newNextNode = parentNode.details.nextNode; 
+      }
+      else {
+        //TODO: REMOVE SWITCH OPTION
+      }
+    }
+  }
+
+  await updateNextNode(parentNode.id, newNextNode);
   await mainManager.reload();
+  return
 }
 
 export const findNodeFrequencies = (given_nodes) => {
