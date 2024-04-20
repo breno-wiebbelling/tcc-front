@@ -20,7 +20,10 @@ export const LoginStyled = styled.div`
         align-items: center;
         flex-direction: column;
 
-        height: 80%;
+        padding: 0px 6%;
+
+        height: 90%;
         width: 500px;
+        box-sizing: border-box;
     }
 `

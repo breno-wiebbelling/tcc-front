@@ -22,12 +22,11 @@ export default (initialNode, initialNodes, nodeEventClicks, simulationId, search
   }
 
   mainManagerLibrary.reload = async () => {
-    let newInitialNodes = await searchInicialNodes()
-
-    await mainManagerLibrary.columnManagerInstance.reset();
-    await mainManagerLibrary.edgeManagerInstance.reset();
-    await mainManagerLibrary.lineManagerInstance.reset();
-    await mainManagerLibrary.nodeManagerInstance.reset(newInitialNodes, mainManagerLibrary);
+    let newInitialNodes = await searchInicialNodes();
+      mainManagerLibrary.edgeManagerInstance.reset();
+      mainManagerLibrary.lineManagerInstance.reset();
+      await mainManagerLibrary.columnManagerInstance.reset();
+      await mainManagerLibrary.nodeManagerInstance.reset(newInitialNodes, mainManagerLibrary);
   }
 
   return mainManagerLibrary;

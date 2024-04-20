@@ -30,6 +30,11 @@ export default styled.div`
         z-index: 2;
     }
 
+    .worker p{
+        width: 70%;
+        padding-left: 11%;
+    }
+
     .action_button{
         width: 50px;
         height: 50px;

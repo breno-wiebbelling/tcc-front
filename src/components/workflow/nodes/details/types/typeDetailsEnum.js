@@ -7,7 +7,7 @@ const typeDetailsValues = {
   },
   COND:{
     code: nodeKeys.CONDITIONAL_KEY,
-    name: "Condicional"
+    name: "Comparação"
   },
   START:{
     code: nodeKeys.START_KEY,
@@ -15,7 +15,7 @@ const typeDetailsValues = {
   },
   TEXT:{
     code: nodeKeys.TEXT_KEY,
-    name: "Texto"
+    name: "Textual"
   },
   END:{
     code: nodeKeys.FINAL_KEY,

@@ -47,9 +47,24 @@ export const validateHostEligibility = async (hostName) => {
     )['data'];
 }
 
+export const getUserInfo = async () => {
+    return (
+        await baseClient.get( 
+            '/user', 
+        )
+    )["data"];
+}
+
 export const getUserHost = async () => {
     let userHost = (await baseClient.get('/user/host'))['data'];
 
     return `${HTTP}${userHost}${DOT}${APP_HOST}`
 }
 
+export const getUserImage = async () => {
+    return (
+        await baseClient.get( 
+            '/image', 
+        )
+    )["data"];
+}

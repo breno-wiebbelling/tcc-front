@@ -6,12 +6,14 @@ import {
   MathDetailsComponent,
   InputDetailsComponent,
   OutputDetailsComponent,
-  TextDetailsComponent
+  TextDetailsComponent,
+  CondDetailsComponent
 } from "./types/typeDetailsManager";
 
 const options = [
   { value: NodeDetailsTypeEnum.MATH.code, label: NodeDetailsTypeEnum.MATH.name, key: NodeDetailsTypeEnum.MATH.code },
-  { value: NodeDetailsTypeEnum.TEXT.code, label: NodeDetailsTypeEnum.TEXT.name, key: NodeDetailsTypeEnum.TEXT.code }
+  { value: NodeDetailsTypeEnum.TEXT.code, label: NodeDetailsTypeEnum.TEXT.name, key: NodeDetailsTypeEnum.TEXT.code },
+  { value: NodeDetailsTypeEnum.COND.code, label: NodeDetailsTypeEnum.COND.name, key: NodeDetailsTypeEnum.COND.code }
 ];
 
 const TypeSelector = ({ nodeInfo, setNodeDetails, setNodeType, nodeType, nodeDetails }) => {
@@ -38,6 +40,9 @@ const TypeSelector = ({ nodeInfo, setNodeDetails, setNodeType, nodeType, nodeDet
         break;
       case NodeDetailsTypeEnum.TEXT.code:
         DetailsComponent = TextDetailsComponent;
+        break;
+      case NodeDetailsTypeEnum.COND.code:
+        DetailsComponent = CondDetailsComponent;
         break;
 
       default:

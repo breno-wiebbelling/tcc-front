@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import {idGenerator} from '../../common/idManager'
 
 const first_line_name = "first";
@@ -30,7 +29,6 @@ const LineManager =  () => {
   }
 
   lineLibrary.getLinePosition = (lineName) => {
-
     let currentLine = lineLibrary.getLine(lineName);
 
     if(lineName === first_line_name){
@@ -39,16 +37,16 @@ const LineManager =  () => {
     else{
       return currentLine.gap + lineLibrary.getLinePosition(currentLine.baseLine);
     }
-
   }
 
   lineLibrary.process = (parentLineName) => {
     if(parentLineName === last_line_name){
       parentLineName = lineLibrary.lines.find(line => line.name === last_line_name).baseLine;
     }
+
     let nextLine = lineLibrary.lines.find(line => line.baseLine === parentLineName);
 
-    if( nextLine.name === lineLibrary.last_line_name ){
+    if( nextLine.name === last_line_name ){
       let newLineName = idGenerator();
 
       lineLibrary.lines.push({ 
@@ -80,6 +78,7 @@ const LineManager =  () => {
 
     let fixedLines = lineLibrary.lines.map(line => {
       if(line.name === currentLineName){ line.baseLine = newLineName}
+      return line;
     })
 
     lineLibrary.lines = (fixedLines);
@@ -94,6 +93,7 @@ const LineManager =  () => {
 
     let fixedLines = lineLibrary.lines.map(line => {
       if(line.name === lineBasedOnCurrentLine.name){ line.baseLine = newLineName}
+      return line;
     })
 
     lineLibrary.lines = (fixedLines);
@@ -116,12 +116,11 @@ const LineManager =  () => {
     lineLibrary.lines = (fixedLines)
   }
 
-  lineLibrary.reset = async () => {
+  lineLibrary.reset = () => {
     lineLibrary.lines = [
       { name:first_line_name, gap: 0 },
       { name:last_line_name, baseLine:first_line_name, gap: Y_GAP }
     ];
-
   }
 
   return lineLibrary;

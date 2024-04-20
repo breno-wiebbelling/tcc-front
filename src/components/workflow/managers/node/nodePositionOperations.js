@@ -1,46 +1,46 @@
 import { idGenerator } from "../../../common/idManager";
-import { nodeKeys, findNodeFrequencies } from  "../nodeManager";
+import { nodeKeys, findNodeFrequencies } from "../nodeManager";
 
 export const isNodeIdPresentOnNextNode = (nodeId, nodeToVerify) => {
   return (
     nodeToVerify.details.nextNode === (nodeId)
   )
-  ||
-  (
-    nodeToVerify.type === nodeKeys.CONDITIONAL_KEY 
-    && nodeToVerify.details.nextNode.includes(nodeId)
-  )
+    ||
+    (
+      nodeToVerify.type === nodeKeys.CONDITIONAL_KEY
+      && nodeToVerify.details.nextNode.includes(nodeId)
+    )
 }
 
 export const reprocessNextNodePosition = (currentNode, currentNodes, mainManager) => {
-  if(currentNode.type === nodeKeys.FINAL_KEY){ return currentNodes }
+  if (currentNode.type === nodeKeys.FINAL_KEY) { return currentNodes }
 
   let nextNode = currentNodes.find(node => isNodeIdPresentOnNextNode(node.id, currentNode));
 
-  if(nextNode.type === nodeKeys.FINAL_KEY){ return currentNodes }
+  if (nextNode.type === nodeKeys.FINAL_KEY) { return currentNodes }
   nextNode.line = mainManager.lineManagerInstance.process(currentNode.line);
 
-  if(nextNode.type === nodeKeys.CONDITIONAL_KEY){
+  if (nextNode.type === nodeKeys.CONDITIONAL_KEY) {
     nextNode.details.nextNode.forEach(nextNodeId => {
       let nextConditionalNode = currentNodes.find(node => node.id === nextNodeId);
-      let conditionalGhostNode = reprocessNodeOnNextPosition( {...nextNode, column:nextConditionalNode.column }, currentNodes, mainManager)
+      let conditionalGhostNode = reprocessNodeOnNextPosition({ ...nextNode, column: nextConditionalNode.column }, currentNodes, mainManager)
 
       nextConditionalNode.line = mainManager.lineManagerInstance.process(conditionalGhostNode.line);
       currentNodes = reprocessNextNodePosition(nextConditionalNode, currentNodes, mainManager);
     })
-    
+
     return currentNodes
   }
 
   return reprocessNextNodePosition(nextNode, currentNodes, mainManager);
 }
 
-export const reprocessNodeColumns = (mainManager, currentNodeId, latestNodes, updateParentNode) => {  
+export const reprocessNodeColumns = (mainManager, currentNodeId, latestNodes, updateParentNode) => {
   let currentNode = latestNodes.find(node => node.id === currentNodeId);
-  switch (currentNode.type){
+  switch (currentNode.type) {
     case nodeKeys.START_KEY:
       currentNode.column = mainManager.columnManagerInstance.central_column_name;
-    
+
     case nodeKeys.TASK_KEY:
       currentNode.column = mainManager.nodeManagerInstance.parentNode.column;
 
@@ -54,7 +54,7 @@ export const reprocessNodeColumns = (mainManager, currentNodeId, latestNodes, up
       currentNode.column = mainManager.nodeManagerInstance.parentNode.column;
 
       currentNode.details.nextNode.forEach((conditionalLegId, index) => {
-        let columnNameForFollowingChild = mainManager.columnManagerInstance.create( index, currentNode.details.nextNode.length, currentNode.column );
+        let columnNameForFollowingChild = mainManager.columnManagerInstance.create(index, currentNode.details.nextNode.length, currentNode.column);
 
         mainManager.nodeManagerInstance.updateParentNode({ column: columnNameForFollowingChild, line: currentNode.line });
         latestNodes = reprocessNodeColumns(mainManager, conditionalLegId, latestNodes, updateParentNode);
@@ -66,22 +66,22 @@ export const reprocessNodeColumns = (mainManager, currentNodeId, latestNodes, up
       currentNode.column = mainManager.columnManagerInstance.central_column_name;
       break;
   }
-  
+
   return latestNodes;
 }
 
 export const reprocessNodeOnNextPosition = (currentNode, currentNodes, mainManager) => {
-  if(currentNode.type === nodeKeys.FINAL_KEY) { return currentNodes }
+  if (currentNode.type === nodeKeys.FINAL_KEY) { return currentNodes }
 
-  let nextNode = currentNodes.find(node => (node.line === currentNode.line && node.column === currentNode.column && node.id != currentNode.id ));
+  let nextNode = currentNodes.find(node => (node.line === currentNode.line && node.column === currentNode.column && node.id != currentNode.id));
 
-  if(!nextNode && currentNode.type === nodeKeys.CONDITIONAL_KEY){
+  if (!nextNode && currentNode.type === nodeKeys.CONDITIONAL_KEY) {
     let nextLine = mainManager.lineManagerInstance.process(currentNode.line);
-    let nextNode = currentNodes.find(node => ( node.line === nextLine && node.column === currentNode.column && node.id != currentNode.id && node.type === nodeKeys.CONDITIONAL_GHOST ));
+    let nextNode = currentNodes.find(node => (node.line === nextLine && node.column === currentNode.column && node.id != currentNode.id && node.type === nodeKeys.CONDITIONAL_GHOST));
 
-    while(!nextNode){
+    while (!nextNode) {
       nextLine = mainManager.lineManagerInstance.process(nextLine);
-      nextNode = currentNodes.find(node => ( node.line === nextLine && node.column === currentNode.column && node.id != currentNode.id && node.type === nodeKeys.CONDITIONAL_GHOST ));
+      nextNode = currentNodes.find(node => (node.line === nextLine && node.column === currentNode.column && node.id != currentNode.id && node.type === nodeKeys.CONDITIONAL_GHOST));
     }
 
     nextNode.line = nextLine;
@@ -96,22 +96,22 @@ export const updateGhostPositions = (mainManager) => {
   mainManager.nodeManagerInstance.setNodes(latestNodes => {
 
     let conditionalGhosts = latestNodes.filter(node => node.type === nodeKeys.CONDITIONAL_GHOST)
-    conditionalGhosts.forEach(conditionalGhost => { 
-      latestNodes = reprocessNextNodePosition(conditionalGhost, latestNodes, mainManager) 
+    conditionalGhosts.forEach(conditionalGhost => {
+      latestNodes = reprocessNextNodePosition(conditionalGhost, latestNodes, mainManager)
     })
 
-    let ghostNodes = latestNodes.filter(node => node.type === nodeKeys.GHOST );
+    let ghostNodes = latestNodes.filter(node => node.type === nodeKeys.GHOST);
 
-    if(ghostNodes.length <= 0){ return latestNodes }
+    if (ghostNodes.length <= 0) { return latestNodes }
 
     let correctGhost = ghostNodes[0];
     let correctGhostPosition = mainManager.lineManagerInstance.getLinePosition(correctGhost.line);
-    
+
     let new_ghostPosition;
     ghostNodes.forEach(new_ghost => {
       new_ghostPosition = mainManager.lineManagerInstance.getLinePosition(new_ghost.line);
 
-      if(new_ghostPosition > correctGhostPosition){
+      if (new_ghostPosition > correctGhostPosition) {
         correctGhost = new_ghost;
         correctGhostPosition = new_ghostPosition;
       }
@@ -126,44 +126,69 @@ export const updateGhostPositions = (mainManager) => {
 
 export const reloadNodesAndAddGhostNodes = (mainManager) => {
   mainManager.nodeManagerInstance.setNodes(latestNodes => {
+    let nodesWithSimilarity = findNodeFrequencies(latestNodes);
     let conditionalNodes = latestNodes.filter(node => node.type === nodeKeys.CONDITIONAL_KEY)
 
-    if(conditionalNodes.length<=0) { return latestNodes }
+    if (conditionalNodes.length <= 0) { return latestNodes }
     conditionalNodes.forEach(conditionalNode => {
       let ghostLine = mainManager.lineManagerInstance.processConditionalGhostLine(conditionalNode.line);
 
       conditionalNode.details.nextNode.forEach(nextNodeId => {
         let nextNode = latestNodes.find(node => node.id === nextNodeId);
-        let newConditionalGhost = { id: idGenerator(), details: {"nextNode":nextNode.id}, type: nodeKeys.CONDITIONAL_GHOST, column:nextNode.column, line:ghostLine }
-        
+        let newConditionalGhost = { id: idGenerator(), details: { "nextNode": nextNode.id }, type: nodeKeys.CONDITIONAL_GHOST, column: nextNode.column, line: ghostLine }
+
         latestNodes.push(newConditionalGhost);
         mainManager.edgeManagerInstance.updateTarget(conditionalNode.id, nextNodeId, newConditionalGhost.id)
         mainManager.edgeManagerInstance.create(newConditionalGhost.id, nextNodeId);
       })
     })
 
-    let nodesWithSimilarity = findNodeFrequencies(latestNodes);
+    //TODO: remove duplicates
+    let tempNodes = latestNodes;
+
+    let seenIds = {};
+    let uniqueList = tempNodes.filter(item => {
+      if (seenIds.hasOwnProperty(item.id)) {
+        return false;
+      } else {
+        seenIds[item.id] = true;
+        return true;
+      }
+    });
+    latestNodes = uniqueList;
+    //END TODO
+
     nodesWithSimilarity.forEach(similarNodeId => {
       let similarNode = latestNodes.find(node => node.id === similarNodeId);
       let ghostLine = mainManager.lineManagerInstance.processGhostLine(similarNode.line);
 
       let nodesPoitingToSimilarNode = latestNodes.filter(node => isNodeIdPresentOnNextNode(similarNodeId, node))
-      nodesPoitingToSimilarNode.forEach(nodePoitingToSimilar => {
+      if (nodesPoitingToSimilarNode.length > 1) {
+        let newGhostColumns = [];
 
-        let newGhostNode  = { id: idGenerator(), details: {"nextNode":nodePoitingToSimilar.details.nextNode}, type: nodeKeys.GHOST, column:nodePoitingToSimilar.column, line:ghostLine }
-        nodePoitingToSimilar.details.nextNode = newGhostNode.id;
-        
-        latestNodes.push(newGhostNode);
-        mainManager.edgeManagerInstance.updateTarget(nodePoitingToSimilar.id, similarNodeId, newGhostNode.id)
-        mainManager.edgeManagerInstance.create(newGhostNode.id, similarNodeId)
-      })
+        nodesPoitingToSimilarNode.forEach(nodePoitingToSimilar => {
+          let newGhostNode = { id: idGenerator("ghost"), details: { "nextNode": nodePoitingToSimilar.details.nextNode }, type: nodeKeys.GHOST, column: nodePoitingToSimilar.column, line: ghostLine }
+          nodePoitingToSimilar.details.nextNode = newGhostNode.id;
+
+          latestNodes.push(newGhostNode);
+          newGhostColumns.push(newGhostNode.column);
+
+          mainManager.edgeManagerInstance.updateTarget(nodePoitingToSimilar.id, similarNodeId, newGhostNode.id)
+          mainManager.edgeManagerInstance.create(newGhostNode.id, similarNodeId)
+        })
+
+        latestNodes.forEach(ln => {
+          if (ln.id === similarNode.id) {
+            ln.column = (mainManager.columnManagerInstance.getCentralColumn(newGhostColumns)).name;
+          }
+        })
+      }
     })
-
     return latestNodes;
   })
 
   updateNodesPositions(mainManager)
-} 
+}
 
 export const updateNodesPositions = (mainManager) => {
   mainManager.nodeManagerInstance.setNodes(latestNodes => {
@@ -172,16 +197,16 @@ export const updateNodesPositions = (mainManager) => {
     return latestNodes.map(node => {
 
       node.position = {
-        x : mainManager.columnManagerInstance.getColumnPosition(node.column),
-        y : mainManager.lineManagerInstance.getLinePosition(node.line)
+        x: mainManager.columnManagerInstance.getColumnPosition(node.column),
+        y: mainManager.lineManagerInstance.getLinePosition(node.line)
       }
 
-      if(node.type === nodeKeys.START_KEY) { node.position.y -= 100 }
-      if(node.type === nodeKeys.CONDITIONAL_KEY) { node.position.y -= 50 }
-      if(node.type === nodeKeys.TASK_KEY || node.type === nodeKeys.NEW_KEY || node.type === nodeKeys.TEXT_KEY) { node.position.y -= 50 }
-      if(node.type === nodeKeys.FINAL_KEY && anyGhostNode ) { node.position.y -= 50 }
+      if (node.type === nodeKeys.START_KEY) { node.position.y -= 100 }
+      if (node.type === nodeKeys.CONDITIONAL_KEY) { node.position.y -= 50 }
+      if (node.type === nodeKeys.TASK_KEY || node.type === nodeKeys.NEW_KEY || node.type === nodeKeys.TEXT_KEY) { node.position.y -= 50 }
+      if (node.type === nodeKeys.FINAL_KEY && anyGhostNode) { node.position.y -= 50 }
 
       return node
-    }) 
+    })
   })
 }

@@ -14,17 +14,14 @@ export const AppRoutes = () => {
     <BrowserRouter>
       <Routes>
           {/* <Route path="/var"        element={ <VariablePage/> } /> */}
-
-          <Route path="/"           element={ <RequireAuth> <Home/> </RequireAuth>} />
-
-          <Route path="/perfil"     element={ <UserProfile/>  } />
+          <Route path="/"                           element={ <RequireAuth> <Home/>        </RequireAuth> }/>
+          <Route path="/perfil"                     element={ <RequireAuth> <UserProfile/> </RequireAuth> }/>
+          <Route path="/simulation/:simulationId"   element={ <RequireAuth> <Simulation/>  </RequireAuth> }/>
+          
           <Route path="/login"      element={ <LoginPage/>    } />
           <Route path="/logout"     element={ <LoginPage/>    } />
           <Route path="/registro"   element={ <CreationPage/> } />
-
-          <Route path="*"           element={ <NotFoundPage/> }/>
-
-          <Route path="/simulation/:simulationId"     element={ <Simulation/>   } />
+          <Route path="*"           element={ <NotFoundPage/> } />
       </Routes>
     </BrowserRouter>
   )

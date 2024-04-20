@@ -3,7 +3,6 @@ import MathOperationEnum from "../../components/workflow/nodes/details/types/mat
 
 import { validateStringValue } from "../../components/form/formValidators";
 import { validateNewUriInfo } from "../clients/nodeClient";
-import URIValueTypeEnum from "../../components/workflow/nodes/details/types/input/uriBuilder/URIValueTypeEnum";
 
 const validateMathTypeDetails = (nodeInformation, setError) => {
   if(nodeInformation.details.mathOperation === MathOperationEnum.NONE.code){
@@ -33,6 +32,10 @@ const validateInputTypeDetails = async (nodeInformation, setError) => {
   return true;
 }
 
+const validateConditionalTypeDetails = (nodeInformation, setError) => {
+  return true;
+}
+
 const validateType = async (nodeInformation, setError) => {
 
   if(nodeInformation.type === NodeDetailsTypeEnum.NONE.code){
@@ -48,7 +51,11 @@ const validateType = async (nodeInformation, setError) => {
     return false;
   }
 
-  return nodeInformation.type !== NodeDetailsTypeEnum.COND.code;
+  if(nodeInformation.type === NodeDetailsTypeEnum.COND.code && !validateConditionalTypeDetails(nodeInformation, setError)){
+    return false
+  }
+
+  return true;
 }
 
 const nameValidator = (nodeInformation, setError) => {

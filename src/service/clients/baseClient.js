@@ -1,8 +1,9 @@
 import axios from "axios";
 import { getToken } from '../authService'
 
-const BASE_URL_HOST = "https://tcc-back-end.vercel.app"
-//http://localhost:8080",
+const BASE_URL_HOST =
+// "https://tcc-back-end.vercel.app";
+"http://localhost:8080";
 
 const baseInstance =  axios.create({
   baseURL: BASE_URL_HOST,

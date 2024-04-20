@@ -121,7 +121,6 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
   
           currentNode.details.nextNode.forEach( async (conditionalLegId, index) => {
             let columnNameForFollowingChild = mainManager.columnManagerInstance.create( index, currentNode.details.nextNode.length, currentNode.column );
-  
             library.updateParentNode({ column: columnNameForFollowingChild, line: currentNode.line }, mainManager);
             mainManager.edgeManagerInstance.create( prev_parentNode.id, conditionalLegId );
             await library.processNode(conditionalLegId, mainManager);

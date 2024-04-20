@@ -10,7 +10,7 @@ export const create = async (new_node) => {
   ))["data"];
 }
 
-export const updateNextNode = async (currentNodeId, newNextNode, previousNodeId) => {
+export const updateNextNode = async (currentNodeId, newNextNode) => {
   return (
     (
       await baseClient.patch(
@@ -18,7 +18,6 @@ export const updateNextNode = async (currentNodeId, newNextNode, previousNodeId)
         {
           'currentNodeId': currentNodeId,
           'newNextNode': newNextNode,
-          'previousNodeId': previousNodeId
         }
       )
     )["data"]

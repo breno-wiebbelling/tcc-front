@@ -53,6 +53,16 @@ export default ({ data }) => {
               <DeleteIcon/>
             </IconButton>
           </div>
+          <div 
+            className='action_button top'
+            onClick={ () => { data.click.addNode(nodeCRUDOperations.ADD_ABOVE, data) } }
+            style={{ "top": (isOptionsVisible) ? "-60px" : "30px" , "left": "75px" }} 
+          >
+            <IconButton className='action_button_element add_above'>
+              <AddIcon className='add_action'/>
+              <ArrowBackIosIcon className='arrow_action'/>
+            </IconButton>
+          </div>
         </div>
         <Handle type="source" position={Position.Bottom} />
       </ConditionalNodeStyled>

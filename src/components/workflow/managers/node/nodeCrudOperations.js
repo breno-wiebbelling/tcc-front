@@ -13,10 +13,10 @@ import {
   deleteById
 } from "../../../../service/clients/nodeClient";
 
-const processNewNode = async (previousNode, mainManager) => {
+const processNewNode = async (previousNode, mainManager, name) => {
 
   let baseNode = await create({
-    name: "Nova tarefa!",
+    name: name,
     simulation_id: mainManager.simulation_id,
     type: nodeKeys.NEW_KEY,
     details: {
@@ -47,12 +47,12 @@ export const addNodeBelow = async (fromNodeInformation, mainManager) => {
   })
 
   let currentNode = localNodes.find(node => node.id === fromNodeInformation.id);
-  let newNodeBelow = await processNewNode(currentNode, mainManager)
+  let newNodeBelow = await processNewNode(currentNode, mainManager, "Nova tarefa!")
   newNodeBelow.id = newNodeBelow._id;
 
   localNodes = await Promise.all(localNodes.map(async node => {
     if (node.id === fromNodeInformation.id) {
-      node.details.nextNode = await updateNextNode(node.id, newNodeBelow.id);
+      await updateNextNode(node.id, newNodeBelow.id);
       node.details.nextNode = newNodeBelow.id;
     }
     return node;
@@ -67,7 +67,6 @@ export const addNodeBelow = async (fromNodeInformation, mainManager) => {
 
   updateGhostPositions(mainManager)
   updateNodesPositions(mainManager)
-  // mainManager.nodeManagerInstance.nodeClickEvents.editNode(newNode['data']);
 
   return localNodes;
 }
@@ -80,7 +79,7 @@ export const addNodeAbove = async (fromNodeInformation, mainManager) => {
   });
 
   let currentNode = localNodes.find(node => node.id === fromNodeInformation.id);
-  let newNode = await processNewNode({ ...currentNode, details: { nextNode: currentNode.id } }, mainManager)
+  let newNode = await processNewNode({ ...currentNode, details: { nextNode: currentNode.id } }, mainManager, "Nova tarefa!")
   newNode.id = newNode._id;
 
   if (currentNode.type === nodeKeys.FINAL_KEY) {
@@ -89,8 +88,7 @@ export const addNodeAbove = async (fromNodeInformation, mainManager) => {
   } else {
     let baseLine = mainManager.lineManagerInstance.getBaseLine(currentNode.line);
     newNode.line = mainManager.lineManagerInstance.process(baseLine.name);
-    // currentNode.line = mainManager.lineManagerInstance.process(currentNode.line);
-  } 
+  }
 
   localNodes.map(async node => {
     if (isNodeIdPresentOnNextNode(currentNode.id, node)) {
@@ -111,13 +109,11 @@ export const addNodeAbove = async (fromNodeInformation, mainManager) => {
 
   localNodes = [...localNodes, newNode];
   localNodes = reprocessNextNodePosition(newNode, localNodes, mainManager);
-  // mainManager.edgeManagerInstance.create(newNode.id, currentNode.id);
 
   mainManager.nodeManagerInstance.setNodes(localNodes);
 
   updateGhostPositions(mainManager)
   updateNodesPositions(mainManager)
-  // mainManager.nodeManagerInstance.nodeClickEvents.editNode(newNode['data']);
 }
 
 export const addConditionalLeg = (fromNodeInformation, mainManager) => {
@@ -143,18 +139,49 @@ export const addConditionalLeg = (fromNodeInformation, mainManager) => {
 
 export const deleteNode = async (nodeInformation, mainManager) => {
   let currentNodes;
-
+  
   mainManager.nodeManagerInstance.setNodes((latestNodes) => {
     currentNodes = latestNodes;
 
     return latestNodes;
   });
-  nodeInformation = currentNodes.filter(node => node.id === nodeInformation.id)[0];
+
   let parentNode = currentNodes.filter(node => isNodeIdPresentOnNextNode(nodeInformation.id, node))[0]
+  nodeInformation = currentNodes.filter(node => node.id === nodeInformation.id)[0];
+  let newParentNode;
+  
+  if (nodeInformation.type === nodeKeys.CONDITIONAL_KEY) {
+    let conditionalClosure = getConditionalClosure(nodeInformation.id, currentNodes);
+    newParentNode = currentNodes.find(cn => cn.id === conditionalClosure.details.nextNode)
+    await deleteById(nodeInformation.id);
+    await updateNextNode(parentNode.id, newParentNode.id);
+  }
+  else {
+    if (parentNode.type === nodeKeys.CONDITIONAL_KEY) {
+      let previousIndex = parentNode.details.nextNode.indexOf(nodeInformation.id)
+      let nextNode = currentNodes.find(gn => gn.id === nodeInformation.details.nextNode);
 
-  await deleteById(nodeInformation.id);
+      if (nextNode.type === nodeKeys.GHOST) {
+        if (parentNode.details.conditionalDetails.type === 'boolean') {
+          let newNode = await processNewNode({ ...nodeInformation, details: { nextNode: nextNode.details.nextNode } }, mainManager, "Tarefa temporária!")
+          parentNode.details.nextNode[previousIndex] = newNode['_id']
+        }
+        else {
+          //TODO: REMOVE SWITCH OPTION, remove id from details.nextNode on parent conditional task
+        }
+      }
+      else {
+        parentNode.details.nextNode[previousIndex] = nextNode['id']
+      }
 
-  await updateNextNode(parentNode.id, nodeInformation.details.nextNode, nodeInformation.id);
+      await updateNextNode(parentNode.id, parentNode.details.nextNode);
+    }
+    else{
+      await updateNextNode(parentNode.id, nodeInformation.details.nextNode, nodeInformation.id);
+    }
+    await deleteById(nodeInformation.id);
+  }
+  
   await mainManager.reload();
 }
 
@@ -214,3 +241,48 @@ export const updateAfterFinish = (mainManager) => {
 
   return
 }
+
+const getConditionalClosure = (conditionalId, givenNodes) => {
+  let conditionalNode = givenNodes.find(gn => gn.id === conditionalId);
+
+  if (conditionalNode.type != nodeKeys.CONDITIONAL_KEY) {
+    conditionalNode = givenNodes.find(gn => gn.id === conditionalNode.details.nextNode);
+  }
+
+  return findMeetPoint(conditionalNode, givenNodes, [], conditionalNode.details.nextNode.length);
+}
+
+function findMeetPoint(currentNode, givenNodes, verifiedPoints, meetSize) {
+  if (currentNode.type === nodeKeys.FINAL_KEY) {
+    return null;
+  }
+
+  if (Array.isArray(currentNode.details.nextNode)) {
+    for (let n of currentNode.details.nextNode) {
+      let nextNode = givenNodes.find(gn => gn.id === n);
+      let meetPointResult = findMeetPoint(nextNode, givenNodes, verifiedPoints, meetSize, nodeKeys);
+      if (meetPointResult !== null) {
+        return meetPointResult;
+      }
+    }
+  } else {
+    verifiedPoints.push(currentNode.id);
+
+    if (verifyPoint(currentNode.id, verifiedPoints, meetSize)) {
+      return currentNode;
+    } else {
+      verifiedPoints.push(currentNode.details.nextNode);
+      return findMeetPoint(givenNodes.find(gn => gn.id === currentNode.details.nextNode), givenNodes, verifiedPoints, meetSize, nodeKeys);
+    }
+  }
+
+  return null;
+}
+
+const verifyPoint = (currentPointId, verifiedPoints, meetSize) => {
+  return verifiedPoints.includes(currentPointId) && verifyMeetClosure(verifiedPoints, currentPointId, meetSize);
+};
+
+const verifyMeetClosure = (verifiedPoints, currentPointId, meetSize) => {
+  return verifiedPoints.filter(vp => vp === currentPointId).length === meetSize;
+};

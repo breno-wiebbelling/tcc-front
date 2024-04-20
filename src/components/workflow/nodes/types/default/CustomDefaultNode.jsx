@@ -8,6 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { nodeCRUDOperations } from "../../../managers/nodeManager";
+import mathSymbol from "./function-mathematical-symbol.png"
 
 export default ({ data }) => {
   const [isOptionsVisible, setIsOptionsVisible] = React.useState(false);
@@ -22,6 +23,7 @@ export default ({ data }) => {
           onClick={ () => { setIsOptionsVisible(true); }}
         >
           <p onClick={ () => { setIsOptionsVisible(true); }}> {data.label} </p>
+          <img style={{height: '45%', padding: '5% 5%'}} src={mathSymbol} alt="Logo" />
         </div>
         <div onClick={ () => { setIsOptionsVisible(false); }} >
           <div 

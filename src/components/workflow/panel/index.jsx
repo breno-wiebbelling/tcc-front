@@ -18,7 +18,6 @@ export default ({ isOpen, setIsOpen, children }) => {
         "height":"100%",
       }}
     >
-
         {isOpen &&
           <Container
             sx={{

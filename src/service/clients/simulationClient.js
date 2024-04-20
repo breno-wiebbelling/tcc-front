@@ -28,6 +28,12 @@ export const deleteSimulationById = async (simulationId) => {
   ).data;
 }
 
+export const getNextNodesAvailable = async (simulationId, nodeId) => {
+  return (
+    await baseClient.get(`/${simulationURI}/${simulationId}/${nodesURI}/${nodeId}/conditionalOptions`)
+  ).data;
+}
+
 export const getSimulationById = async (simulationId) => {
   return (await baseClient.get(`/${simulationURI}/${simulationId}`)).data;
 }

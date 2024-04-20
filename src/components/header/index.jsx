@@ -2,13 +2,22 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
-import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import HeaderStyled from './styled'
 import Box from '@mui/material/Box';
 import logo from './Restmup.png';
+import { getUserImage } from "../../service/clients/userClient";
+import { smoke } from '../common/style';
+
 
 export default () => {
   const navigate = useNavigate();
+  const [userImageUrl, setUserImageUrl] = React.useState("/static/images/avatar/2.jpg");
+
+  React.useEffect(() => {
+    getUserImage().then(url => {
+      setUserImageUrl(url)
+    })
+  }, [])
 
   return (
     <HeaderStyled> 
@@ -21,8 +30,8 @@ export default () => {
         </div>
       </Box>
       <Box className="rigth_box" onClick={ () => {navigate('/perfil')} }>
-        <IconButton sx={{ maxHeight: "98%" }}>
-          <Avatar src="/static/images/avatar/2.jpg" sx={{ height: "5vh", width: "5vh" }}/>
+        <IconButton sx={{ maxHeight: "5vh",  }}>
+          <Avatar src={userImageUrl} sx={{ height: "6vh", width: "6vh", borderRadius: "50%", border: `2px solid ${smoke}` }}/>
         </IconButton>
       </Box>
     </HeaderStyled>

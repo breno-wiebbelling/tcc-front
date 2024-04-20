@@ -62,4 +62,8 @@ export default styled.div`
     cursor: pointer;
   }
 
+  .top{
+    transform: rotate(180deg) ;
+  }
+
 `

@@ -13,7 +13,7 @@ export default () => {
       setEdges(latestEdges => {
         return [...latestEdges, {
           id: `e${sourceNodeId}-${targetNodeId}`,
-          type: "straight",
+          type: "bezier",
           source: sourceNodeId, target: targetNodeId,
           makerEnd: {type: MarkerType.Arrow}, animated:false,
           data: {
@@ -68,8 +68,8 @@ export default () => {
     });
   }
 
-  edgesLibrary.reset = async () => {
-    setEdges([]);
+  edgesLibrary.reset = () => {
+    edgesLibrary.setEdges([]);
   }
 
   return edgesLibrary;
