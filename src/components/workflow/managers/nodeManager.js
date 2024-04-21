@@ -89,7 +89,7 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
     deleteNode: (nodeInformation) => { deleteNode(nodeInformation, mainManager) }
   }
 
-  library.processNode = async (currentNodeId, mainManager) => {
+  library.processNode = (currentNodeId, mainManager) => {
     let currentNodeIndex = library.initialNodes.findIndex(node => node._id === currentNodeId);
 
     if( currentNodeIndex>=0 ){
@@ -111,20 +111,23 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
         case nodeKeys.START_KEY: case nodeKeys.TEXT_KEY: case nodeKeys.TASK_KEY: case nodeKeys.NEW_KEY:
           mainManager.edgeManagerInstance.create(currentNode.id, currentNode.details.nextNode);
           library.updateParentNode(currentNode, mainManager);
-          await library.processNode(currentNode.details.nextNode, mainManager);
+          library.processNode(currentNode.details.nextNode, mainManager);
           break;
   
         case nodeKeys.CONDITIONAL_KEY:
           let prev_parentNode = currentNode;
           currentNode.column = library.parentNode.column;
           currentNode.line = mainManager.lineManagerInstance.process(library.parentNode.line);
-  
-          currentNode.details.nextNode.forEach( async (conditionalLegId, index) => {
-            let columnNameForFollowingChild = mainManager.columnManagerInstance.create( index, currentNode.details.nextNode.length, currentNode.column );
+
+          let conditionalLegId;
+          for(let li = 0; li<currentNode.details.nextNode.length; li++){
+            conditionalLegId = currentNode.details.nextNode[li];
+
+            let columnNameForFollowingChild = mainManager.columnManagerInstance.create( li, currentNode.details.nextNode.length, currentNode.column );
             library.updateParentNode({ column: columnNameForFollowingChild, line: currentNode.line }, mainManager);
             mainManager.edgeManagerInstance.create( prev_parentNode.id, conditionalLegId );
-            await library.processNode(conditionalLegId, mainManager);
-          })
+            library.processNode(conditionalLegId, mainManager);
+          }
           
           library.updateParentNode(prev_parentNode, mainManager)
           break;
@@ -140,8 +143,10 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
       }
       
       setNodes((latest) => { return [...latest, currentNode] })
-      library.initialNodes.splice(currentNodeIndex, 1);
+      library.initialNodes.splice(library.initialNodes.findIndex(node => node._id === currentNodeId), 1);
     }
+
+    return 
   } 
 
   library.reset = async (newInitialNodes, mainManagerLibrary) => {

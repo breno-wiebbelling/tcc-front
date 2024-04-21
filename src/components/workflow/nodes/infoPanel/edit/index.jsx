@@ -12,7 +12,7 @@ import { updateNode } from "../../../../../service/clients/nodeClient";
 import { validateNodeInformation } from "../../../../../service/validators/nodeInformation";
 import NodeDetailsTypeEnum from "../../details/types/typeDetailsEnum";
 
-export default ({ nodeInfo, setIsInfoPanelOpen, setAlertInfo, loadInformation }) => {
+export default ({ nodeInfo, setIsInfoPanelOpen, setAlertInfo }) => {
 
   const [nodeName, setNodeName] = React.useState("");
   const [nodeDetails, setNodeDetails] = React.useState({});

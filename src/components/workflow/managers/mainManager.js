@@ -5,7 +5,6 @@ import EdgeManager from "./edgeManager";
 import { reloadNodesAndAddGhostNodes } from "./nodeManager";
 
 export default (initialNode, initialNodes, nodeEventClicks, simulationId, searchInicialNodes) => {
-
   let mainManagerLibrary = {};
 
   mainManagerLibrary.simulation_id = simulationId;

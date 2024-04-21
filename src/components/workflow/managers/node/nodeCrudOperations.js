@@ -13,6 +13,20 @@ import {
   deleteById
 } from "../../../../service/clients/nodeClient";
 
+const processNextNodeForNewNode = (previousNode, mainManager) => {
+  let nextNode = previousNode.details.nextNode;
+
+  if(nextNode.includes('ghost')){
+    mainManager.nodeManagerInstance.setNodes(ln => {
+      nextNode = (ln.find(n => n.id === nextNode)).details.nextNode
+      return ln;
+    });
+  }
+
+  return nextNode;
+}
+
+
 const processNewNode = async (previousNode, mainManager, name) => {
 
   let baseNode = await create({
@@ -39,19 +53,6 @@ const processNewNode = async (previousNode, mainManager, name) => {
       reload: mainManager.reload
     }
   }
-}
-
-const processNextNodeForNewNode = (previousNode, mainManager) => {
-  let nextNode = previousNode.details.nextNode;
-
-  if(nextNode.includes('ghost')){
-    mainManager.nodeManagerInstance.setNodes(ln => {
-      nextNode = (ln.find(n => n.id === nextNode)).details.nextNode
-      return ln;
-    });
-  }
-
-  return nextNode;
 }
 
 export const addNodeBelow = async (fromNodeInformation, mainManager) => {
@@ -161,43 +162,11 @@ export const deleteNode = async (nodeInformation, mainManager) => {
     return latestNodes;
   });
 
-  let parentNode = currentNodes.find(node => isNodeIdPresentOnNextNode(nodeInformation.id, node));
   nodeInformation = currentNodes.find(node => node.id === nodeInformation.id);
-  /*
-  if (nodeInformation.type === nodeKeys.CONDITIONAL_KEY) {
-    let conditionalClosure = getConditionalClosure(nodeInformation.id, currentNodes);
-    newParentNode = currentNodes.find(cn => cn.id === conditionalClosure.details.nextNode)
-    await deleteById(nodeInformation.id);
-    await updateNextNode(parentNode.id, newParentNode.id);
-  }
-  else {
-    if (parentNode.type === nodeKeys.CONDITIONAL_KEY) {
-      let previousIndex = parentNode.details.nextNode.indexOf(nodeInformation.id)
-      let nextNode = currentNodes.find(gn => gn.id === nodeInformation.details.nextNode);
-
-      if (nextNode.type === nodeKeys.GHOST) {
-        if (parentNode.details.conditionalDetails.type === 'boolean') {
-          let newNode = await processNewNode({ ...nodeInformation, details: { nextNode: nextNode.details.nextNode } }, mainManager, "Tarefa temporária!")
-          parentNode.details.nextNode[previousIndex] = newNode['_id']
-        }
-        else {
-          //TODO: REMOVE SWITCH OPTION, remove id from details.nextNode on parent conditional task
-        }
-      }
-      else {
-        parentNode.details.nextNode[previousIndex] = nextNode['id']
-      }
-
-      await updateNextNode(parentNode.id, parentNode.details.nextNode);
-    }
-    else{
-      // await updateNextNode(parentNode.id, nodeInformation.details.nextNode);
-    }
-    // await deleteById(nodeInformation.id);
-  }
-  */
   await deleteById(nodeInformation.id);
+  
   let newNextNode = processNextNodeForNewNode(nodeInformation, mainManager);
+  let parentNode = currentNodes.find(node => isNodeIdPresentOnNextNode(nodeInformation.id, node));
 
   //TODO: delete all nodes until cond. closure
   if (nodeInformation.type === nodeKeys.CONDITIONAL_KEY) {

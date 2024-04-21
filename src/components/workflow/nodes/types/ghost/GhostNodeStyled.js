@@ -6,9 +6,9 @@ export default styled.div`
     align-items: center;
     justify-content: center;
 
-    //height: 1px;
-    height: 10px;
-    background-color: black;
+    height: 1px;
+    /* height: 10px;
+    background-color: black; */
     
     width: 200px;
 

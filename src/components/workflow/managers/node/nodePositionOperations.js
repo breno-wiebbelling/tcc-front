@@ -135,11 +135,13 @@ export const reloadNodesAndAddGhostNodes = (mainManager) => {
 
       conditionalNode.details.nextNode.forEach(nextNodeId => {
         let nextNode = latestNodes.find(node => node.id === nextNodeId);
+
         let newConditionalGhost = { id: idGenerator(), details: { "nextNode": nextNode.id }, type: nodeKeys.CONDITIONAL_GHOST, column: nextNode.column, line: ghostLine }
 
         latestNodes.push(newConditionalGhost);
         mainManager.edgeManagerInstance.updateTarget(conditionalNode.id, nextNodeId, newConditionalGhost.id)
         mainManager.edgeManagerInstance.create(newConditionalGhost.id, nextNodeId);
+      
       })
     })
 
@@ -148,6 +150,7 @@ export const reloadNodesAndAddGhostNodes = (mainManager) => {
 
     let seenIds = {};
     let uniqueList = tempNodes.filter(item => {
+      console.log(item.id)
       if (seenIds.hasOwnProperty(item.id)) {
         return false;
       } else {
@@ -168,8 +171,8 @@ export const reloadNodesAndAddGhostNodes = (mainManager) => {
 
         nodesPoitingToSimilarNode.forEach(nodePoitingToSimilar => {
           let newGhostNode = { id: idGenerator("ghost"), details: { "nextNode": nodePoitingToSimilar.details.nextNode }, type: nodeKeys.GHOST, column: nodePoitingToSimilar.column, line: ghostLine }
+          nodePoitingToSimilar.details.originalNextNode = nodePoitingToSimilar.details.nextNode;
           nodePoitingToSimilar.details.nextNode = newGhostNode.id;
-
           latestNodes.push(newGhostNode);
           newGhostColumns.push(newGhostNode.column);
 

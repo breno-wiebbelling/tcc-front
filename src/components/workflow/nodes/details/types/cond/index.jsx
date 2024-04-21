@@ -94,7 +94,6 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
   React.useEffect(()=> {
     loadUserVariables(nodeInfo['simulationId'], setVariables)
     getNextNodesAvailable(nodeInfo['simulationId'], nodeInfo['id']).then(availableNodes => {
-      
       availableNodes.push({ id: 'temp', name: "Tarefa temporária"});
 
       setOptionsAvailables((latest)=>{
