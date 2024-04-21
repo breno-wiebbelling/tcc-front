@@ -15,17 +15,17 @@ export default (initialNode, initialNodes, nodeEventClicks, simulationId, search
   mainManagerLibrary.lineManagerInstance = LineManager()
   mainManagerLibrary.nodeManagerInstance = NodeManager(initialNodes, mainManagerLibrary, nodeEventClicks)
 
-  mainManagerLibrary.loadNodes = async () => {
-    await mainManagerLibrary.nodeManagerInstance.processNode(initialNode, mainManagerLibrary) 
+  mainManagerLibrary.loadNodes = () => {
+    mainManagerLibrary.nodeManagerInstance.processNode(initialNode, mainManagerLibrary) 
     reloadNodesAndAddGhostNodes(mainManagerLibrary);
   }
 
   mainManagerLibrary.reload = async () => {
     let newInitialNodes = await searchInicialNodes();
-      mainManagerLibrary.edgeManagerInstance.reset();
-      mainManagerLibrary.lineManagerInstance.reset();
-      await mainManagerLibrary.columnManagerInstance.reset();
-      await mainManagerLibrary.nodeManagerInstance.reset(newInitialNodes, mainManagerLibrary);
+    await mainManagerLibrary.edgeManagerInstance.reset();
+    mainManagerLibrary.lineManagerInstance.reset();
+    mainManagerLibrary.columnManagerInstance.reset();
+    await mainManagerLibrary.nodeManagerInstance.reset(newInitialNodes, mainManagerLibrary);
   }
 
   return mainManagerLibrary;

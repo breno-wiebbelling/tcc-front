@@ -158,7 +158,7 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
     library.initialNodes = newInitialNodes
     library.setNodes([]);
 
-    await library.processNode(mainManagerLibrary.initialNode, mainManagerLibrary)
+    library.processNode(mainManagerLibrary.initialNode, mainManagerLibrary)
     reloadNodesAndAddGhostNodes(mainManagerLibrary);
   }
 

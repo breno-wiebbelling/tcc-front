@@ -4,15 +4,12 @@ import { idGenerator } from '../../common/idManager'
 export default () => {
   const X_GAP = 300;
 
-  const [columns, setColumns] = useState([{ name: "central", gap: 400 }])
-
   let columnLibrary = {};
-  columnLibrary.columns = columns;
-  columnLibrary.setColumns = setColumns;
+  columnLibrary.columns = [{ name: "central", gap: 400 }];
   columnLibrary.central_column_name = "central";
 
   columnLibrary.getColumn = (columnName) => {
-    return columns.filter(column => column.name === columnName)[0]
+    return columnLibrary.columns.filter(column => column.name === columnName)[0]
   }
 
   columnLibrary.getColumnPosition = (columnName) => {
@@ -45,12 +42,12 @@ export default () => {
     if (gapResult === 0) { return parentColumnName }
 
     let newColumnName = idGenerator();
-    columns.push({ name: newColumnName, baseColumn: parentColumnName, gap: gapResult })
+    columnLibrary.columns.push({ name: newColumnName, baseColumn: parentColumnName, gap: gapResult })
 
-    let columnAtTheSamePosition = columns.filter(c => columnLibrary.getColumnPosition(c.name) === columnLibrary.getColumnPosition(newColumnName) && c.name !== newColumnName)[0]
+    let columnAtTheSamePosition = columnLibrary.columns.filter(c => columnLibrary.getColumnPosition(c.name) === columnLibrary.getColumnPosition(newColumnName) && c.name !== newColumnName)[0]
     if (columnAtTheSamePosition) {
 
-      let fixedColumns = columns.map(column => {
+      let fixedColumns = columnLibrary.columns.map(column => {
         if (column.name === newColumnName) {
           column.baseColumn = columnAtTheSamePosition.name;
           column.gap = (column.gap > 0) ? -Math.abs(column.gap) : Math.abs(column.gap);
@@ -62,7 +59,7 @@ export default () => {
         return column;
       })
 
-      setColumns(fixedColumns)
+      columnLibrary.columns = fixedColumns
     }
 
     return newColumnName;
@@ -95,17 +92,8 @@ export default () => {
   }
 
   columnLibrary.reset = () => {
-    return new Promise((resolve) => {
-      columnLibrary.setColumns((lts) => {
-        while(lts.length > 0){
-          lts.splice(0)
-        }
-        lts.push({ name: "central", gap: 400 })
-        resolve();
-        return lts;
-      });
-    });
-  };
-
+    columnLibrary.columns = [{ name: "central", gap: 400 }]
+  }
+  
   return columnLibrary;
 }

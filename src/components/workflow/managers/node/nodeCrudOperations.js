@@ -26,9 +26,7 @@ const processNextNodeForNewNode = (previousNode, mainManager) => {
   return nextNode;
 }
 
-
 const processNewNode = async (previousNode, mainManager, name) => {
-
   let baseNode = await create({
     name: name,
     simulation_id: mainManager.simulation_id,
@@ -133,7 +131,6 @@ export const addNodeAbove = async (fromNodeInformation, mainManager) => {
 }
 
 export const addConditionalLeg = (fromNodeInformation, mainManager) => {
-
   mainManager.nodeManagerInstance.setNodes(latestNodes => {
     latestNodes = latestNodes.filter(node => !node.type.includes(nodeKeys.GHOST))
     latestNodes = latestNodes.filter(node => !node.type.includes(nodeKeys.CONDITIONAL_GHOST))
@@ -155,7 +152,7 @@ export const addConditionalLeg = (fromNodeInformation, mainManager) => {
 
 export const deleteNode = async (nodeInformation, mainManager) => {
   let currentNodes;
-  
+    
   mainManager.nodeManagerInstance.setNodes((latestNodes) => {
     currentNodes = latestNodes;
 
@@ -175,13 +172,22 @@ export const deleteNode = async (nodeInformation, mainManager) => {
   }
 
   if (parentNode.type === nodeKeys.CONDITIONAL_KEY) {
+
     let previousIndex = parentNode.details.nextNode.indexOf(nodeInformation.id);
-    let nextNode = currentNodes.find(gn => gn.id === nodeInformation.details.nextNode);
+    let nextNode
+
+    if(nodeInformation.type === nodeKeys.CONDITIONAL_KEY){
+      nextNode = getConditionalClosure(nodeInformation.id, currentNodes);
+    }else{
+      nextNode = currentNodes.find(cn => cn.id === nodeInformation.details.nextNode);
+    }
 
     if(nextNode.type === nodeKeys.GHOST){
       if (parentNode.details.conditionalDetails.type === 'boolean') {
+        
         let newNode = await processNewNode({ ...nodeInformation, details: { nextNode: nextNode.details.nextNode } }, mainManager, "Tarefa temporária!");
         parentNode.details.nextNode[previousIndex] = newNode['_id'];
+        
         newNextNode = parentNode.details.nextNode; 
       }
       else {

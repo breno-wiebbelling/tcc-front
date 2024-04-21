@@ -150,7 +150,6 @@ export const reloadNodesAndAddGhostNodes = (mainManager) => {
 
     let seenIds = {};
     let uniqueList = tempNodes.filter(item => {
-      console.log(item.id)
       if (seenIds.hasOwnProperty(item.id)) {
         return false;
       } else {

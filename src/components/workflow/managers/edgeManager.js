@@ -1,31 +1,38 @@
-import {MarkerType, useEdgesState} from 'reactflow';
+import {MarkerType} from 'reactflow';
+import { useEffect, useState } from 'react';
 
 export default () => {
   const edgesLibrary = {};
-  const [edges, setEdges] = useEdgesState([]);
+  const [edges, setEdges] = useState([]);
 
   edgesLibrary.edges = edges;
   edgesLibrary.setEdges = setEdges
 
-  edgesLibrary.create = (sourceNodeId, targetNodeId) => {
-    //todo: remove this if
-    if(targetNodeId !== "0"){
-      setEdges(latestEdges => {
-        return [...latestEdges, {
-          id: `e${sourceNodeId}-${targetNodeId}`,
-          type: "bezier",
-          source: sourceNodeId, target: targetNodeId,
-          makerEnd: {type: MarkerType.Arrow}, animated:false,
-          data: {
-            label: 'edge label',
-          },
-          style: {
-            strokeWidth: 2,
-            stroke: '#00000052',
-          }
-        }]
-      })
+  useEffect(() => {
+    if(edgesLibrary.edges.length == 1){
+      if(typeof edgesLibrary.edges[0]['resolve'] == 'function'){
+        edgesLibrary.edges[0]['resolve']();
+        edgesLibrary.edges.splice(0);
+      }
     }
+  }, [edgesLibrary.edges])
+
+  edgesLibrary.create = (sourceNodeId, targetNodeId) => {
+    setEdges(latestEdges => {
+      return [...latestEdges, {
+        id: `e${sourceNodeId}-${targetNodeId}`,
+        type: "bezier",
+        source: sourceNodeId, target: targetNodeId,
+        makerEnd: {type: MarkerType.Arrow}, animated:false,
+        data: {
+          label: 'edge label',
+        },
+        style: {
+          strokeWidth: 2,
+          stroke: '#00000052',
+        }
+      }]
+    })
   }
 
   edgesLibrary.remove = (sourceNodeId, targetNodeId) => {
@@ -69,7 +76,19 @@ export default () => {
   }
 
   edgesLibrary.reset = () => {
-    edgesLibrary.setEdges([]);
+    return new Promise((resolve) => {
+      edgesLibrary.setEdges([
+        
+        {
+          id: `e`,
+          type: "bezier",
+          source: 'sourceNodeId', target: 'targetNodeId',
+          makerEnd: {type: MarkerType.Arrow}, animated:false,
+          resolve: resolve,
+        }
+
+      ]);
+    })
   }
 
   return edgesLibrary;
