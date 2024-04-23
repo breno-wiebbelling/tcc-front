@@ -44,27 +44,61 @@ export default () => {
     let columnPosition = parentPosition+gapResult;
     let newColumn = ({ name: idGenerator(), baseColumn: parentColumnName, gap: gapResult })
     let columnsAtTheSamePosition = columnLibrary.columns.filter(c => (columnLibrary.getColumnPosition(c.name) === columnLibrary.getColumnPosition(parentColumnName)+gapResult))
-
-    console.log(columnsAtTheSamePosition)
+    
     //column.gap = (column.gap > 0) ? -Math.abs(column.gap) : Math.abs(column.gap);
-    if(columnsAtTheSamePosition.length>1){
-      console.log(parentPosition)
-      throw new Error("Error")
-    }
-
     let columnAtTheSamePosition= columnsAtTheSamePosition[0];
-
     if(columnAtTheSamePosition){
-      
       if(typeof columnAtTheSamePosition.baseColumn !== "undefined"){
-        newColumn.baseColumn = columnAtTheSamePosition.baseColumn;
-        columnLibrary.columns.map(c => {
-          if(c.name === columnAtTheSamePosition.name){
-            c.baseColumn = newColumn.name;
+        if(columnPosition <= 0){
+          if(parentPosition <= columnPosition){
+            newColumn.baseColumn = columnAtTheSamePosition.name;
+            newColumn.gap = (newColumn.gap > 0) ? -Math.abs(newColumn.gap) : -Math.abs(newColumn.gap);
+  
+            columnLibrary.columns.map(c => {
+              if(c.baseColumn === columnAtTheSamePosition.name){
+                c.baseColumn = newColumn.name ;
+              }
+    
+              return c;
+            })
+          }       
+          else{
+            newColumn.gap = (newColumn.gap > 0) ? -Math.abs(newColumn.gap) : -Math.abs(newColumn.gap);
+  
+            columnLibrary.columns.map(c => {
+              if(c.name === columnAtTheSamePosition.name){
+                c.baseColumn = newColumn.name ;
+              }
+    
+              return c;
+            })
           }
-
-          return c;
-        })
+        }
+        else{
+          if(parentPosition >= columnPosition){
+            newColumn.baseColumn = columnAtTheSamePosition.name;
+            newColumn.gap = (newColumn.gap > 0) ? +Math.abs(newColumn.gap) : +Math.abs(newColumn.gap);
+  
+            columnLibrary.columns.map(c => {
+              if(c.baseColumn === columnAtTheSamePosition.name){
+                c.baseColumn = newColumn.name ;
+              }
+    
+              return c;
+            })
+          }
+          else{
+            newColumn.gap = (newColumn.gap > 0) ? +Math.abs(newColumn.gap) : +Math.abs(newColumn.gap);
+  
+            columnLibrary.columns.map(c => {
+              if(c.name === columnAtTheSamePosition.name){
+                c.baseColumn = newColumn.name ;
+              }
+    
+              return c;
+            })
+          }   
+        }
       }
       else{
         
@@ -83,9 +117,16 @@ export default () => {
         newColumn.baseColumn = columnAtTheSamePosition.name;
         newColumn.gap = (newColumn.gap > 0) ? -Math.abs(newColumn.gap) : Math.abs(newColumn.gap);
       }
-    
-      
     }
+    /*
+    
+    me = clm same position
+	revert gap
+
+node.base = same position = me
+    
+    */
+
     columnLibrary.columns.push(newColumn)
     return newColumn.name;
   }
