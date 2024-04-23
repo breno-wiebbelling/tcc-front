@@ -135,7 +135,7 @@ export const reloadNodesAndAddGhostNodes = (mainManager) => {
 
       conditionalNode.details.nextNode.forEach(nextNodeId => {
         let nextNode = latestNodes.find(node => node.id === nextNodeId);
-
+        
         let newConditionalGhost = { id: idGenerator(), details: { "nextNode": nextNode.id }, type: nodeKeys.CONDITIONAL_GHOST, column: nextNode.column, line: ghostLine }
 
         latestNodes.push(newConditionalGhost);
@@ -198,9 +198,19 @@ export const updateNodesPositions = (mainManager) => {
 
     return latestNodes.map(node => {
 
+      if(node.type === nodeKeys.FINAL_KEY){
+        node.column = "central"
+      }
+
+      node.name = node.colun;
+
       node.position = {
         x: mainManager.columnManagerInstance.getColumnPosition(node.column),
         y: mainManager.lineManagerInstance.getLinePosition(node.line)
+      }
+
+      if(node.data){
+        node.data.label = node.column+""+node.position.x
       }
 
       if (node.type === nodeKeys.START_KEY) { node.position.y -= 100 }

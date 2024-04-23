@@ -2,7 +2,7 @@ import {idGenerator} from '../../common/idManager'
 
 const first_line_name = "first";
 const last_line_name = "last";
-const Y_GAP = 150;
+const Y_GAP = 120;
 
 export { first_line_name, last_line_name }
 const LineManager =  () => {
@@ -72,8 +72,8 @@ const LineManager =  () => {
   lineLibrary.processGhostLine = (currentLineName) => {
     let lastLine = lineLibrary.lines.find(line => line.name === currentLineName);
     let prevLine = lineLibrary.lines.find(line => line.name === lastLine.baseLine);
-  
-    let newLineName = idGenerator();
+    
+    let newLineName = idGenerator('ghostline');
     lineLibrary.lines.push({ name:newLineName, baseLine:prevLine.name, gap: Y_GAP})
 
     let fixedLines = lineLibrary.lines.map(line => {
@@ -87,8 +87,11 @@ const LineManager =  () => {
 
   lineLibrary.processConditionalGhostLine = (currentLineName) => {
     let lineBasedOnCurrentLine = lineLibrary.lines.find(line => line.baseLine === currentLineName);
-    
-    let newLineName = idGenerator();
+    if(lineBasedOnCurrentLine.name.includes('condGhostLine')){
+      return lineBasedOnCurrentLine.name
+    }
+
+    let newLineName = idGenerator('condGhostLine');
     lineLibrary.lines.push({ name:newLineName, baseLine:lineBasedOnCurrentLine.baseLine, gap: Y_GAP})
 
     let fixedLines = lineLibrary.lines.map(line => {

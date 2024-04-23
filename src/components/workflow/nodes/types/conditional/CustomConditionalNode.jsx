@@ -12,7 +12,6 @@ import { nodeCRUDOperations } from "../../../managers/nodeManager";
 
 export default ({ data }) => {
   const [isOptionsVisible, setIsOptionsVisible] = React.useState(false);
-
   return (
     <ClickOutsideWrapper onOutsideClick={ () => { setIsOptionsVisible(false); } }>
       <ConditionalNodeStyled>

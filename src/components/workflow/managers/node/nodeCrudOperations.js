@@ -107,10 +107,13 @@ export const addNodeAbove = async (fromNodeInformation, mainManager) => {
   localNodes.map(async node => {
     if (isNodeIdPresentOnNextNode(currentNode.id, node)) {
       if (node.type === nodeKeys.CONDITIONAL_KEY) {
-        //TODO p1: add logic for conditional
         let indexOfNextNode = node.details.nextNode.indexOf(currentNode.id);
-        node.details.nextNode[indexOfNextNode] = newNode.id;
-        return node;
+        let tempNode = node.details.nextNode;
+        tempNode[indexOfNextNode] = newNode.id;
+        await updateNextNode(node.id, tempNode);
+      }
+      else if(node.type === nodeKeys.CONDITIONAL_GHOST){
+        node.details.nextNode = newNode.id;
       }
       else {
         await updateNextNode(node.id, newNode.id);
@@ -152,7 +155,7 @@ export const addConditionalLeg = (fromNodeInformation, mainManager) => {
 
 export const deleteNode = async (nodeInformation, mainManager) => {
   let currentNodes;
-    
+  
   mainManager.nodeManagerInstance.setNodes((latestNodes) => {
     currentNodes = latestNodes;
 
@@ -160,6 +163,8 @@ export const deleteNode = async (nodeInformation, mainManager) => {
   });
 
   nodeInformation = currentNodes.find(node => node.id === nodeInformation.id);
+  
+  
   await deleteById(nodeInformation.id);
   
   let newNextNode = processNextNodeForNewNode(nodeInformation, mainManager);
@@ -172,10 +177,9 @@ export const deleteNode = async (nodeInformation, mainManager) => {
   }
 
   if (parentNode.type === nodeKeys.CONDITIONAL_KEY) {
-
+    
     let previousIndex = parentNode.details.nextNode.indexOf(nodeInformation.id);
-    let nextNode
-
+    let nextNode;
     if(nodeInformation.type === nodeKeys.CONDITIONAL_KEY){
       nextNode = getConditionalClosure(nodeInformation.id, currentNodes);
     }else{
@@ -187,17 +191,22 @@ export const deleteNode = async (nodeInformation, mainManager) => {
         
         let newNode = await processNewNode({ ...nodeInformation, details: { nextNode: nextNode.details.nextNode } }, mainManager, "Tarefa temporária!");
         parentNode.details.nextNode[previousIndex] = newNode['_id'];
-        
         newNextNode = parentNode.details.nextNode; 
       }
       else {
         //TODO: REMOVE SWITCH OPTION
       }
     }
+    else{
+      parentNode.details.nextNode[previousIndex] = nextNode.id;
+      newNextNode = parentNode.details.nextNode; 
+    }
   }
-
+  
+  
   await updateNextNode(parentNode.id, newNextNode);
   await mainManager.reload();
+  
   return
 }
 

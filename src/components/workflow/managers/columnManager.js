@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { idGenerator } from '../../common/idManager'
 
 export default () => {
-  const X_GAP = 300;
+  const X_GAP = 220;
 
   let columnLibrary = {};
-  columnLibrary.columns = [{ name: "central", gap: 400 }];
+  columnLibrary.columns = [{ name: "central", gap: X_GAP }];
   columnLibrary.central_column_name = "central";
 
   columnLibrary.getColumn = (columnName) => {
@@ -14,7 +14,6 @@ export default () => {
 
   columnLibrary.getColumnPosition = (columnName) => {
     if(typeof columnName === "undefined"){
-      console.log(columnName)
       return 0
     }
 
@@ -41,28 +40,54 @@ export default () => {
     let gapResult = columnLibrary.getColumnGap(currentIndex, totalLength)
     if (gapResult === 0) { return parentColumnName }
 
-    let newColumnName = idGenerator();
-    columnLibrary.columns.push({ name: newColumnName, baseColumn: parentColumnName, gap: gapResult })
+    let parentPosition = columnLibrary.getColumnPosition(parentColumnName);
+    let columnPosition = parentPosition+gapResult;
+    let newColumn = ({ name: idGenerator(), baseColumn: parentColumnName, gap: gapResult })
+    let columnsAtTheSamePosition = columnLibrary.columns.filter(c => (columnLibrary.getColumnPosition(c.name) === columnLibrary.getColumnPosition(parentColumnName)+gapResult))
 
-    let columnAtTheSamePosition = columnLibrary.columns.filter(c => columnLibrary.getColumnPosition(c.name) === columnLibrary.getColumnPosition(newColumnName) && c.name !== newColumnName)[0]
-    if (columnAtTheSamePosition) {
-
-      let fixedColumns = columnLibrary.columns.map(column => {
-        if (column.name === newColumnName) {
-          column.baseColumn = columnAtTheSamePosition.name;
-          column.gap = (column.gap > 0) ? -Math.abs(column.gap) : Math.abs(column.gap);
-        }
-        else if (column.name === parentColumnName) {
-          column.baseColumn = newColumnName;
-        }
-
-        return column;
-      })
-
-      columnLibrary.columns = fixedColumns
+    console.log(columnsAtTheSamePosition)
+    //column.gap = (column.gap > 0) ? -Math.abs(column.gap) : Math.abs(column.gap);
+    if(columnsAtTheSamePosition.length>1){
+      console.log(parentPosition)
+      throw new Error("Error")
     }
 
-    return newColumnName;
+    let columnAtTheSamePosition= columnsAtTheSamePosition[0];
+
+    if(columnAtTheSamePosition){
+      
+      if(typeof columnAtTheSamePosition.baseColumn !== "undefined"){
+        newColumn.baseColumn = columnAtTheSamePosition.baseColumn;
+        columnLibrary.columns.map(c => {
+          if(c.name === columnAtTheSamePosition.name){
+            c.baseColumn = newColumn.name;
+          }
+
+          return c;
+        })
+      }
+      else{
+        
+        columnLibrary.columns.map(c => {
+          if(c.baseColumn === columnAtTheSamePosition.name && 
+            (
+              (parentPosition <= 0 && c.gap < 0) || (parentPosition >= 0 && c.gap > 0) 
+            )
+          ){
+            c.baseColumn = newColumn.name;
+          }
+
+          return c;
+        })
+
+        newColumn.baseColumn = columnAtTheSamePosition.name;
+        newColumn.gap = (newColumn.gap > 0) ? -Math.abs(newColumn.gap) : Math.abs(newColumn.gap);
+      }
+    
+      
+    }
+    columnLibrary.columns.push(newColumn)
+    return newColumn.name;
   }
 
   columnLibrary.getCentralColumn = (listOfColumns) => {
