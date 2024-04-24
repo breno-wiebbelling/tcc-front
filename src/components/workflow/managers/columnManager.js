@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { idGenerator } from '../../common/idManager'
 
 export default () => {
@@ -45,7 +44,6 @@ export default () => {
     let newColumn = ({ name: idGenerator(), baseColumn: parentColumnName, gap: gapResult })
     let columnsAtTheSamePosition = columnLibrary.columns.filter(c => (columnLibrary.getColumnPosition(c.name) === columnLibrary.getColumnPosition(parentColumnName)+gapResult))
     
-    //column.gap = (column.gap > 0) ? -Math.abs(column.gap) : Math.abs(column.gap);
     let columnAtTheSamePosition= columnsAtTheSamePosition[0];
     if(columnAtTheSamePosition){
       if(typeof columnAtTheSamePosition.baseColumn !== "undefined"){
@@ -118,14 +116,6 @@ export default () => {
         newColumn.gap = (newColumn.gap > 0) ? -Math.abs(newColumn.gap) : Math.abs(newColumn.gap);
       }
     }
-    /*
-    
-    me = clm same position
-	revert gap
-
-node.base = same position = me
-    
-    */
 
     columnLibrary.columns.push(newColumn)
     return newColumn.name;

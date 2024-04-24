@@ -126,28 +126,8 @@ export const updateGhostPositions = (mainManager) => {
 
 export const reloadNodesAndAddGhostNodes = (mainManager) => {
   mainManager.nodeManagerInstance.setNodes(latestNodes => {
-    let nodesWithSimilarity = findNodeFrequencies(latestNodes);
-    let conditionalNodes = latestNodes.filter(node => node.type === nodeKeys.CONDITIONAL_KEY)
 
-    if (conditionalNodes.length <= 0) { return latestNodes }
-    conditionalNodes.forEach(conditionalNode => {
-      let ghostLine = mainManager.lineManagerInstance.processConditionalGhostLine(conditionalNode.line);
-
-      conditionalNode.details.nextNode.forEach(nextNodeId => {
-        let nextNode = latestNodes.find(node => node.id === nextNodeId);
-        
-        let newConditionalGhost = { id: idGenerator(), details: { "nextNode": nextNode.id }, type: nodeKeys.CONDITIONAL_GHOST, column: nextNode.column, line: ghostLine }
-
-        latestNodes.push(newConditionalGhost);
-        mainManager.edgeManagerInstance.updateTarget(conditionalNode.id, nextNodeId, newConditionalGhost.id)
-        mainManager.edgeManagerInstance.create(newConditionalGhost.id, nextNodeId);
-      
-      })
-    })
-
-    //TODO: remove duplicates
     let tempNodes = latestNodes;
-
     let seenIds = {};
     let uniqueList = tempNodes.filter(item => {
       if (seenIds.hasOwnProperty(item.id)) {
@@ -158,8 +138,8 @@ export const reloadNodesAndAddGhostNodes = (mainManager) => {
       }
     });
     latestNodes = uniqueList;
-    //END TODO
 
+    let nodesWithSimilarity = findNodeFrequencies(latestNodes);
     nodesWithSimilarity.forEach(similarNodeId => {
       let similarNode = latestNodes.find(node => node.id === similarNodeId);
       let ghostLine = mainManager.lineManagerInstance.processGhostLine(similarNode.line);
@@ -172,6 +152,7 @@ export const reloadNodesAndAddGhostNodes = (mainManager) => {
           let newGhostNode = { id: idGenerator("ghost"), details: { "nextNode": nodePoitingToSimilar.details.nextNode }, type: nodeKeys.GHOST, column: nodePoitingToSimilar.column, line: ghostLine }
           nodePoitingToSimilar.details.originalNextNode = nodePoitingToSimilar.details.nextNode;
           nodePoitingToSimilar.details.nextNode = newGhostNode.id;
+
           latestNodes.push(newGhostNode);
           newGhostColumns.push(newGhostNode.column);
 
@@ -186,6 +167,29 @@ export const reloadNodesAndAddGhostNodes = (mainManager) => {
         })
       }
     })
+
+    let conditionalNodes = latestNodes.filter(node => node.type === nodeKeys.CONDITIONAL_KEY)
+    if (conditionalNodes.length <= 0) { return latestNodes }
+    conditionalNodes.forEach(cn => {
+      let ghostLine = mainManager.lineManagerInstance.processConditionalGhostLine(cn.line);
+      let nextNodes = (Array.isArray(cn.details.nextNode)) ? cn.details.nextNode : [cn.details.nextNode];
+
+      if(nextNodes.length == 1){
+        let possibleNextNodes = (latestNodes.find(n => n.id === nextNodes[0]))['details']['nextNode']
+        nextNodes = possibleNextNodes.filter(n => !nodesWithSimilarity.includes(n))
+      }
+
+      nextNodes.forEach(nextNodeId => {
+        let nextNode = latestNodes.find(node => node.id === nextNodeId);
+
+        let newConditionalGhost = { id: idGenerator(), details: { "nextNode": nextNode.id }, type: nodeKeys.CONDITIONAL_GHOST, column: nextNode.column, line: ghostLine }
+
+        latestNodes.push(newConditionalGhost);
+        mainManager.edgeManagerInstance.updateTarget(cn.id, nextNodeId, newConditionalGhost.id)
+        mainManager.edgeManagerInstance.create(newConditionalGhost.id, nextNodeId);
+      })
+    })
+
     return latestNodes;
   })
 
@@ -197,20 +201,13 @@ export const updateNodesPositions = (mainManager) => {
     let anyGhostNode = latestNodes.find(node => node.type === nodeKeys.GHOST);
 
     return latestNodes.map(node => {
-
-      if(node.type === nodeKeys.FINAL_KEY){
+      if (node.type === nodeKeys.FINAL_KEY) {
         node.column = "central"
       }
-
-      node.name = node.colun;
 
       node.position = {
         x: mainManager.columnManagerInstance.getColumnPosition(node.column),
         y: mainManager.lineManagerInstance.getLinePosition(node.line)
-      }
-
-      if(node.data){
-        node.data.label = node.column+""+node.position.x
       }
 
       if (node.type === nodeKeys.START_KEY) { node.position.y -= 100 }
