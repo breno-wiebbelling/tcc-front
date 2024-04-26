@@ -49,6 +49,12 @@ export default () => {
 
   edgesLibrary.updateTarget = (source, target, new_target) => {
     edgesLibrary.setEdges(latestEdges => {
+
+      if(typeof latestEdges.find(edge => edge.source == source && edge.target == target) == "undefined"){
+        edgesLibrary.create(source, new_target);
+        return latestEdges;
+      }
+
       return latestEdges.map(edge => {
 
         if(edge.source == source && edge.target == target){

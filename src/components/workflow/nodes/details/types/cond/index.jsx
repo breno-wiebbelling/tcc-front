@@ -55,7 +55,8 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
           conditionalDetails: {
             comparisonDetails: newComparisonDetails,
             type: conditionalType.key
-          }
+          },
+          conditionalClosure: nodeInfo.details.nextNode
         }
       })
 

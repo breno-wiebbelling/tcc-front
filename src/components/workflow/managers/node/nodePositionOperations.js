@@ -2,14 +2,17 @@ import { idGenerator } from "../../../common/idManager";
 import { nodeKeys, findNodeFrequencies } from "../nodeManager";
 
 export const isNodeIdPresentOnNextNode = (nodeId, nodeToVerify) => {
+
   return (
-    nodeToVerify.details.nextNode === (nodeId)
-  )
+    (
+      nodeToVerify.details.nextNode === (nodeId) || (typeof nodeToVerify.details.originalNextNode != "undefined" && nodeToVerify.details.originalNextNode === nodeId) 
+    )
     ||
     (
       nodeToVerify.type === nodeKeys.CONDITIONAL_KEY
       && nodeToVerify.details.nextNode.includes(nodeId)
     )
+  )
 }
 
 export const reprocessNextNodePosition = (currentNode, currentNodes, mainManager) => {
@@ -140,6 +143,7 @@ export const reloadNodesAndAddGhostNodes = (mainManager) => {
     latestNodes = uniqueList;
 
     let nodesWithSimilarity = findNodeFrequencies(latestNodes);
+    
     nodesWithSimilarity.forEach(similarNodeId => {
       let similarNode = latestNodes.find(node => node.id === similarNodeId);
       let ghostLine = mainManager.lineManagerInstance.processGhostLine(similarNode.line);
@@ -160,11 +164,11 @@ export const reloadNodesAndAddGhostNodes = (mainManager) => {
           mainManager.edgeManagerInstance.create(newGhostNode.id, similarNodeId)
         })
 
-        latestNodes.forEach(ln => {
-          if (ln.id === similarNode.id) {
-            ln.column = (mainManager.columnManagerInstance.getCentralColumn(newGhostColumns)).name;
-          }
-        })
+        //latestNodes.forEach(ln => {
+        //  if (ln.id === similarNode.id) {
+        //    ln.column = (mainManager.columnManagerInstance.getCentralColumn(newGhostColumns)).name;
+        //  }
+        //})
       }
     })
 
@@ -192,7 +196,6 @@ export const reloadNodesAndAddGhostNodes = (mainManager) => {
 
     return latestNodes;
   })
-
   updateNodesPositions(mainManager)
 }
 
@@ -201,14 +204,20 @@ export const updateNodesPositions = (mainManager) => {
     let anyGhostNode = latestNodes.find(node => node.type === nodeKeys.GHOST);
 
     return latestNodes.map(node => {
-      if (node.type === nodeKeys.FINAL_KEY) {
-        node.column = "central"
-      }
+      // if (node.type === nodeKeys.FINAL_KEY) {
+      //   node.column = "central"
+      // }
 
       node.position = {
         x: mainManager.columnManagerInstance.getColumnPosition(node.column),
         y: mainManager.lineManagerInstance.getLinePosition(node.line)
       }
+
+      // if(node.data){
+      //   node.data.label = node.line;
+      // }else{
+      //   node.data = { label: node.line }
+      // }
 
       if (node.type === nodeKeys.START_KEY) { node.position.y -= 100 }
       if (node.type === nodeKeys.CONDITIONAL_KEY) { node.position.y -= 50 }

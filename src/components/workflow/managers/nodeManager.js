@@ -48,10 +48,11 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
   library.parentNode = { column: mainManager.columnManagerInstance.central_column_name, line: mainManager.lineManagerInstance.first_line_name };
   library.initialNodes = initialNodes;
 
-  library.updateParentNode = ( newParentNode) => {
-    library.parentNode.column = newParentNode.column;
+  library.updateParentNode = (newParentNode) => { 
+    library.parentNode.column = newParentNode.column; 
     library.parentNode.line = newParentNode.line;
   }
+  library.conditionalClosures = []
 
   library.nodeTypes = { 
     conditional:ConditionalNode,
@@ -65,7 +66,6 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
   };
 
   library.nodeCRUDOperations = nodeCRUDOperations;
-
   library.nodeClickEvents = {
     ...nodeClickEvents,
     addNode:(mode, nodeInformation) => {
@@ -94,6 +94,26 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
 
     if( currentNodeIndex>=0 ){
       let currentNode = library.initialNodes[currentNodeIndex];
+
+      if(library.conditionalClosures.find(cc => cc['closure'] === currentNodeId)){
+        
+        library.conditionalClosures.forEach(cc => {
+          if(cc['closure'] === currentNodeId){
+            if(mainManager.lineManagerInstance.getLinePosition(library.parentNode.line) 
+                > mainManager.lineManagerInstance.getLinePosition(cc.line)
+            ){
+              cc.line = library.parentNode.line;
+            }
+          }
+        })
+
+        return 
+      }
+
+      if(currentNode.name === 't2'){
+        console.log('closed') //662ae1b379352cdcde88b47f
+      }
+
       switch (currentNode.type){
         case nodeKeys.FINAL_KEY:
           currentNode.column = mainManager.columnManagerInstance.central_column_name;
@@ -118,18 +138,29 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
           let prev_parentNode = currentNode;
           currentNode.column = library.parentNode.column;
           currentNode.line = mainManager.lineManagerInstance.process(library.parentNode.line);
+          library.conditionalClosures.push({ id: currentNode.id, closure:currentNode.details.conditionalClosure, column: currentNode.column, line: currentNode.line });
 
           let conditionalLegId;
           for(let li = 0; li<currentNode.details.nextNode.length; li++){
             conditionalLegId = currentNode.details.nextNode[li];
-
-            let columnNameForFollowingChild = mainManager.columnManagerInstance.create( li, currentNode.details.nextNode.length, currentNode.column );
-            library.updateParentNode({ column: columnNameForFollowingChild, line: currentNode.line }, mainManager);
-            mainManager.edgeManagerInstance.create( prev_parentNode.id, conditionalLegId );
-            library.processNode(conditionalLegId, mainManager);
+            
+            if(conditionalLegId !== currentNode.details.conditionalClosure){
+              let columnNameForFollowingChild = mainManager.columnManagerInstance.create(li, currentNode.details.nextNode.length, currentNode.column, Object.keys(library.conditionalClosures).length > 1);
+              library.updateParentNode({ column: columnNameForFollowingChild, line: currentNode.line }, mainManager);
+              mainManager.edgeManagerInstance.create( prev_parentNode.id, conditionalLegId );
+              library.processNode(conditionalLegId, mainManager);
+            }
           }
+
+          let closure = library.conditionalClosures.find(cc => cc['id'] === currentNode.id);
+          let currentClosureLinePosition = mainManager.lineManagerInstance.getLinePosition(closure.line);
+          let currentParentLinePosition  = mainManager.lineManagerInstance.getLinePosition(library.parentNode.line);
+          let lowerParentLine = (currentClosureLinePosition > currentParentLinePosition) ? closure.line : library.parentNode.line;
+
+          library.updateParentNode({ column: closure.column, line: lowerParentLine });
+          library.conditionalClosures = library.conditionalClosures.filter(cc => cc['id'] !== currentNode.id);
+          library.processNode(currentNode.details.conditionalClosure, mainManager);
           
-          library.updateParentNode(prev_parentNode, mainManager)
           break;
       }
 

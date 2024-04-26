@@ -47,3 +47,10 @@ export const validateNewUriInfo = async (newUriInfo) => {
     { "newNode":newUriInfo }
   ))["data"]
 }
+
+export const updateConditionalClosureClient = async (conditionalNodeId, newConditionalClosure) => {
+  return (await baseClient.patch(
+    `${nodeURI}/conditionalClosure`, 
+    { "conditionalNodeId":conditionalNodeId, "newConditionalClosure":newConditionalClosure }
+  ))["data"]
+}

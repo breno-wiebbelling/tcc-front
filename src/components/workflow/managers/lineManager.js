@@ -47,7 +47,7 @@ const LineManager =  () => {
     let nextLine = lineLibrary.lines.find(line => line.baseLine === parentLineName);
 
     if( nextLine.name === last_line_name ){
-      let newLineName = idGenerator();
+      let newLineName = idGenerator('line');
 
       lineLibrary.lines.push({ 
         name: newLineName, 

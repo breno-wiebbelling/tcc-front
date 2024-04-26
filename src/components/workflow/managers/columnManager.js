@@ -35,17 +35,21 @@ export default () => {
     return X_GAP;
   }
 
-  columnLibrary.create = (currentIndex, totalLength, parentColumnName) => {
+  columnLibrary.create = (currentIndex, totalLength, parentColumnName, ifFoundCreate) => {
     let gapResult = columnLibrary.getColumnGap(currentIndex, totalLength)
     if (gapResult === 0) { return parentColumnName }
 
     let parentPosition = columnLibrary.getColumnPosition(parentColumnName);
     let columnPosition = parentPosition+gapResult;
     let newColumn = ({ name: idGenerator(), baseColumn: parentColumnName, gap: gapResult })
-    let columnsAtTheSamePosition = columnLibrary.columns.filter(c => (columnLibrary.getColumnPosition(c.name) === columnLibrary.getColumnPosition(parentColumnName)+gapResult))
-    
-    let columnAtTheSamePosition= columnsAtTheSamePosition[0];
+    let columnAtTheSamePosition = columnLibrary.columns.find(c => (columnLibrary.getColumnPosition(c.name) === columnLibrary.getColumnPosition(parentColumnName)+gapResult))
+
     if(columnAtTheSamePosition){
+
+      if(typeof ifFoundCreate !== "undefined" && !ifFoundCreate){
+        return columnAtTheSamePosition.name;
+      }
+
       if(typeof columnAtTheSamePosition.baseColumn !== "undefined"){
         if(columnPosition <= 0){
           if(parentPosition <= columnPosition){
