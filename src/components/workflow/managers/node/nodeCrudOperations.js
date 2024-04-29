@@ -176,9 +176,8 @@ export const deleteNode = async (nodeInformation, mainManager) => {
   await deleteById(nodeInformation.id);
   let newNextNode = processNextNodeForNewNode(nodeInformation, mainManager);
   let parentNodes = currentNodes.filter(node => isNodeIdPresentOnNextNode(nodeInformation.id, node));
-  
+
   for(let parentNode of parentNodes.filter(pn => ![nodeKeys.CONDITIONAL_GHOST, nodeKeys.GHOST].includes(pn.type))){
-    console.log(parentNode)
     //TODO: delete all nodes until cond. closure
     if(nodeInformation.type === nodeKeys.CONDITIONAL_KEY){
       let conditionalClosure = getConditionalClosure(nodeInformation.id, currentNodes);
@@ -186,6 +185,10 @@ export const deleteNode = async (nodeInformation, mainManager) => {
     }
 
     if(parentNode.type === nodeKeys.CONDITIONAL_KEY){
+      if(typeof parentNode.details.originalNextNode !== "undefined"){
+        parentNode.details.nextNode = parentNode.details.originalNextNode;
+      }
+      
       let previousIndex = parentNode.details.nextNode.indexOf(nodeInformation.id);
       let nextNode;
       if(nodeInformation.type === nodeKeys.CONDITIONAL_KEY){
@@ -194,7 +197,7 @@ export const deleteNode = async (nodeInformation, mainManager) => {
         nextNode = currentNodes.find(cn => cn.id === nodeInformation.details.nextNode);
       }
 
-      if(nextNode.type === nodeKeys.GHOST){
+      if(nextNode.type === nodeKeys.GHOST){ //end of conditional leg
         if (parentNode.details.conditionalDetails.type === 'boolean') {
           let newNode = await processNewNode({ ...nodeInformation, details: { nextNode: nextNode.details.nextNode } }, mainManager, "Tarefa temporária!");
           parentNode.details.nextNode[previousIndex] = newNode['_id'];
@@ -215,7 +218,6 @@ export const deleteNode = async (nodeInformation, mainManager) => {
 
   await updateConditionalClosure(currentNodes, nodeInformation.id, newNextNode);
   await mainManager.reload();
-  
   return
 }
 

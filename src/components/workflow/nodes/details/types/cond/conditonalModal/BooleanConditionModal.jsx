@@ -3,7 +3,7 @@ import { Modal, Box, IconButton, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import PopperAlert from '../../../../../../alert/index';
 import Input from "../../../../../../form/rawInput";
-import ConditionalTypesEnum from "./ConditionalTypesEnum"
+import ComparisonTypesEnum from "./ComparisonTypesEnum"
 
 import { smoke, smokeHover, smokeWhite, white } from "../../../../../../common/style/index";
 import Dropdown from "../../../../../../form/dropdown";
@@ -36,11 +36,14 @@ export default ({ isOpen, close, onCreate, comparisonDetails, variables, setVarC
 	const [name, setName] = React.useState("");
 	const [nameError, setNameError] = React.useState("");
 	const [firstVariable, setFirstVariable] = React.useState("")
-	const [comparison, setComparison] = React.useState(ConditionalTypesEnum.defaultOption);
+	const [comparison, setComparison] = React.useState(ComparisonTypesEnum.defaultOption);
 	const [secondVariable, setSecondVariable] = React.useState("")
 
 	React.useEffect(()=>{
 		getComparisonName(comparisonDetails, setName)
+		setFirstVariable(comparisonDetails['firstVariable'])
+		setComparison(comparisonDetails['comparison'])
+		setSecondVariable(comparisonDetails['secondVariable'])
 	}, [isOpen])
 
 	const handleSubmit = async () => {
@@ -113,7 +116,7 @@ export default ({ isOpen, close, onCreate, comparisonDetails, variables, setVarC
 								<Dropdown options={variables} value={firstVariable} placeholder={"Primeira Variável"} tooltipTitle={"Primeira Variável"} onChange={setFirstVariable} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={() => {setVarCreationModal(true)}} isEnabled={true}/>
 							</div>
 							<div style={{height: '45px', marginTop: '10px'}}>
-								<Dropdown options={ConditionalTypesEnum.options} value={comparison} placeholder={"Tipo de Comparação"} tooltipTitle={"Tipo de Comparação"} onChange={setComparison} hasNewValueOption={false} isEnabled={true} />
+								<Dropdown options={ComparisonTypesEnum.options} value={comparison} placeholder={"Tipo de Comparação"} tooltipTitle={"Tipo de Comparação"} onChange={setComparison} hasNewValueOption={false} isEnabled={true} />
 							</div>
 							<div style={{height: '45px', marginTop: '10px'}}>
 								<Dropdown options={variables} value={secondVariable} placeholder={"Segunda Variável"} tooltipTitle={"Segunda Variável"} onChange={setSecondVariable} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={() => {setVarCreationModal(true)}} isEnabled={true}/>

@@ -110,10 +110,6 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
         return 
       }
 
-      if(currentNode.name === 't2'){
-        console.log('closed') //662ae1b379352cdcde88b47f
-      }
-
       switch (currentNode.type){
         case nodeKeys.FINAL_KEY:
           currentNode.column = mainManager.columnManagerInstance.central_column_name;

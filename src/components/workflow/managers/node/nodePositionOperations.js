@@ -5,12 +5,12 @@ export const isNodeIdPresentOnNextNode = (nodeId, nodeToVerify) => {
 
   return (
     (
-      nodeToVerify.details.nextNode === (nodeId) || (typeof nodeToVerify.details.originalNextNode != "undefined" && nodeToVerify.details.originalNextNode === nodeId) 
+      (nodeToVerify.details.nextNode === (nodeId)) || (typeof nodeToVerify.details.originalNextNode != "undefined" && (nodeToVerify.details.originalNextNode === nodeId )) 
     )
     ||
     (
       nodeToVerify.type === nodeKeys.CONDITIONAL_KEY
-      && nodeToVerify.details.nextNode.includes(nodeId)
+      && ( nodeToVerify.details.nextNode.includes(nodeId) || (typeof nodeToVerify.details.originalNextNode != "undefined" && nodeToVerify.details.originalNextNode.includes(nodeId)))
     )
   )
 }

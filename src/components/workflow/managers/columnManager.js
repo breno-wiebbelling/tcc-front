@@ -1,7 +1,7 @@
 import { idGenerator } from '../../common/idManager'
 
 export default () => {
-  const X_GAP = 220;
+  const X_GAP = 150;
 
   let columnLibrary = {};
   columnLibrary.columns = [{ name: "central", gap: X_GAP }];
@@ -103,7 +103,6 @@ export default () => {
         }
       }
       else{
-        
         columnLibrary.columns.map(c => {
           if(c.baseColumn === columnAtTheSamePosition.name && 
             (
@@ -152,7 +151,7 @@ export default () => {
   }
 
   columnLibrary.reset = () => {
-    columnLibrary.columns = [{ name: "central", gap: 400 }]
+    columnLibrary.columns = [{ name: "central", gap: X_GAP }]
   }
   
   return columnLibrary;

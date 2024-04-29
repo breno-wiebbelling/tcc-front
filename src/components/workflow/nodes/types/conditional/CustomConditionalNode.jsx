@@ -36,7 +36,7 @@ export default ({ data }) => {
           </div>
           <div 
             className='action_button center'
-            onClick={data.click.editNode}  
+            onClick={()=>{ data.click.editNode(data) }}
             style={{ "left": (isOptionsVisible) ? "-40px" : "50px" }}
           >
             <IconButton className='action_button_element'>
