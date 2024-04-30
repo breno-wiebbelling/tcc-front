@@ -106,7 +106,6 @@ export default ({ nodeInfo, setNodeDetails }) => {
     }
   }
 
-
   const feedCondDetails = (variables, availableNodes) => {
     if (typeof nodeInfo['details']['conditionalDetails'] === "undefined") {
       return
