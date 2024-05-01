@@ -49,15 +49,20 @@ export default ({ nodeInfo, setNodeDetails }) => {
   const handleBooleanDetailsCreation = (booleanDetails) => {
     setComparisonDetails((latest) => {
       let newComparisonDetails = { ...latest, ...booleanDetails };
+      let newDetails;
+      
       setNodeDetails(latestNodeDetails => {
-        return {
+        newDetails = {
           ...latestNodeDetails,
           conditionalDetails: {
+            ... latestNodeDetails.conditionalDetails,
             comparisonDetails: newComparisonDetails,
-            type: conditionalType.key
+            type: conditionalType.key,
           },
           conditionalClosure: nodeInfo.details.nextNode
-        }
+        };
+
+        return newDetails;
       })
 
       return newComparisonDetails
@@ -113,7 +118,7 @@ export default ({ nodeInfo, setNodeDetails }) => {
 
     setConditionalType(ConditionalTypeEnum.getDropdownOptionByCode(nodeInfo['details']['conditionalDetails']['type']))
     if (nodeInfo['details']['conditionalDetails']['type'] === ConditionalTypeEnum.BOOL.code) {
-      let comparisonDetails = nodeInfo['details']['conditionalDetails']['comparisonDetails'];
+      let comparisonDetails = { ...nodeInfo['details']['conditionalDetails']['comparisonDetails'] };
       comparisonDetails['firstVariable'] = variables.find(v => v['key'] === comparisonDetails['firstVariable']);
       comparisonDetails['comparison'] = ComparisonTypesEnum.getDropdownOptionByCode(comparisonDetails['comparison']);
       comparisonDetails['secondVariable'] = variables.find(v => v['key'] === comparisonDetails['secondVariable']);
@@ -121,11 +126,14 @@ export default ({ nodeInfo, setNodeDetails }) => {
       setComparisonDetails(comparisonDetails)
     }
 
-    let opDtls = (nodeInfo['details']['conditionalDetails']['options'].map(op => {
+    let opDtls = [... nodeInfo['details']['conditionalDetails']['options'] ]
+
+    opDtls.map(op => {
       op.option = availableNodes.find(an => an.key === op.option);
 
       return op;
-    }))
+    })
+
     setOptionsDetails(opDtls)
   }
 
@@ -141,7 +149,6 @@ export default ({ nodeInfo, setNodeDetails }) => {
       feedCondDetails(variables, availableNodes);
       resolve();
     });
-    //TODO: if conditionalType not defined
   }, [nodeInfo])
 
   return (

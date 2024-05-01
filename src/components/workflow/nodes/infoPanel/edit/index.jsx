@@ -2,7 +2,6 @@ import React from 'react';
 import SimulationInfoStyled from "./styled";
 import { smoke, smokeHover } from "../../../../common/style/index.js";
 import { Container, Button } from '@mui/material';
-import Tooltip from "@mui/material/Tooltip";
 
 import NodeDetailsComponent from "../../details/index.jsx";
 import Input from "../../../../form/rawInput/index";
