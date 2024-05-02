@@ -2,8 +2,10 @@ import axios from "axios";
 import { getToken } from '../authService'
 
 const BASE_URL_HOST =
-"https://tcc-back-end.vercel.app";
-;//"http://localhost:8080";
+//"https://tcc-back-end.vercel.app";
+"http://localhost:8080";
+
+let defaultHeader;
 
 const baseInstance =  axios.create({
   baseURL: BASE_URL_HOST,
@@ -15,7 +17,7 @@ const baseInstance =  axios.create({
 baseInstance.interceptors.request.use(function (config) {
   const token = getToken();
   config.headers.Authorization =  token ? token : '';
-
+  baseInstance.defaults.headers = config.headers; 
   return config;
 });
 

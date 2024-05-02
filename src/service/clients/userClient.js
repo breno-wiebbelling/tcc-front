@@ -9,48 +9,48 @@ export const createUser = async (user) => {
     return await baseClient
         .post('/user/', user)
         .then(response => {
-            return performLogin( response.data );
+            return performLogin(response.data);
         });
 }
 
-export const validateNameAndEmailEligibility = async ( username, email ) => {
-    return ( 
-        await baseClient.post( 
-            '/user/verifyEligibility', 
-            { "username":username, "email":email }
+export const validateNameAndEmailEligibility = async (username, email) => {
+    return (
+        await baseClient.post(
+            '/user/verifyEligibility',
+            { "username": username, "email": email }
         )
     )['data'];
 }
 
-export const login = async ( email, password ) => {
+export const login = async (email, password) => {
     return baseClient
-        .post( '/user/login', { "email":email, "password":password } )
-        .then( response => {
+        .post('/user/login', { "email": email, "password": password })
+        .then(response => {
             return performLogin(response.data);
         })
 }
 
-const performLogin = ( data ) => {
-    if ( 'token' in data){
+const performLogin = (data) => {
+    if ('token' in data) {
         storeToken(data.token);
         return true;
-    } 
+    }
     return false;
 }
 
 export const validateHostEligibility = async (hostName) => {
-    return ( 
-        await baseClient.post( 
-            '/user/host', 
-            { "host":hostName }
+    return (
+        await baseClient.post(
+            '/user/host',
+            { "host": hostName }
         )
     )['data'];
 }
 
 export const getUserInfo = async () => {
     return (
-        await baseClient.get( 
-            '/user', 
+        await baseClient.get(
+            '/user',
         )
     )["data"];
 }
@@ -63,8 +63,40 @@ export const getUserHost = async () => {
 
 export const getUserImage = async () => {
     return (
-        await baseClient.get( 
-            '/image', 
+        await baseClient.get(
+            '/user/image',
+        )
+    )["data"];
+}
+
+export const updateUserInfo = async (userName, email, host) => {
+    return (
+        await baseClient.patch(
+            '/user',
+            {
+                username: userName,
+                email: email,
+                host: host
+            }
+        )
+    )["data"];
+}
+
+export const updateUserImage = async (newUserImage) => {
+    const formData = new FormData();
+    formData.append('newUserImage', newUserImage);
+
+    return (
+        await baseClient.patch(
+            '/user/image',
+            formData,
+            {
+                ...baseClient.defaults,
+                headers: {
+                    ...baseClient.defaults.headers,
+                    'Content-Type': 'multipart/form-data',
+                }
+            }
         )
     )["data"];
 }

@@ -1,6 +1,5 @@
 export const fontFamily = "Poppins"
 
-
 export const white = "#ffffff";
 export const whiteLight = "#f8f8f8";
 

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { smokeBlack, headerHeight } from "../common/style/index";
+import { smokeBlack, headerHeight, smokeWhiteLight, smokeWhiteLightHover } from "../common/style/index";
 
 export default styled.div`
 
@@ -42,4 +42,22 @@ export default styled.div`
     color: navy;
     text-decoration: underline;
   }
+
+  .dropdownOption{
+    height: 35px;
+    width: 100px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dropdownOption:hover{
+    background-color: ${smokeWhiteLightHover};
+  }
+
+  .dropdownOption:active{
+    background-color: ${smokeWhiteLight};
+  }
+  
 `

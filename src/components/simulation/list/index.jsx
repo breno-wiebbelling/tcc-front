@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import BasicTable from '../../common/list/list';
 import CreationModal from "../creation/index"
 import EditionModal from "../edition/index"

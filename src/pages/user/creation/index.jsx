@@ -22,13 +22,7 @@ export default () => {
 	const [formStep, setFormStep] = useState(1);
 	const [host, setHost] = useState("");
 
-	const [formErrors, setFormErrors] = useState({
-		name: '',
-		email: '',
-		password: '',
-		passwordConfirmation: '',
-		host: ''
-	});
+	const [formErrors, setFormErrors] = useState({ name: '', email: '', password: '', passwordConfirmation: '', host: '' });
 
 	const setValidationResult = (result) => {
 		if (Object.values(result).every(erro => erro === '')) return true;
@@ -65,8 +59,6 @@ export default () => {
 	};
 
 	const handleThirdStep = async () => {
-		console.log((await validateHostEligibility(host)))
-
 		if( !(await validateHostEligibility(host)) ){
 			setFormErrors(latest => {
 				return {

@@ -2,7 +2,7 @@ import React from "react";
 import StyledDropdown from "./styled";
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ClickOutsideWrapper from '../../workflow/nodes/types/ClickOutsideElement';
+import ClickOutsideWrapper from '../../common/ClickOutsideElement';
 import Tooltip from "@mui/material/Tooltip";
 import {white, smokeWhiteLightHover, smokeWhite, smoke, smokeHover} from "../../common/style/index";
 import IconButton from "@mui/material/IconButton";

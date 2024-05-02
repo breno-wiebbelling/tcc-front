@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import {smokeWhiteHover} from "../../../components/common/style/index"
+import { blueBayoux, smokeBlack, smokeWhiteLightHover, smokeHover, smokeWhite, smoke } from "../../../components/common/style/index"
 
 export const LoginStyled = styled.div`
   
-    background-color: ${smokeWhiteHover};
+    background-color: ${blueBayoux};
     
     width: 100%;
     height: 100vh;
@@ -11,9 +11,9 @@ export const LoginStyled = styled.div`
     .container{
         background-color: rgba(255,255,255,1);
         border-radius: 6px;
-        -webkit-box-shadow: 0px 0px 28px -3px rgba(153,153,153,1);
-        -moz-box-shadow: 0px 0px 28px -3px rgba(153,153,153,1);
-        box-shadow: 0px 0px 28px -3px rgba(153,153,153,1);
+        -webkit-box-shadow: 0px 0px 28px -3px ${smokeBlack};
+        -moz-box-shadow: 0px 0px 28px -3px ${smokeBlack};
+        box-shadow: 0px 0px 28px -3px ${smokeBlack};
 
         display: flex;
         justify-content: center;
@@ -25,5 +25,24 @@ export const LoginStyled = styled.div`
         height: 90%;
         width: 500px;
         box-sizing: border-box;
+    }
+
+    .edit_field_name_icon{
+        width: 18px; 
+        height: 18px; 
+        padding: 1.4px;
+        box-sizing: 'border-box';
+
+        border-radius: 4px; 
+        background-color: ${smokeWhiteLightHover}; 
+        color: ${smokeHover};
+    }
+
+    .edit_field_name_icon:hover{
+        background-color: ${smokeWhite}
+    }
+
+    .edit_field_name_icon:active{
+        background-color: ${smoke}
     }
 `

@@ -1,7 +1,7 @@
 import React  from 'react';
 import { Handle, Position } from 'reactflow';
 import ConditionalNodeStyled from "./ConditionalNodeStyled"
-import ClickOutsideWrapper from '../ClickOutsideElement'; 
+import ClickOutsideWrapper from '../../../../common/ClickOutsideElement'; 
 
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
