@@ -2,10 +2,11 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 
-const root = ReactDOM.createRoot(document.getElementById('root'))
+import { LoadingProvider } from './context/loadingContext'
 
+const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-    <>
+    <LoadingProvider>
         <App />
-    </>
-);
+    </LoadingProvider>
+)

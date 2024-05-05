@@ -45,7 +45,7 @@ export default styled.div`
 
   .dropdownOption{
     height: 35px;
-    width: 100px;
+    width: 120px;
 
     display: flex;
     align-items: center;

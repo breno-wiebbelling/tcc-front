@@ -38,7 +38,7 @@ export default () => {
             <Avatar src={userImageUrl} sx={{ height: "6vh", width: "6vh", borderRadius: "50%", border: `2px solid ${smoke}` }} />
           </IconButton>
           {isDropdownOpen && (
-            <div style={{ position: 'absolute', top: '8vh', right: '30px', borderBottomLeftRadius: '6px', borderBottomRightRadius: '6px', backgroundColor: 'white' }} >
+            <div style={{ position: 'absolute', top: '8vh', right: '28px', borderBottomLeftRadius: '6px', borderBottomRightRadius: '6px', backgroundColor: 'white' }} >
               <div onClick={()=>{ navigate('/perfil') }} className='dropdownOption' style={{ borderBottom: `1px solid ${smoke}` }} >Perfil</div>
               <div onClick={()=>{ navigate('/login')  }} className='dropdownOption' style={{ borderBottomLeftRadius: '6px', borderBottomRightRadius: '6px' }}>Sair</div>
             </div>

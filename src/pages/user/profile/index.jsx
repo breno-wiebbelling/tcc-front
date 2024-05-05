@@ -1,5 +1,5 @@
 import { LoginStyled } from "./styled"
-import { vividRed, vividRedHover, vividRedHoverActive, vividGreen, softGreen } from "../../../components/common/style";
+import { vividGreen, softGreen } from "../../../components/common/style";
 
 import React, { useCallback } from 'react';
 import _ from 'lodash';
@@ -10,7 +10,7 @@ import FieldEdition from "./fieldEdition/index.jsx";
 import PopperAlert from "../../../components/alert/index.jsx"
 
 import { getUserImage, updateUserImage, getUserInfo, validateHostEligibility, updateUserInfo } from "../../../service/clients/userClient";
-import { verifyUserAndEmailEligibility } from "../../../service/validators/userValidator.js";
+import { verifyCredentialEligibility } from "../../../service/validators/userValidator.js";
 
 import AvatarContainer from "./avatarLogo/index";
 
@@ -30,9 +30,8 @@ export default () => {
   const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: '' });
   const [userInfo, setUserInfo] = React.useState({ "username": "", "email": "", "host": "" });
   const [userImageUrl, setUserImageUrl] = React.useState("");
-  
+
   const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: '' }); }
-  const popError = (e) => { popAlertError(e, setAlertInfo); }
   const popSuccess = (message) => { resetErrorMessage(); setAlertInfo({ msg: message, mode: 'ok' }); }
 
   const fileInputRef = React.useRef(null);
@@ -60,42 +59,36 @@ export default () => {
       ...latest,
       [valueName]: newValue
     }));
+
+    if (!await verifyCredentialEligibility(newValue, valueName)) {
+      popAlertError(`${valueName[0].toUpperCase()+valueName.slice(1)} já registrado`, setAlertInfo)
+    }
+
+  }, 500), [userInfo, setUserInfo, popAlertError, verifyCredentialEligibility]);
+
   
-    let validationResult;
-    if(valueName === "username" || valueName === "email"){
-      validationResult = await verifyUserAndEmailEligibility({ "username": userInfo['username'], "email": userInfo['email'] });
-    }
-    
-    if(valueName === "host"){
-      validationResult = { host: await validateHostEligibility(newValue) };
-    }
-
-    if(validationResult[valueName] == false){
-      popError('Host já registrado')
-    }
-  }, 500), [userInfo, setUserInfo, popError, verifyUserAndEmailEligibility, validateHostEligibility]);
-
+  //TODO: change validation
   const handleUpload = async () => {
-    let validationResult;
+    /*let validationResult;
     validationResult = await verifyUserAndEmailEligibility({ "username": userInfo['username'], "email": userInfo['email'] });
 
-    if(validationResult['username'] !== ''){
+    if (validationResult['username'] !== '') {
       popAlertError(validationResult['username'], setAlertInfo);
       return
     }
-    if(validationResult['email'] !== ''){
+    if (validationResult['email'] !== '') {
       popAlertError(validationResult['email'], setAlertInfo);
       return
     }
-    
+
     validationResult['host'] = await validateHostEligibility(userInfo['host']);
-    if(!validationResult['host']){
+    if (!validationResult['host']) {
       popAlertError("Host já registrado", setAlertInfo);
       return
     }
 
     await updateUserInfo(userInfo['username'], userInfo['email'], userInfo['host'])
-    popSuccess("Dados alterados com sucesso!")
+    popSuccess("Dados alterados com sucesso!")*/
   }
 
   return (
@@ -109,7 +102,7 @@ export default () => {
               <AvatarContainer userInfo={userInfo} userImageUrl={userImageUrl} handleOpenFileInput={handleOpenFileInput} />
             </Container>
             <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
-            
+
             <div style={{ marginTop: "20%" }}>
               <FieldEdition
                 fieldName={'username'}
@@ -137,7 +130,7 @@ export default () => {
                 fontWeight: 600, letterSpacing: "2px",
                 width: '45%', backgroundColor: vividGreen,
                 textWeight: 400,
-                '&:hover': { backgroundColor: softGreen , },
+                '&:hover': { backgroundColor: softGreen, },
                 '&:active': { backgroundColor: softGreen, },
               }}
               variant="contained"

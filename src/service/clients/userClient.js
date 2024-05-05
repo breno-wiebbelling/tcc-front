@@ -1,11 +1,24 @@
 import baseClient from "./baseClient";
 import { storeToken } from "../authService";
+import CryptoJS from 'crypto-js'; 
 
 const APP_HOST = 'restmup.site';
 const DOT = '.';
 const HTTP = 'https://'
 
+async function hashPassword(password) {
+    try {
+        const hashedPassword = CryptoJS.SHA256(password + 'secretKey').toString(CryptoJS.enc.Hex);
+
+        return hashedPassword;
+    } catch (error) {
+        console.error('Error hashing password:', error);
+        throw error;
+    }
+}
+
 export const createUser = async (user) => {
+    user['password'] = await hashPassword(user['password']);
     return await baseClient
         .post('/user/', user)
         .then(response => {
@@ -23,6 +36,7 @@ export const validateNameAndEmailEligibility = async (username, email) => {
 }
 
 export const login = async (email, password) => {
+    password = await hashPassword(password);
     return baseClient
         .post('/user/login', { "email": email, "password": password })
         .then(response => {
@@ -99,4 +113,13 @@ export const updateUserImage = async (newUserImage) => {
             }
         )
     )["data"];
+}
+
+export const verifyUserCredential = async (value, valueName) => {
+    return (
+        await baseClient.post(
+            '/user/verifyCredential',
+            { value: value, valuename: valueName }
+        )
+    )['data']
 }

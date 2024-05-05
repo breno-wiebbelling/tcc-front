@@ -2,6 +2,7 @@ import React from 'react';
 import BasicTable from '../../common/list/list';
 import CreationModal from "../creation/index"
 import EditionModal from "../edition/index"
+import { LoadingConsumer } from '../../../context/loadingContext.jsx'
 import { getSimulationsByUser, deleteSimulationById } from "../../../service/clients/simulationClient";
 import SimulationListStyled from "./style"
 import PopperAlert from '../../../components/alert/index';
@@ -29,10 +30,15 @@ export default () => {
 
   const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: '' }); }
   const popError = (e) => { popAlertError(e, setAlertInfo); }
+  const loadingService = LoadingConsumer();
 
   simulationFieldsDetails["actions"].push({
     "name": "editElement", "function": () => { setIsEditionModalOpen(true) }
   })
+
+  React.useEffect(() => {
+    loadingService.show();
+  }, []);
 
   return (
     <SimulationListStyled className='display_flex_center'>
@@ -49,6 +55,7 @@ export default () => {
         elementFieldDetails={simulationFieldsDetails}
         elementClick={onSimulationClick}
         addAction={() => setIsCreationModalOpen(true)}
+        loadingService={loadingService}
       />
     </SimulationListStyled>
   );
