@@ -9,6 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { nodeCRUDOperations } from "../../../managers/nodeManager";
 import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
+import { Tooltip } from '@mui/material';
 
 export default ({ data }) => {
   const [isOptionsVisible, setIsOptionsVisible] = React.useState(false);
@@ -22,7 +23,9 @@ export default ({ data }) => {
           style={{ border: isOptionsVisible ? '2px solid black' : '1px solid black' }}
           onClick={ () => { setIsOptionsVisible(true); }}
         >
-          <p onClick={ () => { setIsOptionsVisible(true); }}> {data.label} </p>
+          <Tooltip title={data.label}>
+            <p onClick={ () => { setIsOptionsVisible(true); }}> {data.label} </p>
+          </Tooltip>
           <FormatAlignLeftIcon/>
         </div>
         <div onClick={ () => { setIsOptionsVisible(false); }} >

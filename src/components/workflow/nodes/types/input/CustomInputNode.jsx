@@ -5,6 +5,7 @@ import ClickOutsideWrapper from '../../../../common/ClickOutsideElement';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import Tooltip from "@mui/material/Tooltip";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { nodeCRUDOperations } from '../../../managers/nodeManager';
 
@@ -20,10 +21,12 @@ const YourComponent = ({ data }) => {
           onClick={() => {
             setIsOptionsVisible(true);
           }}
-        >
-          <p onClick={() => {setIsOptionsVisible(true);}}>
-            {data.label}
-          </p>
+        > 
+          <Tooltip title={data.label}>
+            <p onClick={() => {setIsOptionsVisible(true);}}>
+              {data.label}
+            </p>
+          </Tooltip>
         </div>
 
         <div

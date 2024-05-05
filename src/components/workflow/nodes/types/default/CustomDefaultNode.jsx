@@ -2,7 +2,7 @@ import React  from 'react';
 import { Handle, Position } from 'reactflow';
 import DefaultNodeStyled from "./styledDefaultNode"
 import ClickOutsideWrapper from '../../../../common/ClickOutsideElement'; 
-import IconButton from '@mui/material/IconButton';
+import {IconButton, Tooltip} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -22,7 +22,9 @@ export default ({ data }) => {
           style={{ border: isOptionsVisible ? '2px solid black' : '1px solid black' }}
           onClick={ () => { setIsOptionsVisible(true); }}
         >
-          <p onClick={ () => { setIsOptionsVisible(true); }}> {data.label} </p>
+          <Tooltip title={data.label}> 
+            <p onClick={ () => { setIsOptionsVisible(true); }}> {data.label} </p>
+          </Tooltip>
           <img style={{height: '45%', padding: '5% 5%'}} src={mathSymbol} alt="Logo" />
         </div>
         <div onClick={ () => { setIsOptionsVisible(false); }} >

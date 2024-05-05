@@ -15,9 +15,9 @@ export default (initialNode, initialNodes, nodeEventClicks, simulationId, search
   mainManagerLibrary.lineManagerInstance = LineManager()
   mainManagerLibrary.nodeManagerInstance = NodeManager(initialNodes, mainManagerLibrary, nodeEventClicks)
 
-  mainManagerLibrary.loadNodes = () => {
+  mainManagerLibrary.loadNodes = async () => {
     mainManagerLibrary.nodeManagerInstance.processNode(initialNode, mainManagerLibrary) 
-    reloadNodesAndAddGhostNodes(mainManagerLibrary);
+    await reloadNodesAndAddGhostNodes(mainManagerLibrary);
   }
 
   mainManagerLibrary.reload = async () => {

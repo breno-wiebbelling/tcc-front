@@ -174,14 +174,20 @@ export const deleteNode = async (nodeInformation, mainManager) => {
   nodeInformation = currentNodes.find(node => node.id === nodeInformation.id);
   
   await deleteById(nodeInformation.id);
-  let newNextNode = processNextNodeForNewNode(nodeInformation, mainManager);
+  let newNextNode;
   let parentNodes = currentNodes.filter(node => isNodeIdPresentOnNextNode(nodeInformation.id, node));
 
   for(let parentNode of parentNodes.filter(pn => ![nodeKeys.CONDITIONAL_GHOST, nodeKeys.GHOST].includes(pn.type))){
     //TODO: delete all nodes until cond. closure
     if(nodeInformation.type === nodeKeys.CONDITIONAL_KEY){
       let conditionalClosure = getConditionalClosure(nodeInformation.id, currentNodes);
-      newNextNode = (currentNodes.find(cn => cn.id === conditionalClosure.details.nextNode)).id
+
+      if(conditionalClosure === null && nodeInformation.details.conditionalClosure){
+        newNextNode = nodeInformation.details.conditionalClosure;
+      }
+      else{
+        newNextNode = (currentNodes.find(cn => cn.id === conditionalClosure.details.nextNode)).id;
+      }
     }
 
     if(parentNode.type === nodeKeys.CONDITIONAL_KEY){
@@ -193,6 +199,9 @@ export const deleteNode = async (nodeInformation, mainManager) => {
       let nextNode;
       if(nodeInformation.type === nodeKeys.CONDITIONAL_KEY){
         nextNode = getConditionalClosure(nodeInformation.id, currentNodes);
+        if(nextNode === null && nodeInformation.details.conditionalClosure){
+          nextNode = currentNodes.find(cn => cn.details.nextNode === nodeInformation.details.conditionalClosure)
+        }
       }else{
         nextNode = currentNodes.find(cn => cn.id === nodeInformation.details.nextNode);
       }
@@ -212,7 +221,9 @@ export const deleteNode = async (nodeInformation, mainManager) => {
         newNextNode = parentNode.details.nextNode; 
       }
     }
-
+    if(nodeInformation.type !== nodeKeys.CONDITIONAL_KEY && parentNode.type !== nodeKeys.CONDITIONAL_KEY){
+      newNextNode = processNextNodeForNewNode(nodeInformation, mainManager);
+    }
     await updateNextNode(parentNode.id, newNextNode);
   }
 
@@ -244,7 +255,6 @@ export const findNodeFrequencies = (given_nodes) => {
   }
 
   given_nodes.forEach(node => {
-
     if ([nodeKeys.CONDITIONAL_GHOST, nodeKeys.GHOST].includes(node.type)) { return }
 
     if (node.type === nodeKeys.CONDITIONAL_KEY) {

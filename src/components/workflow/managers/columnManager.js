@@ -147,7 +147,26 @@ export default () => {
       console.log(e)
       return null;
     }
-    
+  }
+
+  columnLibrary.columnsBetween = (columnA, columnB) => {
+    columnA = columnLibrary.getColumnPosition(columnA);
+    columnB = columnLibrary.getColumnPosition(columnB);
+
+    return (Math.abs(columnA - columnB) / X_GAP)-1;
+  }
+
+  columnLibrary.getGappedColumn = (currentIndex, totalLength, parentColumnName, gaps) => {
+    let gapResearch = 0;
+    gaps++;
+    let newColumn = parentColumnName;
+
+    do{
+      newColumn = columnLibrary.create(currentIndex, totalLength, newColumn, false)
+      gapResearch++;
+    }while(gapResearch<gaps)
+
+    return newColumn;
   }
 
   columnLibrary.reset = () => {

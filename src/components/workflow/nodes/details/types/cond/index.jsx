@@ -50,7 +50,7 @@ export default ({ nodeInfo, setNodeDetails }) => {
     setComparisonDetails((latest) => {
       let newComparisonDetails = { ...latest, ...booleanDetails };
       let newDetails;
-      
+
       setNodeDetails(latestNodeDetails => {
         newDetails = {
           ...latestNodeDetails,
@@ -59,13 +59,13 @@ export default ({ nodeInfo, setNodeDetails }) => {
             comparisonDetails: newComparisonDetails,
             type: conditionalType.key,
           },
-          conditionalClosure: nodeInfo.details.nextNode
+          conditionalClosure: ((nodeInfo.details.nextNode.includes("ghost")) ? nodeInfo.details.originalNextNode: nodeInfo.details.nextNode)
         };
 
         return newDetails;
-      })
+      });
 
-      return newComparisonDetails
+      return newComparisonDetails;
     })
 
     setBooleanCreationModalOpen(false)
