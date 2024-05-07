@@ -148,6 +148,10 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
   }
 
   const changeUriElements = (newUriElements) => {
+    if(httpMethod.key === HttpOperationEnum.POST.code){
+      newUriElements = getUrisByType(newUriElements, URIValueTypeEnum.URI.code);
+    }
+
     let sortedUriElements = sortUriElements(newUriElements);
     setUriElements(sortedUriElements)
     setEndUri(formatEndUri(sortedUriElements));
@@ -189,7 +193,6 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
 
   const handleUriDelete = (index) => {
     uriElements.splice(index, 1);
-
     uriElements.forEach((ue, i)=> ue.index = i);
 
     setNodeDetails(latest => {
@@ -234,10 +237,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
   React.useEffect(() => {
     setNodeDetails(latestDetails => {
       let newUriDetails = uriElements;
-      if(httpMethod.key === HttpOperationEnum.POST.code){
-        newUriDetails = getUrisByType(uriElements, URIValueTypeEnum.URI.code);
-        changeUriElements(newUriDetails)
-      }
+      
 
       return {
         ...latestDetails,
@@ -275,7 +275,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
         httpMethod.key === HttpOperationEnum.POST.code
         && (
           <div style={{ height: '45px', display: 'flex' }}>
-            <Dropdown options={jsonVariables} value={postInputVariable} placeholder={"Payload de Entrada (JSON)"} tooltipTitle={"Variável JSON que armazenará informações recebidas via POST"} onChange={(selectedVariable)=>{ handleInputVariableChange(selectedVariable) }} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={() => { openVariableCreationModal() }} isEnabled={true}  />
+            <Dropdown options={jsonVariables} value={postInputVariable} placeholder={"Payload de Entrada (JSON)"} tooltipTitle={"Variável JSON que irá armazenar as informações recebidas via POST"} onChange={(selectedVariable)=>{ handleInputVariableChange(selectedVariable) }} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={() => { openVariableCreationModal() }} isEnabled={true}  />
           </div>
         )
       }
