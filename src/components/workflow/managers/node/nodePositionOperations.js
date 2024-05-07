@@ -2,7 +2,6 @@ import { idGenerator } from "../../../common/idManager";
 import { nodeKeys, findNodeFrequencies } from "../nodeManager";
 
 export const isNodeIdPresentOnNextNode = (nodeId, nodeToVerify) => {
-
   return (
     (
       (nodeToVerify.details.nextNode === (nodeId)) || (typeof nodeToVerify.details.originalNextNode != "undefined" && (nodeToVerify.details.originalNextNode === nodeId))
@@ -203,8 +202,6 @@ export const reloadNodesAndAddGhostNodes = async (mainManager) => {
       return latestNodesState;
     })
   });
-
-  console.clear();
 
   let conditionalNodes = latestNodes.filter(ln => ln.type === nodeKeys.CONDITIONAL_KEY);
   if (conditionalNodes.length <= 0) {

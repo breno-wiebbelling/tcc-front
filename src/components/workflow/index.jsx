@@ -23,6 +23,7 @@ export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeEventClicks, s
         nodes={ mainManager.nodeManagerInstance.nodes }
         edges={ mainManager.edgeManagerInstance.edges }
         nodeTypes={ mainManager.nodeManagerInstance.nodeTypes}
+        edgeTypes={ mainManager.edgeManagerInstance.edgeTypes}
         style={{ borderRadius:"10px"  }}
       >
         <Controls/>

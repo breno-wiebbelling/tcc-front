@@ -1,15 +1,18 @@
 import {MarkerType} from 'reactflow';
 import { useEffect, useState } from 'react';
+import CustomEdge from '../edge/CustomEdge';
+import DefaultEdge from "../edge/DefaultEdge";
 
 export default () => {
   const edgesLibrary = {};
   const [edges, setEdges] = useState([]);
 
+  edgesLibrary.edgeTypes = { custom: CustomEdge, default: DefaultEdge };
   edgesLibrary.edges = edges;
   edgesLibrary.setEdges = setEdges
 
   useEffect(() => {
-    if(edgesLibrary.edges.length == 1){
+    if(edgesLibrary.edges.length === 1){
       if(typeof edgesLibrary.edges[0]['resolve'] == 'function'){
         edgesLibrary.edges[0]['resolve']();
         edgesLibrary.edges.splice(0);
@@ -21,17 +24,25 @@ export default () => {
     setEdges(latestEdges => {
       return [...latestEdges, {
         id: `e${sourceNodeId}-${targetNodeId}`,
-        type: "bezier",
         source: sourceNodeId, target: targetNodeId,
         makerEnd: {type: MarkerType.Arrow}, animated:false,
-        data: {
-          label: 'edge label',
-        },
         style: {
           strokeWidth: 2,
           stroke: '#00000052',
-        }
+        },
+        type: "default"
       }]
+    })
+  }
+
+  edgesLibrary.createWithLabel = (sourceNodeId, targetNodeId, label) => {
+    edgesLibrary.create(sourceNodeId, targetNodeId);
+    setEdges(latestEdges => {
+      let edge = latestEdges.find(le => le.source === sourceNodeId && le.target === targetNodeId );
+      edge.data = { "label": label };
+      edge.type = 'custom';
+
+      return latestEdges;
     })
   }
 
@@ -50,14 +61,14 @@ export default () => {
   edgesLibrary.updateTarget = (source, target, new_target) => {
     edgesLibrary.setEdges(latestEdges => {
 
-      if(typeof latestEdges.find(edge => edge.source == source && edge.target == target) == "undefined"){
+      if(typeof latestEdges.find(edge => edge.source === source && edge.target === target) == "undefined"){
         edgesLibrary.create(source, new_target);
         return latestEdges;
       }
 
       return latestEdges.map(edge => {
 
-        if(edge.source == source && edge.target == target){
+        if(edge.source == source && edge.target === target){
           edge.target = new_target;
         }
 
@@ -71,7 +82,7 @@ export default () => {
 
       return latestEdges.map(edge => {
 
-        if(edge.source == source && edge.target == target){
+        if(edge.source === source && edge.target === target){
           edge.source = new_source;
         }
 
@@ -84,15 +95,13 @@ export default () => {
   edgesLibrary.reset = () => {
     return new Promise((resolve) => {
       edgesLibrary.setEdges([
-        
         {
           id: `e`,
-          type: "bezier",
           source: 'sourceNodeId', target: 'targetNodeId',
           makerEnd: {type: MarkerType.Arrow}, animated:false,
           resolve: resolve,
+          type: 'custom'
         }
-
       ]);
     })
   }

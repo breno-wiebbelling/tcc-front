@@ -96,7 +96,6 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
       let currentNode = library.initialNodes[currentNodeIndex];
 
       if(library.conditionalClosures.find(cc => cc['closure'] === currentNodeId)){
-        
         library.conditionalClosures.forEach(cc => {
           if(cc['closure'] === currentNodeId){
             if(mainManager.lineManagerInstance.getLinePosition(library.parentNode.line) 
@@ -143,7 +142,7 @@ export default (initialNodes, mainManager, nodeClickEvents) => {
             if(conditionalLegId !== currentNode.details.conditionalClosure){
               let columnNameForFollowingChild = mainManager.columnManagerInstance.create(li, currentNode.details.nextNode.length, currentNode.column, Object.keys(library.conditionalClosures).length > 1);
               library.updateParentNode({ column: columnNameForFollowingChild, line: currentNode.line }, mainManager);
-              mainManager.edgeManagerInstance.create( prev_parentNode.id, conditionalLegId );
+              mainManager.edgeManagerInstance.createWithLabel( prev_parentNode.id, conditionalLegId, currentNode.details.conditionalDetails.options[li].case );
               library.processNode(conditionalLegId, mainManager);
             }
           }

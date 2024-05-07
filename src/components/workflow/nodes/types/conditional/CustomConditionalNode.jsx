@@ -9,6 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { nodeCRUDOperations } from "../../../managers/nodeManager";
+import CallSplitIcon from '@mui/icons-material/CallSplit';
 
 export default ({ data }) => {
   const [isOptionsVisible, setIsOptionsVisible] = React.useState(false);
@@ -32,8 +33,7 @@ export default ({ data }) => {
             style={{ "top": (isOptionsVisible) ? "170px" : "50px" , "left": "75px" }} 
           >
             <IconButton className='action_button_element'>
-              <AddIcon className='add_action'/>
-              <ArrowBackIosIcon className='arrow_action'/>
+              <CallSplitIcon style={{ transform: "rotate(180deg)"}}/>
             </IconButton>
           </div>
           <div 
