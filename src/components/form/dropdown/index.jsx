@@ -36,6 +36,14 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
     );
   }, [value])
 
+  const getVariableValue = (variable) => {
+    if (variable.constructor === ({}).constructor) {
+      return JSON.stringify(variable);
+    }
+
+    return String(variable)
+  }
+
   return (
     <StyledDropdown 
       value={value} 
@@ -79,7 +87,7 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
             {
               options.length > 0 &&
               options.map((option) => (
-                <Tooltip title={option.value} key={option.key}>
+                <Tooltip title={getVariableValue(option.value)} key={option.key}>
                   <div
                     className="dropdown-option"
                     onClick={() => {
