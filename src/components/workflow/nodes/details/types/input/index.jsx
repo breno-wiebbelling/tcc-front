@@ -31,7 +31,7 @@ const getUserHost = ()=>{
 const setOpacity = (state, document, index) => { document.getElementById(`${URI_ELEMENT_CLASS}${index}`).style.opacity = (state) ? 1 : 0; }
 
 const loadUserVariables = (simulationId, setVariables, setJsonVariables) => {
-  getVariablesByUserAndSimulationId(0, simulationId)
+  return getVariablesByUserAndSimulationId(0, simulationId)
     .then(userVariables => {
       let filteredVariables = userVariables.list.map(v => {
         return {key: v['_id'], label:v['name'], value:v['value']}
@@ -119,10 +119,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
     setNodeDetails(latest => {
       return {
         ...latest,
-        details:{
-          ...latest.details,
-          inputVariable: newVariable
-        }
+        inputVariable: newVariable['key']
       }
     })
   }
@@ -228,11 +225,16 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
   }
 
   React.useEffect(() => {
-    loadUserVariables(nodeInfo['simulationId'], setVariables, setJsonVariables);
+    loadUserVariables(nodeInfo['simulationId'], setVariables, setJsonVariables).then(loadedVariables => {
+      if(httpMethod['key'] === HttpOperationEnum.POST.code){
+        setPostInputVariable(loadedVariables.find(v => v['key'] === nodeInfo['details']['inputVariable']))
+      }
+    });
   }, [nodeInfo['simulationId']]);
 
   React.useEffect(()=> {
     setHttpMethod(obtainHttpMethod(nodeDetails));
+
     changeUriElements(nodeInfo['details']['uriInfo'])
   },[nodeInfo])
 
