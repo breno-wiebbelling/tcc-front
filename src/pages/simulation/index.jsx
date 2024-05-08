@@ -36,7 +36,6 @@ export default () => {
   }
 
   const openModalWithNodeEvent = (eventName, nodeInformation) => {
-
     nodeInformation['simulationId'] = simulationId;
 
     switch (eventName){
@@ -92,11 +91,11 @@ export default () => {
       {alertInfo.msg !== "" && <PopperAlert message={alertInfo.msg} mode={alertInfo.mode} resetMessage={resetErrorMessage} />}
 
       <div className='container'>
-        { 
+        {
           loaded &&
-          <SimulationFlow 
-            initialNode={simulationInfo["id_start"]} 
-            initialNodes={initialNodes} 
+          <SimulationFlow
+            initialNode={simulationInfo["id_start"]}
+            initialNodes={initialNodes}
             isInfoPanelOpen={isInfoPanelOpen}
             nodeEventClicks={nodeEventClicks}
             simulationId={simulationId}

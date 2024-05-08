@@ -25,7 +25,9 @@ const obtainHttpMethod = (nodeDetails) => {
     : HttpOperationEnum.getDropdownOptionByCode(HttpOperationEnum.GET.code) ;
 }
 
-const getUserHost = ()=>{ return sessionStorage.getItem(user_host_key); }
+const getUserHost = ()=>{
+  return localStorage.getItem(user_host_key);
+}
 const setOpacity = (state, document, index) => { document.getElementById(`${URI_ELEMENT_CLASS}${index}`).style.opacity = (state) ? 1 : 0; }
 
 const loadUserVariables = (simulationId, setVariables, setJsonVariables) => {
@@ -237,7 +239,6 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
   React.useEffect(() => {
     setNodeDetails(latestDetails => {
       let newUriDetails = uriElements;
-      
 
       return {
         ...latestDetails,
