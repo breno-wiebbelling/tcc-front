@@ -21,6 +21,7 @@ export const smokeBlack = "#1d1d1d";
 export const denseLightBlue = "#0074eb";
 export const blueBayoux = "#475F76";
 
+export const redSalmon = "#Ff7d77";
 export const vividRed = "#dc3c31" //"#f44336";
 export const vividRedHover = "#c22219";
 export const vividRedHoverActive = "#cb5650";

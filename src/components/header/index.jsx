@@ -6,7 +6,7 @@ import HeaderStyled from './styled'
 import Box from '@mui/material/Box';
 import logo from './Restmup.png';
 import { getUserImage } from "../../service/clients/userClient";
-import { smoke } from '../common/style';
+import { smoke, smokeWhiteLight, smokeWhiteLightHover } from '../common/style';
 
 import ClickOutsideWrapper from "../common/ClickOutsideElement";
 
@@ -33,12 +33,12 @@ export default () => {
       </Box>
       <Box className="rigth_box" onClick={() => { setIsDropdownOpen(true) }}>
         <ClickOutsideWrapper onOutsideClick={() => { if (isDropdownOpen) { setIsDropdownOpen(false); } }} >
-          <IconButton sx={{ maxHeight: "5vh", }}>
+          <IconButton sx={{ maxHeight: "5vh", cursor: 'pointer' }}>
             <Avatar src={userImageUrl} sx={{ height: "6vh", width: "6vh", borderRadius: "50%", border: `2px solid ${smoke}` }} />
           </IconButton>
           {isDropdownOpen && (
-            <div style={{ position: 'absolute', top: '8vh', right: '28px', borderBottomLeftRadius: '6px', borderBottomRightRadius: '6px', backgroundColor: 'white', zIndex: 2 }} className='header_dropdown_options' >
-              <div onClick={()=>{ navigate('/perfil') }} className='dropdownOption' style={{ borderBottom: `1px solid ${smoke}` }} >Perfil</div>
+            <div style={{ borderRadius: '6px', position: 'absolute', cursor: 'pointer', top: '9vh', right: '40px', borderBottomLeftRadius: '6px', borderBottomRightRadius: '6px', backgroundColor: 'white', zIndex: 2, fontSize: '13px' }} className='header_dropdown_options' >
+              <div onClick={()=>{ navigate('/perfil') }} className='dropdownOption' style={{ borderBottom: `1px solid ${smoke}`, borderTopLeftRadius: '6px', borderTopRightRadius: '6px' }} >Perfil</div>
               <div onClick={()=>{ navigate('/login')  }} className='dropdownOption' style={{ borderBottomLeftRadius: '6px', borderBottomRightRadius: '6px' }}>Sair</div>
             </div>
           )}

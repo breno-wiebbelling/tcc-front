@@ -2,7 +2,7 @@ import { nodeKeys } from "../../../managers/nodeManager";
 
 const typeDetailsValues = {
   MATH: {
-    code: nodeKeys.TASK_KEY,
+    code: nodeKeys.MATH_KEY,
     name: "Matemática"
   },
   COND:{
@@ -21,6 +21,10 @@ const typeDetailsValues = {
     code: nodeKeys.FINAL_KEY,
     name: "Saída"
   },
+  JSON:{
+    code: nodeKeys.JSON_KEY,
+    name: 'Json'
+  },
   NONE: {
     code:"none",
     name:"Tipo"
@@ -30,17 +34,19 @@ const typeDetailsValues = {
 const getOptionType = (code) => {
   switch (code){
     case typeDetailsValues.MATH.code:
-      return typeDetailsValues.MATH
+      return typeDetailsValues.MATH;
     case typeDetailsValues.COND.code:
-      return typeDetailsValues.COND
+      return typeDetailsValues.COND;
     case typeDetailsValues.START.code:
-      return typeDetailsValues.START
+      return typeDetailsValues.START;
     case typeDetailsValues.TEXT.code:
-      return typeDetailsValues.TEXT
+      return typeDetailsValues.TEXT;
     case typeDetailsValues.END.code:
-      return typeDetailsValues.END
+      return typeDetailsValues.END;
+    case typeDetailsValues.JSON.code:
+      return typeDetailsValues.JSON;
     default:
-      return typeDetailsValues.NONE
+      return typeDetailsValues.NONE;
   }
 }
 

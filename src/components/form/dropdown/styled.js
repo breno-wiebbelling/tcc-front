@@ -2,6 +2,8 @@ import styled from "styled-components";
 import {
   white,
   smokeWhite,
+  smokeWhiteHover,
+  smoke,
   smokeHover,
   whiteLightHover,
   smokeWhiteLightHover,
@@ -33,11 +35,8 @@ export default styled.div`
 
   .dropdown-label-display .dropdown-add-icon, 
   .dropdown-label-display .dropdown-drop-icon{
-    width: 25px;
-    height: 25px;
     border-radius: 50px;
     
-    background-color: ${smokeWhiteLightHover};
     color: ${smokeHover};
     justify-content: center;
   }
@@ -49,17 +48,35 @@ export default styled.div`
     justify-content: space-between;
   }
 
+  .dropdown-placeholder{
+    max-width: 75%;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .dropdown-label-display .dropdown-add-icon{
     margin-left: 5px;    
   }
 
   .dropdown-label-display .dropdown-drop-icon {
-    padding-left: 15px;
-
     box-sizing: border-box;
     display: flex;
   }
 
+  .dropdown-drop-icon, .dropdown-add-icon{
+    background-color: ${smokeWhiteHover};
+  }
+
+  .dropdown-drop-icon:hover, .dropdown-add-icon:hover{
+    background-color: ${smoke};
+  }
+  
+  .dropdown-drop-icon:active, .dropdown-add-icon:active{
+    background-color: ${smokeWhiteLightHover};
+  }
+  
   .dropdown-label-display .dropdown-placeholder{
     color: ${smokeHover};
   }
@@ -67,7 +84,7 @@ export default styled.div`
   .dropdown-options{
     z-index: 5;
     position: absolute;
-    top: 43px;
+    top: 97%;
     
     width: 100%;
     margin-left: -11px;

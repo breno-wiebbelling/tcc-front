@@ -47,7 +47,6 @@ export default styled.div`
         align-items: center;
 
         transition-duration: .5s;
-        z-index: 1;
     }
 
     .action_button .action_button_element{

@@ -30,7 +30,7 @@ export default ({ data }) => {
           <div
             className='action_button left'
             onClick={() => { data.click.editNode(data) }}
-            style={{"left": (isOptionsVisible) ? "-15px" : "50px"}}
+            style={{"left": (isOptionsVisible) ? "-7px" : "50px"}}
           >
             <IconButton className='action_button_element'>
               <EditIcon/>
@@ -42,7 +42,7 @@ export default ({ data }) => {
             onClick={() => {
               data.click.addNode(nodeCRUDOperations.ADD_ABOVE, data)
             }}
-            style={{"top": (isOptionsVisible) ? "-70px" : "0px", "left": "75px"}}
+            style={{"top": (isOptionsVisible) ? "-60px" : "0px", "left": "75px"}}
           >
             <IconButton className='action_button_element'>
               <AddIcon className='add_action'/>

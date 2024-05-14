@@ -44,7 +44,6 @@ export default styled.div`
 
     overflow: hidden;
 
-    text-overflow: ellipsis;
     text-align: center;
     text-overflow: ellipsis;
     text-transform: capitalize;

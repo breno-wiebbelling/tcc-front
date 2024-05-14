@@ -101,7 +101,7 @@ export default styled.div`
   }
 
   .list_display .list_pagination{
-    height: 10%;
+    height: 7%;
     width: 100%;
   }
 
@@ -148,7 +148,6 @@ export default styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    text-overflow: ellipsis;  
     color: ${denseSmoke};
   }
 

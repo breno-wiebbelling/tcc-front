@@ -9,7 +9,7 @@ export default ({ value, onChange, placeholder, error, type, tooltipTitle }) => 
 					placeholder={placeholder}
 					type={type}
 					style={{width: "100%"}}
-					value={value}
+					value={ (value) ? value : ''}
 					onChange={onChange}
 				/>
 			</Tooltip>

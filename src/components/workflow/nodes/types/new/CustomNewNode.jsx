@@ -20,7 +20,7 @@ export default ({ data }) => {
         <div
           className='action_button left'
           onClick={()=>{ data.click.editNode(data) }}
-          style={{"left": (isOptionsVisible) ? "-70px" : "0px"}}
+          style={{"left": (isOptionsVisible) ? "-60px" : "0px"}}
         >
           <IconButton className='action_button_element'>
             <EditIcon/>
@@ -29,7 +29,7 @@ export default ({ data }) => {
         <div
           className='action_button rigth'
           onClick={() => { data.click.deleteNode(data) }}
-          style={{"right": (isOptionsVisible) ? "-70px" : "0px"}}
+          style={{"right": (isOptionsVisible) ? "-60px" : "0px"}}
         >
           <IconButton className='action_button_element'>
             <DeleteIcon/>

@@ -43,10 +43,10 @@ export const reprocessNodeColumns = (mainManager, currentNodeId, latestNodes, up
     case nodeKeys.START_KEY:
       currentNode.column = mainManager.columnManagerInstance.central_column_name;
 
-    case nodeKeys.TASK_KEY:
+    case nodeKeys.MATH_KEY:
       currentNode.column = mainManager.nodeManagerInstance.parentNode.column;
 
-    case nodeKeys.START_KEY: case nodeKeys.TASK_KEY:
+    case nodeKeys.START_KEY: case nodeKeys.MATH_KEY:
       mainManager.nodeManagerInstance.updateParentNode(currentNode);
       latestNodes = reprocessNodeColumns(mainManager, currentNode.details.nextNode, latestNodes, updateParentNode);
       break;
@@ -274,10 +274,6 @@ export const updateNodesPositions = (mainManager) => {
     let anyGhostNode = latestNodes.find(node => node.type === nodeKeys.GHOST);
 
     return latestNodes.map(node => {
-      // if (node.type === nodeKeys.FINAL_KEY) {
-      //   node.column = "central"
-      // }
-
       node.position = {
         x: mainManager.columnManagerInstance.getColumnPosition(node.column),
         y: mainManager.lineManagerInstance.getLinePosition(node.line)
@@ -289,10 +285,10 @@ export const updateNodesPositions = (mainManager) => {
       //   node.data = { label: node.line }
       // }
 
-      if (node.type === nodeKeys.START_KEY) { node.position.y -= 100 }
+      if (node.type === nodeKeys.START_KEY) { node.position.y -= 120 }
       if (node.type === nodeKeys.CONDITIONAL_KEY) { node.position.y -= 50 }
-      if (node.type === nodeKeys.TASK_KEY || node.type === nodeKeys.NEW_KEY || node.type === nodeKeys.TEXT_KEY) { node.position.y -= 50 }
-      if (node.type === nodeKeys.FINAL_KEY && anyGhostNode) { node.position.y -= 50 }
+      if (node.type === nodeKeys.JSON_KEY || node.type === nodeKeys.MATH_KEY || node.type === nodeKeys.NEW_KEY || node.type === nodeKeys.TEXT_KEY) { node.position.y -= 50 }
+      if (node.type === nodeKeys.FINAL_KEY && anyGhostNode) { node.position.y -= 30 }
 
       return node
     })

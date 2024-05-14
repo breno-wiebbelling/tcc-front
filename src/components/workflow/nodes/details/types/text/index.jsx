@@ -8,10 +8,7 @@ import Dropdown from "../../../../../form/dropdown";
 import VariableCreationModal from "../../../../../variable/creation/variableCreationModal";
 import TextValueModal from "./textBuilder/textValueDetailsModal";
 import { getVariablesByUserAndSimulationId } from "../../../../../../service/clients/variableClient";
-import { formatTextInfo } from "./textBuilder/textBuilderManager";
 import TextValueTypeEnum from "./textBuilder/TextValueTypeEnum";
-
-
 
 export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
   
@@ -21,8 +18,6 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
 
   const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: ''});
   const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: ''}); }
-  const setError = (errMsg) => { setAlertInfo({ mode: 'error', msg: errMsg }) }
-  const setWarning = (wrnMsg) => { setAlertInfo({ mode: 'warn', msg: wrnMsg }) }
 
   const [textElements, setTextElements] = React.useState([]);
   const [newTextInfo, setNewTextInfo] = React.useState({ "uiDisplay": "", "type": "", "value": "", "isNew":true, "index": 0 });
@@ -135,15 +130,9 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
             return (
               <div 
                 className={"text-element"} key={index} 
-                onClick={()=>{ 
-                  openTextEditModalOpen(textElement) 
-                }}
+                onClick={()=>{ openTextEditModalOpen(textElement) }}
               >
-                <p 
-                  style={{ 
-                    backgroundColor: (textElement.type == TextValueTypeEnum.TEXT.code ) ? smokeWhiteHover : lightVividGreen
-                  }} 
-                >
+                <p style={{ backgroundColor: (textElement.type == TextValueTypeEnum.TEXT.code ) ? smokeWhiteHover : lightVividGreen }} >
                   { textElement.uiDisplay }
                 </p>
               </div>

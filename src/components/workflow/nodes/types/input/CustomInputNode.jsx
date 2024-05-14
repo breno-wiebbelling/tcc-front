@@ -32,7 +32,7 @@ const YourComponent = ({ data }) => {
         <div
           className='action_button left'
           onClick={() => { data.click.editNode(data)  }}
-          style={{"left": (isOptionsVisible) ? "-15px" : "50px"}}
+          style={{"left": (isOptionsVisible) ? "-5px" : "50px"}}
         >
           <IconButton className='action_button_element'>
             <EditIcon/>
@@ -47,7 +47,7 @@ const YourComponent = ({ data }) => {
             onClick={() => {
               data.click.addNode(nodeCRUDOperations.ADD_BELOW, data)
             }}
-            style={{"top": (isOptionsVisible) ? "120px" : "0px", "left": "75px"}}
+            style={{"top": (isOptionsVisible) ? "110px" : "0px", "left": "75px"}}
           >
             <IconButton className='action_button_element'>
               <AddIcon className='add_action'/>

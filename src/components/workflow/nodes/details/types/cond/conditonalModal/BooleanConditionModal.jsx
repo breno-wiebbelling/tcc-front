@@ -58,7 +58,6 @@ export default ({ isOpen, close, onCreate, comparisonDetails, variables, setVarC
 	}
 
 	const validateFields = (setAlertInfo) => {
-
 		if(name === "Não definida" || name === "Nome da Comparação"){
 			setAlertInfo({ msg:"Insira um nome!", mode: 'error' })
 			return false;

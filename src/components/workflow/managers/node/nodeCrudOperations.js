@@ -274,7 +274,7 @@ export const updateAfterFinish = (mainManager) => {
 
     latestNodes = latestNodes.map(node => {
       if (node.type === nodeKeys.NEW_KEY) {
-        node.type = nodeKeys.TASK_KEY;
+        node.type = nodeKeys.MATH_KEY;
       }
 
       return node
