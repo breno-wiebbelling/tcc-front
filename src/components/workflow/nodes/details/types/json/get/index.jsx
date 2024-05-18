@@ -28,7 +28,7 @@ export default ({ nodeInfo, setNodeDetails, variables, openVariableCreationModal
 
   React.useEffect(() => {
     let newResultVariable = (typeof nodeInfo['details']['resultVariable'] !== "undefined")
-      ? typeof variables.find(v => v['key'] === nodeInfo['details']['resultVariable']) !== 'undefined'
+      ? variables.find(v => v['key'] === nodeInfo['details']['resultVariable'])
       : DEFAULT_NEW_JSON_VALUE;
     setResultVariable(newResultVariable);
 
