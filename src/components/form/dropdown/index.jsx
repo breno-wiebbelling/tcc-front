@@ -19,7 +19,7 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
   const [display, setDisplay] = React.useState("");
   const [hasChanged, setHasChanged] = React.useState(false);
 
-  iconSizes = (typeof iconSizes != "undefined") ? iconSizes: { width: '25px', height: '25px' };
+  iconSizes = (typeof iconSizes != "undefined") ? iconSizes : { width: '25px', height: '25px' };
 
   React.useEffect(() => {
     options = options.map(option => {
@@ -29,7 +29,7 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
   }, [])
 
   React.useEffect(() => {
-    if(value['key'] != 'key'){
+    if (value['key'] != 'key') {
       setHasChanged(true);
     }
 
@@ -70,8 +70,8 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
             {isEnabled &&
               (
                 <div className="dropdown-buttons">
-                  <IconButton className={`dropdown-drop-icon`} sx={{  ...iconSizes , color: white, rotate: (isOptionsOpen) ? "180deg" : "0deg" }}>
-                    <ArrowBackIosIcon/>
+                  <IconButton className={`dropdown-drop-icon`} sx={{ ...iconSizes, color: white, rotate: (isOptionsOpen) ? "180deg" : "0deg" }}>
+                    <ArrowBackIosIcon />
                   </IconButton>
                   {hasNewValueOption &&
                     <IconButton
@@ -95,7 +95,7 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
           <div className="dropdown-options">
             {
               options.length > 0 &&
-              options.map((option) => ( 
+              options.map((option) => (
                 <Tooltip title={getVariableValue(option.value)} key={option.key} disableInteractive>
                   <div
                     className="dropdown-option"
@@ -113,7 +113,6 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
                     <p>{option.label}</p>
                   </div>
                 </Tooltip>
-
               ))
             }
             {
@@ -128,7 +127,6 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
                 </div>
               )
             }
-
           </div>
         }
       </ClickOutsideWrapper>

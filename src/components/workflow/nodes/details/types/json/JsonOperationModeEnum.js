@@ -13,7 +13,7 @@ const jsonOperationModeOptions = {
 
 const getByCode = (code) => {
   switch (code){
-    case jsonOperationModeOptions.GET.code:
+    case jsonOperationModeOptions.GET.key:
       return jsonOperationModeOptions.GET;
     default:
       return jsonOperationModeOptions.EDIT;

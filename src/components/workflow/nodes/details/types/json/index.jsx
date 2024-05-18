@@ -10,7 +10,7 @@ import EditJsonInfo from "./edit/index";
 import GetJsonKeyValue from "./get/index";
 
 const DEFAULT_JSON_VARIABLE = { key: 'key', label: 'Variável JSON', value: 'Não definido' };
-const DEFAULT_JSON_OPERATION_OPTION = { key: 'key', label: 'Operação JSON', value:"Operação realizada no JSON selecionado"}
+const DEFAULT_JSON_OPERATION_OPTION = { key: 'key', label: 'Operação JSON', value: "Operação realizada no JSON selecionado" }
 
 export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
   const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: '' });
@@ -21,11 +21,11 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
   const [variables, setVariables] = React.useState([]);
   const [jsonVariables, setJsonVariables] = React.useState([]);
   const [variableCreationModalOpen, setVariableCreationModalOpen] = React.useState(false);
-  const openVariableCreationModal  = () => { setVariableCreationModalOpen(true); }
+  const openVariableCreationModal = () => { setVariableCreationModalOpen(true); }
   const closeVariableCreationModal = () => { setVariableCreationModalOpen(false); }
 
   const [jsonVariable, setJsonVariable] = React.useState(DEFAULT_JSON_VARIABLE);
-  const [jsonOperationMode, setJsonOperationMode] = React.useState(DEFAULT_JSON_OPERATION_OPTION)
+  const [jsonOperationMode, setJsonOperationMode] = React.useState(JsonOperationModeEnum.getByCode('get'))
 
   const loadUserVariables = async () => {
     let userVariables = await getVariablesByUserAndSimulationId(0, nodeInfo['simulationId'])
@@ -52,7 +52,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
     });
   }
 
-  const handleJsonOperationChange = (newJsonOperation) => { 
+  const handleJsonOperationChange = (newJsonOperation) => {
     setJsonOperationMode(newJsonOperation)
     setNodeDetails(latestDetails => {
       latestDetails['jsonOperationMode'] = newJsonOperation['key']
@@ -62,17 +62,17 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
 
   const loadJsonDetails = async (nodeInfo) => {
     let loadedVariables = await loadUserVariables(nodeInfo['simulationId']);
+
     if (typeof nodeInfo['details']['jsonVariable'] === 'undefined') {
       setJsonVariable(DEFAULT_JSON_VARIABLE);
     }
     else {
       setJsonVariable(loadedVariables.find(lv => lv['key'] === nodeInfo['details']['jsonVariable']));
     }
-
-    if(typeof nodeInfo['details']['jsonOperationMode'] === 'undefined'){
+    if (typeof nodeInfo['details']['jsonOperationMode'] === 'undefined') {
       setJsonOperationMode(DEFAULT_JSON_OPERATION_OPTION)
-    }else{
-      setJsonOperationMode(JsonOperationModeEnum.getByCode(typeof nodeInfo['details']['jsonOperationMode']))
+    } else {
+      setJsonOperationMode(JsonOperationModeEnum.getByCode(nodeInfo['details']['jsonOperationMode']))
     }
   }
 
@@ -95,20 +95,25 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
       <div style={{ height: '45px' }}>
         <Dropdown options={jsonVariables} value={jsonVariable} onChange={handleJsonVariableChange} placeholder={jsonVariable.label} tooltipTitle={"Variável JSON"} hasNewValueOption={true} onNewValueOptionClick={openVariableCreationModal} />
       </div>
-      <div style={{ height: '45px' }}>
-        <Dropdown options={JsonOperationModeEnum.dropdownOptions} value={jsonOperationMode} onChange={handleJsonOperationChange} placeholder={jsonOperationMode.label} tooltipTitle={"Operação JSON"}/>
-      </div>
+      {
+        jsonVariable['key'] !== 'key' &&
+        (
+          <div style={{ height: '45px' }}>
+            <Dropdown options={JsonOperationModeEnum.dropdownOptions} value={jsonOperationMode} onChange={handleJsonOperationChange} placeholder={jsonOperationMode.label} tooltipTitle={"Operação JSON"} />
+          </div>
+        )
+      }
       {
         (jsonVariable['key'] !== DEFAULT_JSON_VARIABLE['key'] && jsonOperationMode['key'] === JsonOperationModeEnum.EDIT.key) &&
         (
-          <EditJsonInfo nodeInfo={nodeInfo} setNodeDetails={setNodeDetails} variables={variables} jsonVariable={jsonVariable} setWarning={setWarning} openVariableCreationModal={openVariableCreationModal} setError={setError}/>
-        )  
+          <EditJsonInfo nodeInfo={nodeInfo} setNodeDetails={setNodeDetails} variables={variables} jsonVariable={jsonVariable} setWarning={setWarning} openVariableCreationModal={openVariableCreationModal} setError={setError} />
+        )
       }
       {
         (jsonVariable['key'] !== DEFAULT_JSON_VARIABLE['key'] && jsonOperationMode['key'] === JsonOperationModeEnum.GET.key) &&
         (
-          <GetJsonKeyValue nodeInfo={nodeInfo} setNodeDetails={setNodeDetails} variables={variables} openVariableCreationModal={openVariableCreationModal}/>
-        )  
+          <GetJsonKeyValue nodeInfo={nodeInfo} setNodeDetails={setNodeDetails} variables={variables} openVariableCreationModal={openVariableCreationModal} />
+        )
       }
 
       <VariableCreationModal isOpen={variableCreationModalOpen} close={() => { closeVariableCreationModal(false) }} onCreate={handleVariableCreation} simulationId={nodeInfo['simulationId']} openVariableCreationModal={openVariableCreationModal} />

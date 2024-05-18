@@ -12,27 +12,28 @@ export default ({ nodeInfo, setNodeDetails, variables, openVariableCreationModal
   const handleResultVariableChange = (newResultVariable) => {
     setResultVariable(newResultVariable)
     setNodeDetails(latest => {
-      latest['details']['resultVariable'] = newResultVariable['key'];
+      latest['resultVariable'] = newResultVariable['key'];
       return latest;
     })
   }
 
-  const handleKeyNameChange = (newKeyName) => {
+  const handleKeyNameChange = (event) => {
+    let newKeyName = event.target.value;
     setKeyName(newKeyName);
     setNodeDetails(latest => {
-      latest['details']['keyName'] = newKeyName;
+      latest['keyName'] = newKeyName;
       return latest;
     });
   }
 
   React.useEffect(() => {
     let newResultVariable = (typeof nodeInfo['details']['resultVariable'] !== "undefined")
-      ? variables.find(v => v['key'] === nodeInfo['details']['resultVariable'])
+      ? typeof variables.find(v => v['key'] === nodeInfo['details']['resultVariable']) !== 'undefined'
       : DEFAULT_NEW_JSON_VALUE;
     setResultVariable(newResultVariable);
 
     let keyName = (typeof nodeInfo['details']['keyName'] !== "undefined")
-      ? variables.find(v => v['key'] === nodeInfo['details']['keyName'])
+      ? nodeInfo['details']['keyName']
       : '';
     setKeyName(keyName);
   }, [nodeInfo])
@@ -42,11 +43,7 @@ export default ({ nodeInfo, setNodeDetails, variables, openVariableCreationModal
       <div style={{ height:"45px" }}>
         <Dropdown options={variables} value={resultVariable} onChange={handleResultVariableChange} placeholder={"Variável Destino"} hasNewValueOption={true} onNewValueOptionClick={openVariableCreationModal} iconSizes={{ height: '18px', width: '18px' }} />
       </div>
-      <Input
-        value={keyName}
-        onChange={handleKeyNameChange}
-        placeholder="Chave"
-      />
+      <Input value={keyName} onChange={handleKeyNameChange} placeholder="Chave" />
     </GetJsonValueStyled>
   )
 }

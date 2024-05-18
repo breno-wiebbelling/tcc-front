@@ -101,6 +101,11 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
     })
   }
 
+  const handleAddModeChange = () => {
+    setAddModeOn(latest => !latest);
+    setNewJsonOperation(DEFAULT_NEW_JSON_OPERATION);
+  }
+
   React.useEffect(() => {
     loadJsonDetails(nodeInfo)
   }, [nodeInfo])
@@ -160,7 +165,7 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
           {!editModeOn && <EditIcon sx={{ width: "17px", height: "17px", color: smokeBlack }} />}
           {editModeOn && <CheckIcon sx={{ width: "17px", height: "17px", color: smokeBlack }} />}
         </IconButton>
-        <IconButton onClick={() => { setAddModeOn(latest => !latest); }} className={`display_flex_center`} sx={{ width: "25px", height: "25px", transition: ".3s", borderRadius: "50%", color: denseSmoke, position: "absolute", transform: (addModeOn) ? "rotate(48deg)" : "rotate(0deg)", bottom: '20px', right: (editModeOn) ? '40px' : '10px', backgroundColor: smoke, "&:hover": { backgroundColor: smokeWhiteHover }, "&:active": { backgroundColor: smokeBlack } }}>
+        <IconButton onClick={() => { handleAddModeChange() }} className={`display_flex_center`} sx={{ width: "25px", height: "25px", transition: ".3s", borderRadius: "50%", color: denseSmoke, position: "absolute", transform: (addModeOn) ? "rotate(48deg)" : "rotate(0deg)", bottom: '20px', right: (editModeOn) ? '40px' : '10px', backgroundColor: smoke, "&:hover": { backgroundColor: smokeWhiteHover }, "&:active": { backgroundColor: smokeBlack } }}>
           <AddIcon sx={{ width: "17px", height: "17px", color: smokeBlack }} />
         </IconButton>
       </div>
