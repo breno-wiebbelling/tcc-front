@@ -49,14 +49,6 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
     <InputDetailsStyled>
       <div className="node-details-line"></div>
       <h3>Detalhes de Saída</h3>
-      <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-        <p style={{backgroundColor: creamWhite, padding: "2px 7px", borderRadius: "5px", marginRight: "10px"}}>
-          Seu host é:
-        </p>
-        <a href={getUserHost()} target={"_blank"} style={{fontSize: "15px"}}>
-          {getUserHost()}
-        </a>
-      </div>
       <div style={{ height: '45px' }}>
         <Dropdown
           options={variables}
