@@ -11,7 +11,10 @@ import { useNavigate } from 'react-router-dom';
 import { PassInput } from "../../../components/form/input/index";
 import { createUser, validateHostEligibility } from "../../../service/clients/userClient";
 import { verifyUserAndEmailEligibility, validateAndComparePasswords } from "../../../service/validators/userValidator"
+import IconButton from "@mui/material/IconButton";
+import ArrowBackIosIcon from '@mui/icons-material/KeyboardArrowDown';
 
+import backgroundImage from "./register_background.png"
 export default () => {
 	const navigate = useNavigate();
 
@@ -47,26 +50,28 @@ export default () => {
 
 	const handleFirstStep = async (e) => {
 		e.preventDefault();
-		if (await validateFirstStep()) setFormStep(2);
+		setFormStep(2);
+		// if (await validateFirstStep()) setFormStep(2);
 	};
 
 	const handleSecondStep = async (e) => {
 		e.preventDefault();
+		setFormStep(3)
 
-		if (await validateSecondStep()) {
-			setFormStep(3)
-		}
+		// if (await validateSecondStep()) {
+		// 	setFormStep(3)
+		// }
 	};
 
 	const handleThirdStep = async () => {
-		if( !(await validateHostEligibility(host)) ){
+		if (!(await validateHostEligibility(host))) {
 			setFormErrors(latest => {
 				return {
 					...latest,
 					"host": "Host não disponível"
 				}
 			})
-			return 
+			return
 		}
 
 		let userCreationResponse = await createUser({
@@ -79,27 +84,27 @@ export default () => {
 		if (userCreationResponse == true) {
 			navigate('/');
 		}
-		else{
+		else {
 			alert(userCreationResponse)
 		}
 	}
 
 	return (
 		<CreationStyled className="base_page">
-			<Container
-				component="main"
-				className="creation"
-				sx={{ height: '80%', padding: '0px', display: "flex", alignItems: "center" }}
-			>
-				<Box
-					sx={{
-						width: '60%',
-						height: '100%',
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-					}}
-				/>
+			<div className="creation">
+				<div sx={{ height: '100%', width: '60%' }} >
+					<img
+						style={{
+							width: '100%',
+							height: '100%',
+							objectFit: 'cover',
+							borderRadius: '6px'
+						}}
+						src={backgroundImage}
+						alt="Logo"
+					/>
+				</div>
+
 				<Container
 					sx={{
 						width: '40%',
@@ -111,15 +116,26 @@ export default () => {
 						alignItems: 'center',
 					}}
 				>
+					<div style={{ width: '70%', marginBottom: '20px' }}>
+						{
+							formStep > 1 &&
+							<IconButton className="back_button" onClick={() => { setFormStep(ls => --ls)  }} style={{ height: '30px', width: '30px' }}>
+								<ArrowBackIosIcon />
+							</IconButton>
+						}
+					</div>
 					<Box>
-						<Typography component="h1" variant="h5" sx={{ fontWeight: 'bold' }} >
-							Registro
+						<Typography sx={{ fontWeight: 'bold', fontSize: '20px', letterSpacing: '1.4px' }} >
+							{formStep === 1 && 'Registro'}
+							{formStep === 2 && 'Defina sua senha'}
+							{formStep === 3 && 'Host'}
 						</Typography>
+
 					</Box>
 					<Box sx={{ mt: '30px', width: '100%' }} >
-						{ 
-							formStep === 1 && 
-							(	
+						{
+							formStep === 1 &&
+							(
 								<div className="form-items">
 									<TextField
 										label="Nome"
@@ -127,8 +143,8 @@ export default () => {
 										onChange={(e) => setUsername(e.target.value)}
 										error={!!formErrors.username}
 										helperText={formErrors.username}
-										fullWidth
 										margin="normal"
+										sx={{ width: "70%" }}
 									/>
 									<TextField
 										label="Email"
@@ -137,17 +153,16 @@ export default () => {
 										onChange={(e) => setEmail(e.target.value)}
 										error={!!formErrors.email}
 										helperText={formErrors.email}
-										fullWidth
 										margin="normal"
+										sx={{ width: "70%" }}
 									/>
 									<Button
 										onClick={handleFirstStep}
 										variant="contained"
-										fullWidth
 										color="primary"
-										sx={{ 
+										sx={{
 											fontWeight: 600,
-											letterSpacing:"2px"
+											letterSpacing: "2px"
 										}}
 									>
 										Avançar
@@ -155,28 +170,29 @@ export default () => {
 								</div>
 							)
 						}
-						{ 
-							formStep === 2 && 
+						{
+							formStep === 2 &&
 							(
 								<div className="form-items">
 									<PassInput
 										label="Senha"
 										error={formErrors.password}
 										onChange={(e) => { setPassword(e.target.value) }}
+										sx={{ width: "70%" }}
 									/>
 									<PassInput
 										label="Confirmar Senha"
 										error={formErrors.passwordConfirmation}
 										onChange={(e) => { setPasswordConfirmation(e.target.value) }}
 									/>
-									<Button onClick={handleSecondStep} variant="contained" color="primary" sx={{ fontWeight: 600, letterSpacing:"2px"	}}>
-										Cadastrar
+									<Button onClick={handleSecondStep} variant="contained" color="primary" sx={{ fontWeight: 600, letterSpacing: "2px" }}>
+										Avançar
 									</Button>
 								</div>
 							)
 						}
-						{ 
-							formStep === 3 && 
+						{
+							formStep === 3 &&
 							(
 								<div className="form-items">
 									<Tooltip title={"Este será o subdmínio das suas simulações"}>
@@ -187,22 +203,22 @@ export default () => {
 											onChange={(e) => setHost(e.target.value)}
 											error={!!formErrors.host}
 											helperText={formErrors.host}
-											fullWidth
 											margin="normal"
+											sx={{ width: "70%" }}
 										/>
 									</Tooltip>
 									<div>
-										
+
 									</div>
-									<Button onClick={handleThirdStep} variant="contained" color="primary" sx={{ fontWeight: 600, letterSpacing:"2px"	}}>
-										Avançar
+									<Button onClick={handleThirdStep} variant="contained" color="primary" sx={{ fontWeight: 600, letterSpacing: "2px" }}>
+										Concluir
 									</Button>
 								</div>
 							)
 						}
 					</Box>
 				</Container>
-			</Container>
+			</div>
 		</CreationStyled>
 	);
 }

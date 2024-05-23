@@ -18,11 +18,11 @@ export const PassInput = ({ label, value, onChange, error }) => {
       type={(passVisible ? "text" : "password")}
       error={!!error}
       helperText={error}
-      fullWidth
       margin="normal"
+      sx={{ width: "70%" }}
       InputProps={{
         endAdornment: (
-          <InputAdornment position="end">
+          <InputAdornment position="end" style={{ marginBottom: "9%" }}>
             <IconButton onClick={changeVisibility} aria-label="toggle password visibility">
               {passVisible ? <VisibilityOff /> : <Visibility />}
             </IconButton>
