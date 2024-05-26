@@ -18,6 +18,7 @@ export const denseSmoke = "#4d4d4d";
 export const denseSmokeBlack = "#1d2d3d";
 export const smokeBlack = "#1d1d1d";
 
+export const easyNavy = "#305da7";
 export const denseLightBlue = "#0074eb";
 export const blueBayoux = "#475F76";
 

@@ -14,7 +14,9 @@ import { verifyUserAndEmailEligibility, validateAndComparePasswords } from "../.
 import IconButton from "@mui/material/IconButton";
 import ArrowBackIosIcon from '@mui/icons-material/KeyboardArrowDown';
 
-import backgroundImage from "./register_background.png"
+import backgroundImage from "./images/register_background.png"
+import restmupWelcomeLogo from "./images/1-cutout.png"
+
 export default () => {
 	const navigate = useNavigate();
 
@@ -92,17 +94,14 @@ export default () => {
 	return (
 		<CreationStyled className="base_page">
 			<div className="creation">
-				<div sx={{ height: '100%', width: '60%' }} >
+				<div className="welcome">
+					<h3>Bem-vindo ao</h3>
 					<img
-						style={{
-							width: '100%',
-							height: '100%',
-							objectFit: 'cover',
-							borderRadius: '6px'
-						}}
-						src={backgroundImage}
-						alt="Logo"
+						style={{ width: '45%' }}
+						src={restmupWelcomeLogo}
 					/>
+					<p>Simulações de rotas REST.</p>
+					<p>Garanta a funcionalidade dos seus endpoints <span className="before">antes</span> do desenvolvimento.</p>
 				</div>
 
 				<Container
@@ -116,22 +115,24 @@ export default () => {
 						alignItems: 'center',
 					}}
 				>
-					<div style={{ width: '70%', marginBottom: '20px' }}>
-						{
-							formStep > 1 &&
-							<IconButton className="back_button" onClick={() => { setFormStep(ls => --ls)  }} style={{ height: '30px', width: '30px' }}>
-								<ArrowBackIosIcon />
-							</IconButton>
-						}
-					</div>
-					<Box>
-						<Typography sx={{ fontWeight: 'bold', fontSize: '20px', letterSpacing: '1.4px' }} >
+					<div style={{ width: '70%', marginBottom: '20px', display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+						<div style={{ height: '30px', width: '30px' }}>
+							{
+								formStep > 1 &&
+								<IconButton className="back_button" onClick={() => { setFormStep(ls => --ls) }} style={{ height: '30px', width: '30px' }}>
+									<ArrowBackIosIcon />
+								</IconButton>
+							}
+						</div>
+						<Typography sx={{ fontWeight: 'bold', fontSize: '20px', letterSpacing: '1.4px', fontWeight: "600" }} >
 							{formStep === 1 && 'Registro'}
 							{formStep === 2 && 'Defina sua senha'}
 							{formStep === 3 && 'Host'}
 						</Typography>
+						<div style={{ height: '30px', width: '30px' }}>
+						</div>
+					</div>
 
-					</Box>
 					<Box sx={{ mt: '30px', width: '100%' }} >
 						{
 							formStep === 1 &&
@@ -156,15 +157,7 @@ export default () => {
 										margin="normal"
 										sx={{ width: "70%" }}
 									/>
-									<Button
-										onClick={handleFirstStep}
-										variant="contained"
-										color="primary"
-										sx={{
-											fontWeight: 600,
-											letterSpacing: "2px"
-										}}
-									>
+									<Button onClick={handleFirstStep} variant="contained" className="continueButton" color="primary">
 										Avançar
 									</Button>
 								</div>
@@ -174,18 +167,20 @@ export default () => {
 							formStep === 2 &&
 							(
 								<div className="form-items">
-									<PassInput
-										label="Senha"
-										error={formErrors.password}
-										onChange={(e) => { setPassword(e.target.value) }}
-										sx={{ width: "70%" }}
-									/>
-									<PassInput
-										label="Confirmar Senha"
-										error={formErrors.passwordConfirmation}
-										onChange={(e) => { setPasswordConfirmation(e.target.value) }}
-									/>
-									<Button onClick={handleSecondStep} variant="contained" color="primary" sx={{ fontWeight: 600, letterSpacing: "2px" }}>
+									<div style={{ width: "70%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+										<PassInput
+											label="Senha"
+											error={formErrors.password}
+											onChange={(e) => { setPassword(e.target.value) }}
+										/>
+										<PassInput
+											label="Confirmar Senha"
+											error={formErrors.passwordConfirmation}
+											onChange={(e) => { setPasswordConfirmation(e.target.value) }}
+										/>
+									</div>
+
+									<Button onClick={handleSecondStep} className="continueButton" variant="contained" color="primary">
 										Avançar
 									</Button>
 								</div>
@@ -210,7 +205,7 @@ export default () => {
 									<div>
 
 									</div>
-									<Button onClick={handleThirdStep} variant="contained" color="primary" sx={{ fontWeight: 600, letterSpacing: "2px" }}>
+									<Button onClick={handleThirdStep} className="continueButton" variant="contained" color="primary">
 										Concluir
 									</Button>
 								</div>
