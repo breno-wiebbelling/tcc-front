@@ -7,8 +7,9 @@ import CheckIcon from '@mui/icons-material/Check';
 import { IconButton } from "@mui/material";
 import Dropdown from '../../../../../../form/dropdown';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Tooltip from '@mui/material/Tooltip';
 
-const DEFAULT_KEY_NAME = "chave";
+const DEFAULT_KEY_NAME = "";
 const DEFAULT_NEW_JSON_VALUE = { key: 'key', label: 'valor', value: 'Não definido' }
 const DEFAULT_NEW_JSON_OPERATION = { key: DEFAULT_KEY_NAME, value: DEFAULT_NEW_JSON_VALUE }
 
@@ -16,6 +17,7 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
 
   const [editModeOn, setEditModeOn] = React.useState(false);
   const [addModeOn, setAddModeOn] = React.useState(false);
+  const [deleteModeOn, setDeleteModeOn] = React.useState(false);
   const [jsonOperations, setJsonOperations] = React.useState([]);
   const [newJsonOperation, setNewJsonOperation] = React.useState(DEFAULT_NEW_JSON_OPERATION);
 
@@ -48,43 +50,51 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
   }
 
   const handleEditModeChange = () => {
-    if (editModeOn && addModeOn) {
+    if (editModeOn && (addModeOn || deleteModeOn)) {
       if (newJsonOperation['key'] === DEFAULT_KEY_NAME) {
         setWarning('Insira uma chave!')
         return;
       }
-
-      if(jsonOperations.find(jo => jo.key === newJsonOperation['key'])){
+      if (jsonOperations.find(jo => jo.key === newJsonOperation['key'])) {
         setError('Chave já registrada!')
         return
       }
-
-      if (newJsonOperation['value']['key'] === DEFAULT_NEW_JSON_OPERATION['value']['key']) {
-        setWarning('Insira um valor!')
-        return;
-      }
-
-      setAddModeOn(false)
-      setJsonOperations(latest => {
-        return [
-          ...latest,
-          ({ key: newJsonOperation['key'], value: { variableId: newJsonOperation['value']['key'], label: newJsonOperation['value']['label'] } })
-        ];
-      })
-
-      return
+      newJsonOperation['key'] = String(newJsonOperation['key']).replace(/\s+/g, '');
     }
 
-    setNodeDetails(latestDetails => {
-      latestDetails['jsonOperations'] = jsonOperations;
-      return latestDetails;
-    });
+    if (editModeOn) {
+      if (addModeOn) {
+        if (newJsonOperation['value']['key'] === DEFAULT_NEW_JSON_OPERATION['value']['key']) {
+          setWarning('Insira um valor!')
+          return;
+        }
+
+        setAddModeOn(false);
+        setJsonOperations(latest => {
+          latest.push({ key: newJsonOperation['key'], value: { variableId: newJsonOperation['value']['key'], label: newJsonOperation['value']['label'] } })
+          return latest;
+        })
+      }
+
+      if (deleteModeOn) {
+        setDeleteModeOn(false);
+        setJsonOperations(latest => {
+          latest.push({ key: newJsonOperation['key'] })
+          return latest;
+        })
+      }
+
+      setNodeDetails(latestDetails => {
+        latestDetails['jsonOperations'] = jsonOperations;
+        return latestDetails;
+      });
+    }
 
     setEditModeOn(!editModeOn);
   }
 
   const editJsonOperation = (jsonOperation) => {
-    if(editModeOn){
+    if (editModeOn) {
       setNewJsonOperation(latest => {
         return {
           key: jsonOperation['key'],
@@ -97,12 +107,23 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
 
   const popJsonOperation = (index) => {
     setJsonOperations(latest => {
-      return latest.filter((op, i) => i!==index);
+      return latest.filter((op, i) => i !== index);
     })
   }
 
   const handleAddModeChange = () => {
-    setAddModeOn(latest => !latest);
+    if (deleteModeOn) {
+      setDeleteModeOn(latest => !latest);
+    }
+    else {
+      setAddModeOn(latest => !latest);
+    }
+    setNewJsonOperation(DEFAULT_NEW_JSON_OPERATION);
+  }
+
+  const handleDeleteModeChange = () => {
+    setDeleteModeOn(latest => !latest);
+    setEditModeOn(true)
     setNewJsonOperation(DEFAULT_NEW_JSON_OPERATION);
   }
 
@@ -125,7 +146,9 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
                 <div className='json_line' key={jsonOperation['key'] + " - " + i}>
                   <div className="json_ident"></div>
                   <div className='json_value'>
-                    <div className='json_info' onClick={() => { editJsonOperation(jsonOperation) }}><p>{jsonOperation['key']}</p> : <p>{jsonOperation['value']['label']}</p></div>
+                    {typeof jsonOperation['value'] !== "undefined" && <div className='json_info' onClick={() => { editJsonOperation(jsonOperation) }}><p>{jsonOperation['key']}</p> : <p>{jsonOperation['value']['label']}</p></div>}
+                    {typeof jsonOperation['value'] === "undefined" && <div className='json_info' onClick={() => { editJsonOperation(jsonOperation) }}><p>{jsonOperation['key']}</p></div>}
+
                     {
                       editModeOn &&
                       (
@@ -146,7 +169,9 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
               <div className='json_line'>
                 <div className="json_ident"></div>
                 <div style={{ minHeight: '18px', display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
-                  <input type="text" value={String(newJsonOperation.key)} onChange={(event) => { handleNewKeyChange(event.target.value) }} style={{ textAlign: 'center' }} placeholder='chave' />
+                  <Tooltip title="Chave">
+                    <input type="text" value={String(newJsonOperation.key)} onChange={(event) => { handleNewKeyChange(event.target.value) }} style={{ textAlign: 'center' }} placeholder='chave' />
+                  </Tooltip>
                   :
                   <div style={{ height: '28px', width: '200px' }}>
                     <Dropdown options={variables} value={newJsonOperation.value} onChange={handleNewJsonOperationValue} placeholder={newJsonOperation.value.label} hasNewValueOption={true} onNewValueOptionClick={openVariableCreationModal} iconSizes={{ height: '18px', width: '18px' }} />
@@ -156,8 +181,21 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
               </div>
             )
           }
+          {
+            (editModeOn && deleteModeOn) &&
+            (
+              <div className='json_line'>
+                <div className="json_ident"></div>
+                <Tooltip title="Chave a ser deletada">
+                  <div style={{ minHeight: '18px', display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
+                    <input type="text" value={String(newJsonOperation.key)} onChange={(event) => { handleNewKeyChange(event.target.value) }} style={{ textAlign: 'center' }} placeholder='chave' />
+                  </div>
+                </Tooltip>
+                ,
+              </div>
+            )
+          }
           <p> {'}'} </p>
-
         </div>
       </div>
       <div style={{ position: "relative", width: '100%' }}>
@@ -165,9 +203,15 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
           {!editModeOn && <EditIcon sx={{ width: "17px", height: "17px", color: smokeBlack }} />}
           {editModeOn && <CheckIcon sx={{ width: "17px", height: "17px", color: smokeBlack }} />}
         </IconButton>
-        <IconButton onClick={() => { handleAddModeChange() }} className={`display_flex_center`} sx={{ width: "25px", height: "25px", transition: ".3s", borderRadius: "50%", color: denseSmoke, position: "absolute", transform: (addModeOn) ? "rotate(48deg)" : "rotate(0deg)", bottom: '20px', right: (editModeOn) ? '40px' : '10px', backgroundColor: smoke, "&:hover": { backgroundColor: smokeWhiteHover }, "&:active": { backgroundColor: smokeBlack } }}>
+        <IconButton onClick={() => { handleAddModeChange() }} className={`display_flex_center`} sx={{ width: "25px", height: "25px", transition: ".3s", borderRadius: "50%", color: denseSmoke, position: "absolute", transform: (addModeOn || deleteModeOn) ? "rotate(48deg)" : "rotate(0deg)", bottom: '20px', right: (editModeOn) ? '40px' : '10px', backgroundColor: smoke, "&:hover": { backgroundColor: smokeWhiteHover }, "&:active": { backgroundColor: smokeBlack } }}>
           <AddIcon sx={{ width: "17px", height: "17px", color: smokeBlack }} />
         </IconButton>
+        {
+          !addModeOn &&
+          <IconButton onClick={() => { handleDeleteModeChange() }} className={`display_flex_center`} sx={{ width: "25px", height: "25px", transition: ".3s", borderRadius: "50%", color: denseSmoke, position: "absolute", bottom: '20px', right: (editModeOn) ? '70px' : '10px', backgroundColor: smoke, "&:hover": { backgroundColor: smokeWhiteHover }, "&:active": { backgroundColor: smokeBlack } }}>
+            <DeleteIcon sx={{ width: "17px", height: "17px", color: smokeBlack }} />
+          </IconButton>
+        }
       </div>
     </JsonDetailsStyled>
   )
