@@ -146,8 +146,26 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
                 <div className='json_line' key={jsonOperation['key'] + " - " + i}>
                   <div className="json_ident"></div>
                   <div className='json_value'>
-                    {typeof jsonOperation['value'] !== "undefined" && <div className='json_info' onClick={() => { editJsonOperation(jsonOperation) }}><p>{jsonOperation['key']}</p> : <p>{jsonOperation['value']['label']}</p></div>}
-                    {typeof jsonOperation['value'] === "undefined" && <div className='json_info' onClick={() => { editJsonOperation(jsonOperation) }}><p>{jsonOperation['key']}</p></div>}
+                    {
+                      typeof jsonOperation['value'] !== "undefined" &&
+                      <div className='json_info' onClick={() => { editJsonOperation(jsonOperation) }}>
+                        <p> 
+                          <EditIcon className="icon"/> 
+                          {jsonOperation['key']}
+                        </p> 
+                          : 
+                        <p>{jsonOperation['value']['label']}</p>
+                      </div>
+                    }
+                    {
+                      typeof jsonOperation['value'] === "undefined" &&
+                      <div className='json_info' onClick={() => { editJsonOperation(jsonOperation) }}>
+                        <p>  
+                          <DeleteIcon className="icon" /> 
+                          {jsonOperation['key']}
+                        </p>
+                      </div>
+                    }
 
                     {
                       editModeOn &&

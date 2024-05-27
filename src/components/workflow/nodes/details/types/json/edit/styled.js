@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { whiteLight, smokeWhiteLightHover, smokeWhite, smokeWhiteHover, whiteLightHover, smoke, smokeHover, denseLightBlue } from "../../../../../../common/style"
+import { whiteLight, smokeWhiteLightHover, smokeWhite, smokeWhiteHover, whiteLightHover, smoke, smokeHover, denseLightBlue, denseSmokeBlack } from "../../../../../../common/style"
 
 export default styled.div`
 
@@ -63,9 +63,18 @@ export default styled.div`
     cursor: pointer;
   }
 
-  .json_info{
+  .json_info, .json_info p{
     display: flex;
     flex-direction: row;
+    align-items: center;
+  }
+
+  .json_info .icon{
+    color: ${denseSmokeBlack};
+    width:14px;
+    height: 14px;
+    margin-right: 5px;
+    margin-bottom: 1px;
   }
 
   .json-details .json_value p{
