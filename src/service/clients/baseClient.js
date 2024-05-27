@@ -3,8 +3,6 @@ import { getToken } from '../authService'
 
 const BASE_URL_HOST = process.env.REACT_APP_BACK_END_URL;
 
-console.log('API Key:', BASE_URL_HOST);
-
 const baseInstance =  axios.create({
   baseURL: BASE_URL_HOST,
   headers: { 
