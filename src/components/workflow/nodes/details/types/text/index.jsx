@@ -3,7 +3,7 @@ import { denseSmoke, smokeWhiteLight, white, whiteHover, smokeWhiteHover, lightV
 import TextDetailsStyled from "./styled";
 import AddIcon from '@mui/icons-material/Add';
 import PopperAlert from '../../../../../alert/index';
-import {IconButton} from "@mui/material";
+import { IconButton } from "@mui/material";
 import Dropdown from "../../../../../form/dropdown";
 import VariableCreationModal from "../../../../../variable/creation/variableCreationModal";
 import TextValueModal from "./textBuilder/textValueDetailsModal";
@@ -11,25 +11,25 @@ import { getVariablesByUserAndSimulationId } from "../../../../../../service/cli
 import TextValueTypeEnum from "./textBuilder/TextValueTypeEnum";
 
 export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
-  
+
   const [variables, setVariables] = React.useState([]);
   const [variableCreationModalOpen, setVariableCreationModalOpen] = React.useState(false);
   const [textEditModalOpen, setTextEditModalOpen] = React.useState(false);
 
-  const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: ''});
-  const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: ''}); }
+  const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: '' });
+  const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: '' }); }
 
   const [textElements, setTextElements] = React.useState([]);
-  const [newTextInfo, setNewTextInfo] = React.useState({ "uiDisplay": "", "type": "", "value": "", "isNew":true, "index": 0 });
+  const [newTextInfo, setNewTextInfo] = React.useState({ "uiDisplay": "", "type": "", "value": "", "isNew": true, "index": 0 });
   const [resultVariable, setResultVariable] = React.useState({});
 
   const loadUserVariables = () => {
     getVariablesByUserAndSimulationId(0, nodeInfo['simulationId'])
       .then(userVariables => {
         let filteredVariables = userVariables.list.map(v => {
-          return {key: v['_id'], label:v['name'], value:v['value']}
+          return { key: v['_id'], label: v['name'], value: v['value'] }
         });
-        
+
         setVariables(filteredVariables)
         return filteredVariables;
       })
@@ -41,75 +41,75 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
   }
   const openVariableCreationModal = () => { setVariableCreationModalOpen(true); }
   const closeVariableCreationModal = () => { setVariableCreationModalOpen(false); }
-  const closeTextEditModalOpen = () => { 
-    setTextEditModalOpen(false); 
+  const closeTextEditModalOpen = () => {
+    setTextEditModalOpen(false);
     setNewTextInfo(latest => {
       return {
         ...latest,
-        "uiDisplay": "", "type": "", "value": "", "isNew":true, "index": 0
+        "uiDisplay": "", "type": "", "value": "", "isNew": true, "index": 0
       }
     });
   }
-  const openTextEditModalOpen = (textElement) => { 
+  const openTextEditModalOpen = (textElement) => {
     setNewTextInfo(latest => {
       return {
         ...latest,
-        ...textElement        
+        ...textElement
       }
     })
-    setTextEditModalOpen(true); 
+    setTextEditModalOpen(true);
   }
-  
+
   const openTextModalCreation = () => {
     setNewTextInfo(latest => {
       return {
         ...latest,
         value: "",
-        type:"",
+        type: "",
         index: textElements.length
       }
     })
-    setTextEditModalOpen(true); 
+    setTextEditModalOpen(true);
   }
 
   const handleTextEdition = (newText) => {
     textElements[newText.index] = newText;
     closeTextEditModalOpen();
   }
-  const handleTextDeletion = (index) => { 
-    textElements.splice(index, 1); 
+  const handleTextDeletion = (index) => {
+    textElements.splice(index, 1);
     closeTextEditModalOpen();
   }
-  const handleResultVariable = (resultVariable)=>{
+  const handleResultVariable = (resultVariable) => {
     setResultVariable(resultVariable);
   }
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     loadUserVariables(nodeInfo['simulationId']);
   }, [nodeInfo['simulationId']]);
 
-  React.useEffect(()=> {
+  React.useEffect(() => {
     setTextElements(typeof nodeInfo['details']['textElements'] != "undefined" ? nodeInfo['details']['textElements'] : []);
 
     getVariablesByUserAndSimulationId(0, nodeInfo['simulationId'])
       .then(userVariables => {
         let filteredVariables = userVariables.list.map(v => {
-          return {key: v['_id'], label:v['name'], value:v['value']}
+          return { key: v['_id'], label: v['name'], value: v['value'] }
         });
-        
+
         setVariables(filteredVariables)
         return filteredVariables;
       })
-      .then((filteredVariables)=>{
-        setResultVariable(filteredVariables.filter(v=> v['key']==nodeInfo['details']['resultVariable'])[0])
+      .then((filteredVariables) => {
+        setResultVariable(filteredVariables.filter(v => v['key'] == nodeInfo['details']['resultVariable'])[0])
 
         return filteredVariables;
       })
-    
-  },[nodeInfo])
 
-  React.useEffect(()=>{
-    setNodeDetails(latestDetails=>{
+  }, [nodeInfo])
+
+  React.useEffect(() => {
+    setNodeDetails(latestDetails => {
       return {
         ...latestDetails,
         textElements: textElements,
@@ -128,27 +128,27 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
         {
           textElements.map((textElement, index) => {
             return (
-              <div 
-                className={"text-element"} key={index} 
-                onClick={()=>{ openTextEditModalOpen(textElement) }}
+              <div
+                className={"text-element"} key={index}
+                onClick={() => { openTextEditModalOpen(textElement) }}
               >
-                <p style={{ backgroundColor: (textElement.type == TextValueTypeEnum.TEXT.code ) ? smokeWhiteHover : lightVividGreen }} >
-                  { textElement.uiDisplay }
+                <p style={{ backgroundColor: (textElement.type == TextValueTypeEnum.TEXT.code) ? smokeWhiteHover : lightVividGreen }} >
+                  {textElement.uiDisplay}
                 </p>
               </div>
             );
           })
-        } 
-        <IconButton 
+        }
+        <IconButton
           className={`display_flex_center`}
-          onClick={ openTextModalCreation } 
-          sx={{ width: "25px",  height: "25px", borderRadius: "50%",  color: denseSmoke, position: "absolute", bottom: '10px', right: '10px', backgroundColor: white, "&:hover": {backgroundColor: whiteHover}, "&:active": {backgroundColor: smokeWhiteLight} }}
+          onClick={openTextModalCreation}
+          sx={{ width: "25px", height: "25px", borderRadius: "50%", color: denseSmoke, position: "absolute", bottom: '10px', right: '10px', backgroundColor: white, "&:hover": { backgroundColor: whiteHover }, "&:active": { backgroundColor: smokeWhiteLight } }}
         >
-          <AddIcon sx={{width: "18px", height: "18px"}} />
+          <AddIcon sx={{ width: "18px", height: "18px" }} />
         </IconButton>
       </div>
-      <div style={{ height: '45px', display: 'flex',  marginTop: "10px" }}>
-        <Dropdown options={variables} value={resultVariable} placeholder={"Variável destino"} tooltipTitle={"Variável selecionada"} onChange={handleResultVariable} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={openVariableCreationModal} isEnabled={true}  />
+      <div style={{ height: '45px', display: 'flex', marginTop: "10px" }}>
+        <Dropdown options={variables} value={resultVariable} placeholder={"Variável destino"} tooltipTitle={"Variável selecionada"} onChange={handleResultVariable} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={openVariableCreationModal} isEnabled={true} />
       </div>
       <div className="node-details-line"></div>
       <TextValueModal
@@ -165,7 +165,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
         close={() => { closeVariableCreationModal(false) }}
         onCreate={handleVariableCreation}
         simulationId={nodeInfo['simulationId']}
-      /> 
+      />
     </TextDetailsStyled>
   )
 }

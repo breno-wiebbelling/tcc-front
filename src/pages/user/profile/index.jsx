@@ -93,7 +93,7 @@ export default () => {
 
   return (
     <LoginStyled>
-      {alertInfo.msg != "" && <PopperAlert message={alertInfo.msg} mode={alertInfo.mode} resetMessage={resetErrorMessage} />}
+      {alertInfo.msg !== "" && <PopperAlert message={alertInfo.msg} mode={alertInfo.mode} resetMessage={resetErrorMessage} />}
       <Header />
       <Container sx={{ display: "flex", height: '92vh', ...displayCenter }}>
         <Box className="container" style={{ height: "92%" }} >

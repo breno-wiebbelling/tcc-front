@@ -11,27 +11,27 @@ import {
 } from "../../common/style";
 
 export default styled.div`
-    position: relative;
+  position: relative;
 
-    width: 100%;
-    height: 100%;
-    padding: 0px 10px 0px 10px;
-    box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 0px 10px 0px 10px;
+  box-sizing: border-box;
 
-    font-size: 16px;
-    border: 1px solid ${smokeWhite};
-    border-radius: 8px;
+  font-size: 16px;
+  border: 2px solid ${smokeWhite};
+  border-radius: 8px;
 
-    .dropdown-label-display,
-    .dropdown-label-display .dropdown-buttons,
-    .dropdown-options .dropdown-option {
-        display: flex;
-        align-items: center;
-    }
-    
-    .dropdown-label-display .dropdown-buttons{
-        width: fit-content;    
-    }
+  .dropdown-label-display,
+  .dropdown-label-display .dropdown-buttons,
+  .dropdown-options .dropdown-option {
+    display: flex;
+    align-items: center;
+  }
+  
+  .dropdown-label-display .dropdown-buttons{
+    width: fit-content;    
+  }
 
   .dropdown-label-display .dropdown-add-icon, 
   .dropdown-label-display .dropdown-drop-icon{

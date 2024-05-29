@@ -89,7 +89,6 @@ export default styled.div`
     color: ${white};
   }
   
-  //position ajustments
   .variable-type-selector .variable-type-selector-names{
     position: relative;
   }

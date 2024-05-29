@@ -8,6 +8,7 @@ import { IconButton } from "@mui/material";
 import Dropdown from '../../../../../../form/dropdown';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Tooltip from '@mui/material/Tooltip';
+import { validateDangerousChars } from "../../../../../../form/formValidators";
 
 const DEFAULT_KEY_NAME = "";
 const DEFAULT_NEW_JSON_VALUE = { key: 'key', label: 'valor', value: 'Não definido' }
@@ -20,6 +21,7 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
   const [deleteModeOn, setDeleteModeOn] = React.useState(false);
   const [jsonOperations, setJsonOperations] = React.useState([]);
   const [newJsonOperation, setNewJsonOperation] = React.useState(DEFAULT_NEW_JSON_OPERATION);
+  const [keyBeingEdited, setKeyBeingEdited] = React.useState(DEFAULT_KEY_NAME);
 
   const loadJsonDetails = async (nodeInfo) => {
     if (typeof nodeInfo['details']['jsonOperations'] === 'undefined') {
@@ -29,6 +31,7 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
       setJsonOperations(nodeInfo['details']['jsonOperations']);
     }
     setNewJsonOperation(DEFAULT_NEW_JSON_OPERATION);
+    setKeyBeingEdited(DEFAULT_KEY_NAME);
   }
 
   const handleNewJsonOperationValue = (newValue) => {
@@ -51,14 +54,18 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
 
   const handleEditModeChange = () => {
     if (editModeOn && (addModeOn || deleteModeOn)) {
+      if(!validateDangerousChars(newJsonOperation['key'], setError)){
+        return;
+      }
       if (newJsonOperation['key'] === DEFAULT_KEY_NAME) {
         setWarning('Insira uma chave!')
         return;
       }
-      if (jsonOperations.find(jo => jo.key === newJsonOperation['key'])) {
+      if (jsonOperations.find(jo => jo.key === newJsonOperation['key']) && keyBeingEdited === DEFAULT_KEY_NAME) {
         setError('Chave já registrada!')
         return
       }
+      return
       newJsonOperation['key'] = String(newJsonOperation['key']).replace(/\s+/g, '');
     }
 
@@ -70,16 +77,33 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
         }
 
         setAddModeOn(false);
-        setJsonOperations(latest => {
-          latest.push({ key: newJsonOperation['key'], value: { variableId: newJsonOperation['value']['key'], label: newJsonOperation['value']['label'] } })
-          return latest;
-        })
       }
 
       if (deleteModeOn) {
         setDeleteModeOn(false);
+      }
+
+      if(addModeOn || deleteModeOn){
+        let newOperation;
         setJsonOperations(latest => {
-          latest.push({ key: newJsonOperation['key'] })
+          newOperation = (deleteModeOn) 
+            ? ({ key: newJsonOperation['key'] })
+            : ({ key: newJsonOperation['key'], value: { variableId: newJsonOperation['value']['key'], label: newJsonOperation['value']['label'] } })
+
+          if(keyBeingEdited === DEFAULT_KEY_NAME){
+            latest.push(newOperation);
+          }
+          else{
+            latest.map((op, index) => {
+              if(String(op.key) === String(keyBeingEdited)){
+                latest[index] = newOperation; 
+                return newOperation;
+              }
+              return op;
+            });
+            setKeyBeingEdited(DEFAULT_KEY_NAME);
+          }
+
           return latest;
         })
       }
@@ -88,6 +112,7 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
         latestDetails['jsonOperations'] = jsonOperations;
         return latestDetails;
       });
+      setKeyBeingEdited(DEFAULT_KEY_NAME);
     }
 
     setEditModeOn(!editModeOn);
@@ -101,7 +126,21 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
           value: (variables.find(v => v['key'] === jsonOperation['value']['variableId']))
         };
       });
+      setKeyBeingEdited(jsonOperation['key'])
       setAddModeOn(true)
+    }
+  }
+
+  const editDeleteJsonOperation = (jsonOperation) => {
+    if (editModeOn) {
+      setNewJsonOperation(latest => {
+        return {
+          key: jsonOperation['key'],
+          value: DEFAULT_NEW_JSON_VALUE
+        };
+      });
+      setKeyBeingEdited(jsonOperation['key'])
+      setDeleteModeOn(true)
     }
   }
 
@@ -149,19 +188,19 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
                     {
                       typeof jsonOperation['value'] !== "undefined" &&
                       <div className='json_info' onClick={() => { editJsonOperation(jsonOperation) }}>
-                        <p> 
-                          <EditIcon className="icon"/> 
+                        <p>
+                          <EditIcon className="icon" />
                           {jsonOperation['key']}
-                        </p> 
-                          : 
+                        </p>
+                        :
                         <p>{jsonOperation['value']['label']}</p>
                       </div>
                     }
                     {
                       typeof jsonOperation['value'] === "undefined" &&
-                      <div className='json_info' onClick={() => { editJsonOperation(jsonOperation) }}>
-                        <p>  
-                          <DeleteIcon className="icon" /> 
+                      <div className='json_info' onClick={() => { editDeleteJsonOperation(jsonOperation) }}>
+                        <p>
+                          <DeleteIcon className="icon" />
                           {jsonOperation['key']}
                         </p>
                       </div>

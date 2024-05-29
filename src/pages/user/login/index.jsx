@@ -55,20 +55,14 @@ export default () => {
 
   return (
     <LoginStyled className="base_page">
-			{alertInfo.msg != "" && <PopperAlert message={alertInfo.msg} mode={'error'} resetMessage={resetErrorMessage} />}	
+			{alertInfo.msg !== "" && <PopperAlert message={alertInfo.msg} mode={'error'} resetMessage={resetErrorMessage} />}	
 
       <Container component="main" maxWidth="xs" className="login" sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }} >
-          <Typography
-            component="h1"
-            variant="h5"
-            sx={{
-              fontWeight: 'bold'
-            }}
-          >
+          <Typography component="h1" variant="h5" sx={{ fontWeight: 'bold', mb: '30px' }} >
             Login
           </Typography>
-          <Container>
+          <Container sx={{ display: 'flex', flexDirection: "column", alignItems: 'center'}} >
             <TextField
               margin="normal"
               fullWidth
@@ -83,18 +77,7 @@ export default () => {
               error={loginErrors.password}
               onChange={(e) => { setPassword(e.target.value) }}
             />
-            <Button
-              type="submit"
-              sx={{ 
-                mt: 3, 
-                mb: 1,
-                fontWeight: 600,
-                letterSpacing:"2px"
-              }}
-              fullWidth
-              variant="contained"
-              onClick={handleSubmit}
-            >
+            <Button variant="contained" className="button" onClick={handleSubmit} >
               Entrar
             </Button>
             <Link href="/registro" variant="body2"> {"Ainda não possue uma conta? Crie uma!"} </Link>

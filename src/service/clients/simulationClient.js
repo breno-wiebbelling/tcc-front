@@ -22,6 +22,12 @@ export const createSimulation = async (simulation) => {
   ).data;
 }
 
+export const updateSimulation = async (simulation) => {
+  return (
+    await baseClient.patch(`/${simulationURI}`, { "simulation": simulation })
+  ).data;
+}
+
 export const deleteSimulationById = async (simulationId) => {
   return (
     await baseClient.delete(`/${simulationURI}/${simulationId}`)

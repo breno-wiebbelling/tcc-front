@@ -1,5 +1,4 @@
-import React from 'react';
-import BasicTable from '../../common/list/list';
+import React, { useEffect } from 'react';
 import CreationModal from "../creation/index"
 import EditionModal from "../edition/index"
 import { LoadingConsumer } from '../../../context/loadingContext.jsx'
@@ -7,12 +6,15 @@ import { getSimulationsByUser, deleteSimulationById } from "../../../service/cli
 import SimulationListStyled from "./style"
 import PopperAlert from '../../../components/alert/index';
 
-const LIST_NAME = "Simulações"
-const ELEMENT_NAME = "simulação"
-const onSimulationClick = (simulation) => { window.location.href = `/simulation/${simulation["_id"]}` }
-const deleteSimulation = async (simulation) => { await deleteSimulationById(simulation['_id']); }
-let simulationFieldsDetails = { "keys": ["name", "description", "createdAt"], "names": ["Nome", "Descrição", "Data de Criação"], "sizes": ["28%", "52%", "17%"], "tooltip": [false, true, false], "actions": [{ "name": "onElementClick", "function": onSimulationClick }, { "name": "deleteElement", "function": deleteSimulation }] }
+import NoResults from '../../common/list/noResults/index.jsx';
+import AddIcon from '@mui/icons-material/Add';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { smokeHover } from '../../common/style/index.js';
 
+const onSimulationClick = (simulation) => { window.location.href = `/simulation/${simulation["_id"]}` }
 const popAlertError = (e, setAlertInfo) => {
   if (e.message) {
     setAlertInfo({ msg: (e.message ?? "Algo de errado aconteceu!"), mode: 'error' });
@@ -23,40 +25,104 @@ const popAlertError = (e, setAlertInfo) => {
 }
 
 export default () => {
+  const [simulations, setSimulations] = React.useState([])
+  const [simulationInfo, setSimulationInfo] = React.useState({ name: "", description: "" })
+
   const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: '' });
   const [isCreationModalOpen, setIsCreationModalOpen] = React.useState(false);
   const [isEditionModalOpen, setIsEditionModalOpen] = React.useState(false);
-  const [simulations, setSimulations] = React.useState([])
-
   const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: '' }); }
   const popError = (e) => { popAlertError(e, setAlertInfo); }
+
+  const [page, setPage] = React.useState(1);
+  const [pagesCount, setPagesCount] = React.useState(0);
   const loadingService = LoadingConsumer();
 
-  simulationFieldsDetails["actions"].push({
-    "name": "editElement", "function": () => { setIsEditionModalOpen(true) }
-  })
-
-  React.useEffect(() => {
+  const loadSimulations = async (pge) => {
     loadingService.show();
-  }, []);
+
+    getSimulationsByUser(pge)
+      .then(clientResponse => {
+        setSimulations(clientResponse.list);
+        setPagesCount(clientResponse.pages)
+        if (loadingService) {
+          loadingService.hide();
+        }
+      })
+  }
+
+  const editSimulation = async (simulation) => {
+    setSimulationInfo(simulation);
+    setIsEditionModalOpen(true);
+  }
+
+  const deleteSimulation = async (simulation) => {
+    await deleteSimulationById(simulation['_id']);
+    loadSimulations(page)
+  }
+
+  useEffect(() => {
+    loadSimulations(1);
+  }, [])
 
   return (
     <SimulationListStyled className='display_flex_center'>
       {alertInfo.msg != "" && <PopperAlert message={alertInfo.msg} mode={'error'} resetMessage={resetErrorMessage} />}
 
-      <CreationModal open={isCreationModalOpen} setOpen={setIsCreationModalOpen} setSimulations={setSimulations} setErrorMessage={popError} />
-      <EditionModal open={isEditionModalOpen} setOpen={setIsEditionModalOpen} setSimulations={setSimulations} setErrorMessage={popError} />
-      <BasicTable
-        elements={simulations}
-        setElements={setSimulations}
-        getWithPage={getSimulationsByUser}
-        listName={LIST_NAME}
-        elementName={ELEMENT_NAME}
-        elementFieldDetails={simulationFieldsDetails}
-        elementClick={onSimulationClick}
-        addAction={() => setIsCreationModalOpen(true)}
-        loadingService={loadingService}
-      />
-    </SimulationListStyled>
+      <CreationModal reload={()=>{ loadSimulations(page) }} open={isCreationModalOpen} setOpen={setIsCreationModalOpen} setErrorMessage={popError} />
+      <EditionModal  reload={()=>{ loadSimulations(page) }} open={isEditionModalOpen}  setOpen={setIsEditionModalOpen}  setErrorMessage={popError} simulationInfo={simulationInfo} setSimulationInfo={setSimulationInfo} />
+
+      <div className='simulationList'>
+        <div className="simulationsInfo">
+          <h4>Simulações</h4>
+          <div className="actions">
+            <button onClick={() => { setIsCreationModalOpen(true) }} className='display_flex_center'>
+              <AddIcon className='add_icon' style={{ color: smokeHover }} />
+              <span>criar simulação</span>
+            </button>
+          </div>
+        </div>
+        <div className="header">
+          <p style={{ width: "25%", paddingLeft: "10px" }}> Nome </p>
+          <p style={{ width: "35%" }}> Descrição        </p>
+          <p style={{ width: "30%" }}> Data de Criação  </p>
+          <div className="actions"></div>
+        </div>
+        <div className="simulations">
+          {
+            simulations.length === 0 && <NoResults contentName={"Simulação"} />
+          }
+          {
+            simulations.length > 0 &&
+            <>
+              {
+                simulations.map(simulation => {
+                  return (
+                    <div className={"simulation"} key={simulation['_id']}>
+                      <p onClick={()=>{ onSimulationClick(simulation) }} style={{ width: "25%", paddingLeft: "10px" }} > {simulation['name']} </p>
+                      <p style={{ width: "35%" }} onClick={()=>{ onSimulationClick(simulation) }} > {simulation['description']} </p>
+                      <p style={{ width: "30%" }} onClick={()=>{ onSimulationClick(simulation) }}> {String(simulation['createdAt']).split("T")[0]} </p>
+
+                      <div className='actions'>
+                        <EditIcon   className='action' onClick={()=>{ editSimulation(simulation)   }} />
+                        <DeleteIcon className='action' onClick={()=>{ deleteSimulation(simulation) }} />
+                      </div>
+                    </div>
+                  )
+                })
+              }
+            </>
+          }
+        </div>
+        <div className="pagination display_flex_center">
+          {
+            pagesCount > 1 &&
+            <Stack spacing={2}>
+              <Pagination count={pagesCount} onChange={(event, value) => { setPage(() => { return value }); loadSimulations(value) }} />
+            </Stack>
+          }
+        </div>
+      </div>
+    </SimulationListStyled >
   );
 }

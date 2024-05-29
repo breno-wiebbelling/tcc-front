@@ -4,14 +4,14 @@ import Button from "@mui/material/Button";
 import CloseIcon from '@mui/icons-material/Close';
 import EditionModalStyled from "./styled";
 import IconButton from '@mui/material/IconButton';
-import TextField from "@mui/material/TextField";
 import Modal from '@mui/material/Modal';
+import Input from "../../form/rawInput/index";
 
-import { createSimulation } from "../../../service/clients/simulationClient";
+import { updateSimulation } from "../../../service/clients/simulationClient";
 import { white, smokeWhite, smoke, smokeHover, denseLightBlue } from '../../common/style';
 
 const style = {
-  width: '80%',
+  width: '40%',
   height: '80%',
   p: 4,
   position: 'absolute',
@@ -23,37 +23,43 @@ const style = {
   borderRadius: "15px",
 
   display: "flex",
-  flexDirection:"column",
+  flexDirection: "column",
   alignItems: "center",
-  justifyContent:"center"
+  justifyContent: "center"
 };
 
-export default ({ open, setOpen, setSimulations, setErrorMessage }) => {
+export default ({ open, setOpen, setSimulationInfo, simulationInfo, reload, setErrorMessage }) => {
 
   const handleClose = () => setOpen(false);
   const [name, setName] = React.useState("");
-  const [nameError, setNameError] = React.useState("");
   const [description, setDescription] = React.useState("");
 
-  const handleSubmit = () => {
+  const [nameError, setNameError] = React.useState("");
 
-    //TODO
-    if(name!=="" && name.trim() !== ""){
-      return createSimulation({ 
-        name: name, 
+  const handleSubmit = () => {
+    if (name !== "" && name.trim() !== "") {
+      return updateSimulation({
+        simulationId: simulationInfo['_id'],
+        name: name,
         description: description,
       })
       .then(new_simulations => {
-        setSimulations(new_simulations.list)
-        handleClose()
+        setSimulationInfo({});
+        setOpen(false);
+        reload();
       })
       .catch(e => {
         setErrorMessage(e);
       });
-    }else{
+    } else {
       setNameError("Este campo é obrigatório");
     }
   }
+
+  React.useEffect(() => {
+    setName(simulationInfo['name']);
+    setDescription(simulationInfo['description']);
+  }, [simulationInfo])
 
   return (
     <EditionModalStyled>
@@ -65,61 +71,65 @@ export default ({ open, setOpen, setSimulations, setErrorMessage }) => {
         className='modal'
       >
         <Box sx={style}>
-          <div 
+          <div
             style={{
               width: "100%",
               height: "10%"
             }}
           >
-            <IconButton 
-              onClick={ handleClose }
-              className='display_flex_center' 
+            <IconButton
+              onClick={handleClose}
+              className='display_flex_center'
               sx={{
                 width: "40px",
                 height: "40px",
-                backgroundColor:smokeWhite,
+                backgroundColor: smokeWhite,
                 borderRadius: "50%",
-                color:white,
-                cursor:"pointer",
+                color: white,
+                cursor: "pointer",
                 "&:hover": {
-                  backgroundColor:smoke
+                  backgroundColor: smoke
                 },
                 "&:active": {
-                  backgroundColor:smokeHover
+                  backgroundColor: smokeHover
                 }
               }}
             >
-              <CloseIcon/>
+              <CloseIcon />
             </IconButton>
           </div>
-          <div 
+          <div
             className="content"
             style={{
-              width:"60%",
-              height: "90%"
+              width: "60%",
+              height: "90%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center"
             }}
           >
-            <h3>Edição de Modal</h3>
-            <TextField
-              margin="normal"
-              fullWidth
-              error={!!nameError}
-              helperText={nameError}
-              label="Nome"
-              onChange={(e) => { setName(e.target.value) }}
-              autoFocus
-            />
+            <h3 style={{ marginBottom: "20px" }} >Edição de Simulação</h3>
 
+            <div style={{ width: '100%' }}>
+              <Input
+                error={nameError}
+                label="Nome"
+                value={name}
+                onChange={(e) => { setName(e.target.value) }}
+              />
+            </div>
             <textarea
               placeholder="Descrição da simulação"
-              onChange={ (event) => { setDescription(event.target.value) } }
+              onChange={(event) => { setDescription(event.target.value) }}
+              value={description}
               style={{
                 width: "100%",
                 height: "50%",
                 fontSize: "15px",
                 padding: "15px",
-                boxSizing:"border-box",
+                boxSizing: "border-box",
                 resize: "none",
+                marginTop: '5px',
 
                 border: `2px solid ${smoke}`,
                 borderRadius: "5px",
@@ -129,16 +139,15 @@ export default ({ open, setOpen, setSimulations, setErrorMessage }) => {
 
             <Button
               type="submit"
-              sx={{ 
-                mt: 3, 
-                mb: 1, 
+              sx={{
+                mt: 3,
+                mb: 1,
                 fontWeight: 600,
-                letterSpacing:"2px",
+                letterSpacing: "2px",
                 backgroundColor: denseLightBlue
               }}
-              fullWidth
               variant="contained"
-              onClick={ handleSubmit }
+              onClick={handleSubmit}
             >
               Salvar
             </Button>

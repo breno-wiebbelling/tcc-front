@@ -24,7 +24,7 @@ export const verifyUserAndEmailEligibility = async (payload) => {
 
     let userAndEmailEligibilityResult = await validateNameAndEmailEligibility(payload.username, payload.email);
 
-    if (!Object.values(userAndEmailEligibilityResult).every(result => result == '')) {
+    if (!Object.values(userAndEmailEligibilityResult).every(result => result === '')) {
         errors.email = userAndEmailEligibilityResult.email;
         errors.username = userAndEmailEligibilityResult.username;
     };
@@ -38,7 +38,7 @@ export const validateAndComparePasswords = async (payload) => {
     errors.password = (payload.password === '') ? 'A senha é obrigatória.' : '';
     errors.password = (payload.password.length < 6) ? 'A senha deve ter pelo menos 6 caracteres.' : '';
 
-    if (errors.password != '') {
+    if (errors.password !== '') {
         return errors;
     }
 
