@@ -26,10 +26,16 @@ export default styled.div`
     padding: 8px;
   }
 
+  .text-details .text-element{
+    cursor: 'pointer';
+  }
+
   .text-details .text-element p{
     padding: 2px 6px;
     margin: 2px;
     border-radius: 4px;
+    cursor: 'pointer';
+
   }
 
 `

@@ -58,7 +58,7 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
   return (
     <StyledDropdown
       value={value}
-      style={{ backgroundColor: ((isEnabled) ? white : smokeWhiteLightHover), borderBottomLeftRadius: (isOptionsOpen && isEnabled) ? "0px" : "8px", borderBottomRightRadius: (isOptionsOpen && isEnabled) ? "0px" : "8px" }}
+      style={{ backgroundColor: ((isEnabled) ? white : smokeWhiteLightHover), borderBottomLeftRadius: (isOptionsOpen && isEnabled) ? "0px" : "8px", borderBottomRightRadius: (isOptionsOpen && isEnabled) ? "0px" : "8px", cursor: (!isEnabled) ? "not-allowed" : "pointer" }}
     >
       <ClickOutsideWrapper
         className="wrapper"

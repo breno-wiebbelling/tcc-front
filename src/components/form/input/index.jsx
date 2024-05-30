@@ -5,7 +5,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
 
-export const PassInput = ({ label, value, onChange, error }) => {
+export const PassInput = ({ label, value, onChange, error, onKeyDown }) => {
 
   const [passVisible, setPassVisible] = useState(false)
   const changeVisibility = () => { setPassVisible(!passVisible) }
@@ -20,6 +20,7 @@ export const PassInput = ({ label, value, onChange, error }) => {
       helperText={error}
       margin="normal"
       sx={{ width: "100%" }}
+      onKeyDown={onKeyDown}
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">

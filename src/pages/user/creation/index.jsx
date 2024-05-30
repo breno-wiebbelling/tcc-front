@@ -13,8 +13,8 @@ import { createUser, validateHostEligibility } from "../../../service/clients/us
 import { verifyUserAndEmailEligibility, validateAndComparePasswords } from "../../../service/validators/userValidator"
 import IconButton from "@mui/material/IconButton";
 import ArrowBackIosIcon from '@mui/icons-material/KeyboardArrowDown';
+import { LoadingConsumer } from "../../../context/loadingContext";
 
-import backgroundImage from "./images/register_background.png"
 import restmupWelcomeLogo from "./images/1-cutout.png"
 
 export default () => {
@@ -28,11 +28,14 @@ export default () => {
 	const [host, setHost] = useState("");
 
 	const [formErrors, setFormErrors] = useState({ name: '', email: '', password: '', passwordConfirmation: '', host: '' });
+	const loadingService = LoadingConsumer();
 
 	const setValidationResult = (result) => {
 		if (Object.values(result).every(erro => erro === '')) return true;
 
 		setFormErrors(result);
+		loadingService.hide();
+
 		return false;
 	}
 
@@ -51,21 +54,20 @@ export default () => {
 	}
 
 	const handleFirstStep = async (e) => {
-		e.preventDefault();
-		setFormStep(2);
-		// if (await validateFirstStep()) setFormStep(2);
+		loadingService.show();
+
+		if (await validateFirstStep()) setFormStep(2);
 	};
 
 	const handleSecondStep = async (e) => {
-		e.preventDefault();
-		setFormStep(3)
+		loadingService.show();
 
-		// if (await validateSecondStep()) {
-		// 	setFormStep(3)
-		// }
+		if (await validateSecondStep()) { setFormStep(3) }
 	};
 
 	const handleThirdStep = async () => {
+		loadingService.show();
+
 		if (!(await validateHostEligibility(host))) {
 			setFormErrors(latest => {
 				return {
@@ -90,6 +92,12 @@ export default () => {
 			alert(userCreationResponse)
 		}
 	}
+
+	const handleKeyDown = (event, fun) => {
+    if (event.key === 'Enter') {
+      fun();
+    }
+  };
 
 	return (
 		<CreationStyled className="base_page">
@@ -146,6 +154,7 @@ export default () => {
 										helperText={formErrors.username}
 										margin="normal"
 										sx={{ width: "70%" }}
+										onKeyDown={(e) => handleKeyDown(e, handleFirstStep) }
 									/>
 									<TextField
 										label="Email"
@@ -156,6 +165,7 @@ export default () => {
 										helperText={formErrors.email}
 										margin="normal"
 										sx={{ width: "70%" }}
+										onKeyDown={(e) => handleKeyDown(e, handleFirstStep) }
 									/>
 									<Button onClick={handleFirstStep} variant="contained" className="continueButton" color="primary">
 										Avançar
@@ -172,11 +182,13 @@ export default () => {
 											label="Senha"
 											error={formErrors.password}
 											onChange={(e) => { setPassword(e.target.value) }}
+											onKeyDown={(e) => handleKeyDown(e, handleSecondStep) }
 										/>
 										<PassInput
 											label="Confirmar Senha"
 											error={formErrors.passwordConfirmation}
 											onChange={(e) => { setPasswordConfirmation(e.target.value) }}
+											onKeyDown={(e) => handleKeyDown(e, handleSecondStep) }
 										/>
 									</div>
 
@@ -200,6 +212,7 @@ export default () => {
 											helperText={formErrors.host}
 											margin="normal"
 											sx={{ width: "70%" }}
+											onKeyDown={(e) => handleKeyDown(e, handleThirdStep) }
 										/>
 									</Tooltip>
 									<div>

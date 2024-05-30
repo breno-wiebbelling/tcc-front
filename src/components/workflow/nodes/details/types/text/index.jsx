@@ -10,6 +10,8 @@ import TextValueModal from "./textBuilder/textValueDetailsModal";
 import { getVariablesByUserAndSimulationId } from "../../../../../../service/clients/variableClient";
 import TextValueTypeEnum from "./textBuilder/TextValueTypeEnum";
 
+const DEFAULT_RESULT_VARIABLE = { key: 'key', label: 'Variável resultado', value: 'key' };
+
 export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
 
   const [variables, setVariables] = React.useState([]);
@@ -21,7 +23,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
 
   const [textElements, setTextElements] = React.useState([]);
   const [newTextInfo, setNewTextInfo] = React.useState({ "uiDisplay": "", "type": "", "value": "", "isNew": true, "index": 0 });
-  const [resultVariable, setResultVariable] = React.useState({});
+  const [resultVariable, setResultVariable] = React.useState(DEFAULT_RESULT_VARIABLE);
 
   const loadUserVariables = () => {
     getVariablesByUserAndSimulationId(0, nodeInfo['simulationId'])
@@ -101,7 +103,12 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
         return filteredVariables;
       })
       .then((filteredVariables) => {
-        setResultVariable(filteredVariables.filter(v => v['key'] == nodeInfo['details']['resultVariable'])[0])
+        if(typeof nodeInfo['details']['resultVariable'] === 'undefined'){
+          setResultVariable(DEFAULT_RESULT_VARIABLE);
+        }
+        else{
+          setResultVariable(filteredVariables.filter(v => v['key'] == nodeInfo['details']['resultVariable'])[0]);
+        }
 
         return filteredVariables;
       })
@@ -131,6 +138,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
               <div
                 className={"text-element"} key={index}
                 onClick={() => { openTextEditModalOpen(textElement) }}
+                style={{ cursor: 'pointer'}}
               >
                 <p style={{ backgroundColor: (textElement.type == TextValueTypeEnum.TEXT.code) ? smokeWhiteHover : lightVividGreen }} >
                   {textElement.uiDisplay}

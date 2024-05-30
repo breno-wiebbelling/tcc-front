@@ -118,6 +118,7 @@ export default styled.div`
     align-items: center;
 
     border-bottom: 1px solid ${smokeWhiteLight};
+    cursor: pointer;
   }
 
   .simulations .simulation:hover{

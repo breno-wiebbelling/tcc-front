@@ -8,6 +8,7 @@ import {
   whiteLightHover,
   smokeWhiteLightHover,
   whiteHover,
+  denseSmoke
 } from "../../common/style";
 
 export default styled.div`
@@ -21,6 +22,11 @@ export default styled.div`
   font-size: 16px;
   border: 2px solid ${smokeWhite};
   border-radius: 8px;
+  cursor: pointer;
+
+  &:hover{
+    border-color: ${denseSmoke};
+  }
 
   .dropdown-label-display,
   .dropdown-label-display .dropdown-buttons,

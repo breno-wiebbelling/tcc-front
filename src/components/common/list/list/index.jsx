@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { smokeWhite, whiteHover } from '../../style';
-import { LoadingConsumer } from '../../../../context/loadingContext';
 
 export default function BasicTable({ getWithPage, listName, elementName, elementFieldDetails, addAction, elements, setElements, loadingService }) {
   

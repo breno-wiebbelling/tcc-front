@@ -255,7 +255,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
       {alertInfo.msg !== "" && <PopperAlert message={alertInfo.msg} mode={alertInfo.mode} resetMessage={resetErrorMessage} />}
       <div className="node-details-line"></div>
       <h3>Detalhes de Entrada</h3>
-      <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+      <div style={{display: "flex", flexDirection: "row", alignItems: "center", cursor: "default"}}>
         <p style={{backgroundColor: creamWhite, padding: "2px 7px", borderRadius: "5px", marginRight: "10px"}}>
           Seu host é:
         </p>
@@ -263,7 +263,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
           {getUserHost()}
         </a>
       </div>
-      <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+      <div style={{display: "flex", flexDirection: "row", alignItems: "center", cursor: "default"}}>
         <p style={{backgroundColor: creamWhite, padding: "2px 7px", borderRadius: "5px", marginRight: "10px"}}>
           URI:
         </p>
