@@ -7,7 +7,7 @@ import ComparisonTypesEnum from "./ComparisonTypesEnum"
 
 import { smoke, smokeHover, smokeWhite, white } from "../../../../../../common/style/index";
 import Dropdown from "../../../../../../form/dropdown";
-const style = { width: '40%', height: '80%', p: 4, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, borderRadius: "15px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", outline: "none" };
+const style = { width: '40%', minWidth: "500px", height: '80%', p: 4, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, borderRadius: "15px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", outline: "none" };
 
 const getComparisonName = (comparisonDetails, setName) => {
 	if(typeof comparisonDetails.name != "undefined"){
@@ -35,15 +35,15 @@ export default ({ isOpen, close, onCreate, comparisonDetails, variables, setVarC
 
 	const [name, setName] = React.useState("");
 	const [nameError, setNameError] = React.useState("");
-	const [firstVariable, setFirstVariable] = React.useState("")
+	const [firstVariable, setFirstVariable] = React.useState({ key: "key", label:"Primeira Variável"})
 	const [comparison, setComparison] = React.useState(ComparisonTypesEnum.defaultOption);
-	const [secondVariable, setSecondVariable] = React.useState("")
+	const [secondVariable, setSecondVariable] = React.useState({ key: "key", label:"Segunda Variável"})
 
 	React.useEffect(()=>{
-		getComparisonName(comparisonDetails, setName)
-		setFirstVariable(comparisonDetails['firstVariable'])
-		setComparison(comparisonDetails['comparison'])
-		setSecondVariable(comparisonDetails['secondVariable'])
+		getComparisonName(typeof comparisonDetails.name !== "undefined" ? comparisonDetails.name : "" )
+		setFirstVariable(typeof comparisonDetails['firstVariable'] !== 'undefined' ? comparisonDetails['firstVariable'] : { key: "key", label:"Primeira Variável"});
+		setComparison(typeof comparisonDetails['comparison'] !== "undefined" ? comparisonDetails['comparison']: ComparisonTypesEnum.defaultOption );
+		setSecondVariable(typeof comparisonDetails['secondVariable'] !== 'undefined' ? comparisonDetails['secondVariable'] : { key: "key", label:"Segunda Variável"});
 	}, [isOpen])
 
 	const handleSubmit = async () => {
@@ -58,22 +58,22 @@ export default ({ isOpen, close, onCreate, comparisonDetails, variables, setVarC
 	}
 
 	const validateFields = (setAlertInfo) => {
-		if(name === "Não definida" || name === "Nome da Comparação"){
+		if(name === ""){
 			setAlertInfo({ msg:"Insira um nome!", mode: 'error' })
 			return false;
 		}
 
-		if(firstVariable === ""){
+		if(firstVariable.key === "" || firstVariable.key === "key"){
 			setAlertInfo({ msg:"Insira a primeira variável!", mode: 'error' })
 			return false;
 		}
 
-		if(comparison.key === "none"){
+		if(comparison.key === "none" || comparison.key === "key"){
 			setAlertInfo({ msg:"Insira a comparação!", mode: 'error' })
 			return false;
 		}
 
-		if(secondVariable === ""){
+		if(secondVariable.key === "" || secondVariable.key === "key"){
 			setAlertInfo({ msg:"Insira a segunda variável!", mode: 'error' })
 			return false;
 		}
@@ -114,7 +114,7 @@ export default ({ isOpen, close, onCreate, comparisonDetails, variables, setVarC
 							<div style={{height: '45px'}}>
 								<Dropdown options={variables} value={firstVariable} placeholder={"Primeira Variável"} tooltipTitle={"Primeira Variável"} onChange={setFirstVariable} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={() => {setVarCreationModal(true)}} isEnabled={true}/>
 							</div>
-							<div style={{height: '45px', marginTop: '10px'}}>
+							 <div style={{height: '45px', marginTop: '10px'}}>
 								<Dropdown options={ComparisonTypesEnum.options} value={comparison} placeholder={"Tipo de Comparação"} tooltipTitle={"Tipo de Comparação"} onChange={setComparison} hasNewValueOption={false} isEnabled={true} />
 							</div>
 							<div style={{height: '45px', marginTop: '10px'}}>

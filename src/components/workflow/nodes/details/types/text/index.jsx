@@ -130,7 +130,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
       <div className="node-details-line"></div>
 
       {alertInfo.msg !== "" && <PopperAlert message={alertInfo.msg} mode={alertInfo.mode} resetMessage={resetErrorMessage} />}
-      <h3>Detalhes de Texto</h3>
+      <h3>Detalhes do Texto</h3>
       <div className={"text-details"} style={{ position: "relative" }}>
         {
           textElements.map((textElement, index) => {

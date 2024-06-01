@@ -28,6 +28,16 @@ const conditionalTypeOptions = [
 ]
 
 const defaultBooleanComparison = { "name": "Não definida" }
+const defaultBooleanOptionDetails = ([
+  {
+    case: "true",
+    option: { key: "key", value: "", label: `Node caso true` }
+  },
+  {
+    case: "false",
+    option: { key: "key", value: "", label: `Node caso false` }
+  }
+]);
 
 export default ({ nodeInfo, setNodeDetails }) => {
   const [variables, setVariables] = React.useState([]);
@@ -55,11 +65,11 @@ export default ({ nodeInfo, setNodeDetails }) => {
         newDetails = {
           ...latestNodeDetails,
           conditionalDetails: {
-            ... latestNodeDetails.conditionalDetails,
+            ...latestNodeDetails.conditionalDetails,
             comparisonDetails: newComparisonDetails,
             type: conditionalType.key,
           },
-          conditionalClosure: ((nodeInfo.details.nextNode.includes("ghost")) ? nodeInfo.details.originalNextNode: nodeInfo.details.nextNode)
+          conditionalClosure: ((nodeInfo.details.nextNode.includes("ghost")) ? nodeInfo.details.originalNextNode : nodeInfo.details.nextNode)
         };
 
         return newDetails;
@@ -98,16 +108,7 @@ export default ({ nodeInfo, setNodeDetails }) => {
   const handleDetailsTypeChange = (newType) => {
     setConditionalType(newType)
     if (conditionalType.value === ConditionalTypeEnum.BOOL.code) {
-      setOptionsDetails([
-        {
-          case: "true",
-          option: { key: "true", value: "", label: `Node caso true` }
-        },
-        {
-          case: "false",
-          option: { key: "false", value: "", label: `Node caso false` }
-        }
-      ])
+      setOptionsDetails(defaultBooleanOptionDetails)
     }
   }
 
@@ -126,7 +127,7 @@ export default ({ nodeInfo, setNodeDetails }) => {
       setComparisonDetails(comparisonDetails)
     }
 
-    let opDtls = [... nodeInfo['details']['conditionalDetails']['options'] ]
+    let opDtls = [...nodeInfo['details']['conditionalDetails']['options']]
 
     opDtls.map(op => {
       op.option = availableNodes.find(an => an.key === op.option);
@@ -138,26 +139,28 @@ export default ({ nodeInfo, setNodeDetails }) => {
   }
 
   React.useEffect(() => {
-    new Promise(async (resolve) => {
-      let variables = await loadUserVariables(nodeInfo['simulationId'], setVariables);
-      let availableNodes = await getNextNodesAvailable(nodeInfo['simulationId'], nodeInfo['id']);
-      availableNodes.push({ _id: 'temp', name: "Tarefa temporária" });
-      availableNodes = availableNodes.map(an => { return { key: an['_id'], value: an['_id'], label: an.name } });
-      setOptionsAvailables(availableNodes);
-      handleDetailsTypeChange(conditionalTypeOptions[0])
+    setOptionsDetails(defaultBooleanOptionDetails);
 
-      feedCondDetails(variables, availableNodes);
-      resolve();
-    });
+    loadUserVariables(nodeInfo['simulationId'], setVariables)
+      .then((variables) => {
+        return getNextNodesAvailable(nodeInfo['simulationId'], nodeInfo['id'])
+          .then(availableNodes => {
+            availableNodes.push({ _id: 'temp', name: "Tarefa temporária" });
+            availableNodes = availableNodes.map(an => { return { key: an['_id'], value: an['_id'], label: an.name } });
+            setOptionsAvailables(availableNodes);
+            handleDetailsTypeChange(conditionalTypeOptions[0])
+            feedCondDetails(variables, availableNodes);
+          })
+      });
   }, [nodeInfo])
 
   return (
     <InputDetailsStyled>
       <div className="node-details-line"></div>
-      <h3>Detalhes de Saída</h3>
-      <div style={{ height: '45px' }}>
+      <h3>Detalhes da Comparação</h3>
+      {/* <div style={{ height: '45px' }}>
         <Dropdown placeholder="Tipo de Comparação" tooltipTitle={"Tipo de Comparação"} options={conditionalTypeOptions} value={conditionalType} onChange={handleDetailsTypeChange} isEnabled={true} />
-      </div>
+      </div> */}
       {
         conditionalType.value === ConditionalTypeEnum.BOOL.code &&
         (

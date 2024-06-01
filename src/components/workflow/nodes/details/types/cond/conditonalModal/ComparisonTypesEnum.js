@@ -20,8 +20,8 @@ const compTypesEnumValues = {
     name: "Menor ou Igual"
   },
   NONE: {
-    code: "none",
-    name: "Selecione uma comparação"
+    code: "key",
+    name: "Comparação"
   }
 }
 

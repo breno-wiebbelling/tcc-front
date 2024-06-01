@@ -12,6 +12,7 @@ import { white, smokeWhite, smoke, smokeHover, denseLightBlue } from '../../comm
 
 const style = {
   width: '40%',
+  minWidth: '500px',
   height: '80%',
   p: 4,
   position: 'absolute',

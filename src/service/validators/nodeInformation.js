@@ -3,6 +3,7 @@ import MathOperationEnum from "../../components/workflow/nodes/details/types/mat
 
 import { validateStringValue } from "../../components/form/formValidators";
 import { validateNewUriInfo } from "../clients/nodeClient";
+const allEqual = arr => arr.every(val => val === arr[0]);
 
 const validateMathTypeDetails = (nodeInformation, setError) => {
   if (nodeInformation.details.mathOperation === MathOperationEnum.NONE.code) {
@@ -15,7 +16,7 @@ const validateMathTypeDetails = (nodeInformation, setError) => {
     return false;
   }
 
-  return true
+  return true;
 }
 
 const validateInputTypeDetails = async (nodeInformation, setError) => {
@@ -33,26 +34,61 @@ const validateInputTypeDetails = async (nodeInformation, setError) => {
 }
 
 const validateConditionalTypeDetails = (nodeInformation, setError) => {
-
-  if (typeof nodeInformation['details']['conditionalDetails']   === "undefined"
-    || typeof nodeInformation['details']['conditionalClosure']  === "undefined"
+  if (
+    typeof nodeInformation['details']['conditionalClosure'] === "undefined" 
+    || typeof nodeInformation['details']['conditionalDetails']   === "undefined"
     || typeof nodeInformation['details']['conditionalDetails']['comparisonDetails'] === "undefined"
-    || typeof nodeInformation['details']['conditionalDetails']['type']    === "undefined"
-    || typeof nodeInformation['details']['conditionalDetails']['options'] === "undefined"
-    || nodeInformation['details']['conditionalDetails']['comparisonDetails']['comparison']['key']
-    || nodeInformation['details']['conditionalDetails']['comparisonDetails']['firstVariable']['key']
-    || nodeInformation['details']['conditionalDetails']['comparisonDetails']['secondVariable']['key']
   ){
-    setError("Algo de errado aconteceu! Tente novamente!")
-  
+    setError("Adicione uma Condição!");
+    return false;
+  }
+
+  if (
+    typeof nodeInformation['details']['conditionalDetails']['comparisonDetails']['firstVariable'] === "undefined" 
+    || nodeInformation['details']['conditionalDetails']['comparisonDetails']['firstVariable']['key']
+    || nodeInformation['details']['conditionalDetails']['comparisonDetails']['firstVariable'] === 'key'
+  ){
+    setError("Adicione a primeira variável na Condição");
+    return false;
+  }
+
+  if (
+    typeof nodeInformation['details']['conditionalDetails']['comparisonDetails']['comparison'] === "undefined" 
+    || nodeInformation['details']['conditionalDetails']['comparisonDetails']['comparison']['key']
+    || nodeInformation['details']['conditionalDetails']['comparisonDetails']['comparison'] === 'key'
+  ){
+    setError("Adicione a comparação na Condição");
+    return false;
+  }
+
+  if (
+    typeof nodeInformation['details']['conditionalDetails']['comparisonDetails']['secondVariable'] === "undefined" 
+    || nodeInformation['details']['conditionalDetails']['comparisonDetails']['secondVariable']['key']
+    || nodeInformation['details']['conditionalDetails']['comparisonDetails']['secondVariable'] === 'key'
+  ){
+    setError("Adicione a segunda variável na Condição");
+    return false;
+  }
+
+  if(typeof nodeInformation['details']['conditionalDetails']['options'] === "undefined"){
+    setError("Selecione as opções da Comparação");
+    return false;
+  }
+
+  if(nodeInformation['details']['conditionalDetails']['options'].map(op => op.option).includes('key')){
+    setError("Selecione todas opções da Comparação");
+    return false;
+  }
+
+  if(allEqual(nodeInformation['details']['conditionalDetails']['options'].map(op => op.option)) && nodeInformation['details']['conditionalDetails']['options'][0]['option'] !== 'temp' ){
+    setError("As opções da Comparação não podem ser iguais");
     return false;
   }
 
   nodeInformation['details']['conditionalDetails']['options'].map(option => {
-    if(option['option']['key']){
+    if (option['option']['key']) {
       option.option = option.option.key
     }
-
     return option;
   })
 
@@ -60,7 +96,6 @@ const validateConditionalTypeDetails = (nodeInformation, setError) => {
 }
 
 const validateType = async (nodeInformation, setError) => {
-
   if (nodeInformation.type === NodeDetailsTypeEnum.NONE.code) {
     setError('Selecione um tipo!');
     return false;
@@ -91,6 +126,5 @@ const nameValidator = (nodeInformation, setError) => {
 }
 
 export const validateNodeInformation = async (nodeInformation, setError) => {
-
   return nameValidator(nodeInformation, setError) && (await validateType(nodeInformation, setError));
 }

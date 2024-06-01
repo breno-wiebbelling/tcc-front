@@ -91,7 +91,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
     <JsonDetailsStyled>
       <div className="node-details-line"></div>
       {alertInfo.msg !== "" && <PopperAlert message={alertInfo.msg} mode={alertInfo.mode} resetMessage={resetErrorMessage} />}
-      <h3>Detalhes de JSON</h3>
+      <h3>Detalhes do JSON</h3>
       <div style={{ height: '45px' }}>
         <Dropdown options={jsonVariables} value={jsonVariable} onChange={handleJsonVariableChange} placeholder={jsonVariable.label} tooltipTitle={"Variável JSON"} hasNewValueOption={true} onNewValueOptionClick={openVariableCreationModal} />
       </div>

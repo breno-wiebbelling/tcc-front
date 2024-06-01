@@ -17,7 +17,7 @@ import {
 	validateNumberValue
 } from "../../form/formValidators";
 
-const style = { width: '40%', height: '80%', p: 4, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, borderRadius: "15px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", outline: "none" };
+const style = { width: '40%', minWidth: '500px', height: '80%', p: 4, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, borderRadius: "15px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", outline: "none" };
 const variableTypesOptions = [{ key: VariableTypeEnum.JSON.code, value: VariableTypeEnum.JSON.code, label: VariableTypeEnum.JSON.name }, { key: VariableTypeEnum.NUMBER.code, value: VariableTypeEnum.NUMBER.code, label: VariableTypeEnum.NUMBER.name }, { key: VariableTypeEnum.TEXT.code, value: VariableTypeEnum.TEXT.code, label: VariableTypeEnum.TEXT.name }];
 
 const validateTypeError = (type, setTypeError) => {
