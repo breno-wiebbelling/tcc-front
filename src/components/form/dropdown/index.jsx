@@ -64,7 +64,7 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
         className="wrapper"
         onOutsideClick={() => { setIsOptionOpen(false); }}
       >
-        <Tooltip title={(!isEnabled || !isOptionsOpen) ? tooltipTitle : ""}>
+        <Tooltip title={(!isEnabled || !isOptionsOpen) ? tooltipTitle : ""} disableInteractive>
           <div className="dropdown-label-display" style={{ borderColor: ((hasChanged) ? smokeBlack : smokeHover) }} onClick={() => { setIsOptionOpen(latest => !latest) }}>
             <p className="dropdown-placeholder" style={{ color: ((hasChanged) ? smokeBlack : smokeHover) }} >{display}</p>
             {isEnabled &&

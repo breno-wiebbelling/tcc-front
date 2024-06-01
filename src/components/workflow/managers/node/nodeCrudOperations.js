@@ -17,7 +17,7 @@ import {
 const processNextNodeForNewNode = (previousNode, mainManager) => {
   let nextNode = previousNode.details.nextNode;
 
-  if(nextNode.includes('ghost')){
+  if (nextNode.includes('ghost')) {
     mainManager.nodeManagerInstance.setNodes(ln => {
       nextNode = (ln.find(n => n.id === nextNode)).details.nextNode
       return ln;
@@ -55,6 +55,7 @@ const processNewNode = async (previousNode, mainManager, name) => {
 }
 
 export const addNodeBelow = async (fromNodeInformation, mainManager) => {
+  mainManager.loadingService.show();
   let localNodes = []
   mainManager.nodeManagerInstance.setNodes(latestNodes => {
     localNodes = latestNodes;
@@ -73,22 +74,23 @@ export const addNodeBelow = async (fromNodeInformation, mainManager) => {
     return node;
   }));
 
-  localNodes = [...localNodes, newNodeBelow];
-  localNodes = reprocessNextNodePosition(currentNode, localNodes, mainManager);
+  // localNodes = [...localNodes, newNodeBelow];
+  // localNodes = reprocessNextNodePosition(currentNode, localNodes, mainManager);
 
-  mainManager.edgeManagerInstance.updateSource(currentNode.id, newNodeBelow.details.nextNode, newNodeBelow.id);
-  mainManager.edgeManagerInstance.create(currentNode.id, newNodeBelow.id)
-  mainManager.nodeManagerInstance.setNodes(localNodes);
+  // mainManager.edgeManagerInstance.updateSource(currentNode.id, newNodeBelow.details.nextNode, newNodeBelow.id);
+  // mainManager.edgeManagerInstance.create(currentNode.id, newNodeBelow.id)
+  // mainManager.nodeManagerInstance.setNodes(localNodes);
 
-  updateGhostPositions(mainManager)
-  updateNodesPositions(mainManager)
-
+  // updateGhostPositions(mainManager)
+  // updateNodesPositions(mainManager)
+  await mainManager.reload();
+  mainManager.loadingService.hide();
   return localNodes;
 }
 
 const updateConditionalClosure = async (localNodes, currentNodeId, newNodeId) => {
-  for(let conditionalNode of localNodes.filter(n => n.type === nodeKeys.CONDITIONAL_KEY)){
-    if(conditionalNode.details.conditionalClosure === currentNodeId){
+  for (let conditionalNode of localNodes.filter(n => n.type === nodeKeys.CONDITIONAL_KEY)) {
+    if (conditionalNode.details.conditionalClosure === currentNodeId) {
       await updateConditionalClosureClient(conditionalNode.id, newNodeId)
       conditionalNode.details.conditionalClosure = newNodeId
     }
@@ -96,8 +98,9 @@ const updateConditionalClosure = async (localNodes, currentNodeId, newNodeId) =>
 }
 
 export const addNodeAbove = async (fromNodeInformation, mainManager) => {
+  mainManager.loadingService.show();
   let localNodes = [];
-  
+
   mainManager.nodeManagerInstance.setNodes(latestNodes => {
     localNodes = latestNodes;
     return latestNodes;
@@ -115,15 +118,21 @@ export const addNodeAbove = async (fromNodeInformation, mainManager) => {
     newNode.line = mainManager.lineManagerInstance.process(baseLine.name);
   }
 
-  for(let node of localNodes ){
-    if(isNodeIdPresentOnNextNode(currentNode.id, node)){
-      if(node.type === nodeKeys.CONDITIONAL_KEY){
+  for (let node of localNodes) {
+    if (isNodeIdPresentOnNextNode(currentNode.id, node)) {
+      if (node.type === nodeKeys.CONDITIONAL_KEY) {
         let indexOfNextNode = node.details.nextNode.indexOf(currentNode.id);
-        let tempNode = node.details.nextNode;
+        let tempNode = [ ...node.details.nextNode];
+
+        if(indexOfNextNode === -1 && typeof node.details.originalNextNode !== "undefined"){
+          indexOfNextNode = node.details.originalNextNode.indexOf(currentNode.id);
+          tempNode = [ ...node.details.originalNextNode ];
+        }
+
         tempNode[indexOfNextNode] = newNode.id;
         await updateNextNode(node.id, tempNode);
       }
-      else if(node.type === nodeKeys.CONDITIONAL_GHOST || node.type === nodeKeys.GHOST){
+      else if (node.type === nodeKeys.CONDITIONAL_GHOST || node.type === nodeKeys.GHOST) {
         node.details.nextNode = newNode.id;
       }
       else {
@@ -135,12 +144,14 @@ export const addNodeAbove = async (fromNodeInformation, mainManager) => {
 
   await updateConditionalClosure(localNodes, currentNode.id, newNode.id);
 
-  localNodes = [...localNodes, newNode];
-  localNodes = reprocessNextNodePosition(newNode, localNodes, mainManager);
-  mainManager.nodeManagerInstance.setNodes(localNodes);
+  await mainManager.reload();
+  mainManager.loadingService.hide();
+  // localNodes = [...localNodes, newNode];
+  // localNodes = reprocessNextNodePosition(newNode, localNodes, mainManager);
+  // mainManager.nodeManagerInstance.setNodes(localNodes);
 
-  updateGhostPositions(mainManager)
-  updateNodesPositions(mainManager)
+  // updateGhostPositions(mainManager);
+  // updateNodesPositions(mainManager);
 }
 
 export const addConditionalLeg = (fromNodeInformation, mainManager) => {
@@ -164,71 +175,74 @@ export const addConditionalLeg = (fromNodeInformation, mainManager) => {
 }
 
 export const deleteNode = async (nodeInformation, mainManager) => {
+  mainManager.loadingService.show();
   let currentNodes;
-  
+
   mainManager.nodeManagerInstance.setNodes((latestNodes) => {
     currentNodes = latestNodes;
 
     return latestNodes;
   });
   nodeInformation = currentNodes.find(node => node.id === nodeInformation.id);
-  
-   await deleteById(nodeInformation.id);
+
+  await deleteById(nodeInformation.id);
   let newNextNode;
   let parentNodes = currentNodes.filter(node => isNodeIdPresentOnNextNode(nodeInformation.id, node));
-  for(let parentNode of parentNodes.filter(pn => ![nodeKeys.CONDITIONAL_GHOST, nodeKeys.GHOST].includes(pn.type))){
+  for (let parentNode of parentNodes.filter(pn => ![nodeKeys.CONDITIONAL_GHOST, nodeKeys.GHOST].includes(pn.type))) {
     //TODO: delete all nodes until cond. closure
     let newNode;
-    if(nodeInformation.type === nodeKeys.CONDITIONAL_KEY){
+    if (nodeInformation.type === nodeKeys.CONDITIONAL_KEY) {
       let conditionalClosure = getConditionalClosure(nodeInformation.id, currentNodes);
 
-      if(conditionalClosure === null && nodeInformation.details.conditionalClosure){
+      if (conditionalClosure === null && nodeInformation.details.conditionalClosure) {
         newNextNode = nodeInformation.details.conditionalClosure;
       }
-      else{
+      else {
         newNextNode = (currentNodes.find(cn => cn.id === conditionalClosure.details.nextNode)).id;
       }
     }
 
-    if(parentNode.type === nodeKeys.CONDITIONAL_KEY){
-      if(typeof parentNode.details.originalNextNode !== "undefined"){
+    if (parentNode.type === nodeKeys.CONDITIONAL_KEY) {
+      if (typeof parentNode.details.originalNextNode !== "undefined") {
         parentNode.details.nextNode = parentNode.details.originalNextNode;
       }
-      
+
       let previousIndex = parentNode.details.nextNode.indexOf(nodeInformation.id);
       let nextNode;
-      if(nodeInformation.type === nodeKeys.CONDITIONAL_KEY){
+      if (nodeInformation.type === nodeKeys.CONDITIONAL_KEY) {
         nextNode = getConditionalClosure(nodeInformation.id, currentNodes);
-        if(nextNode === null && nodeInformation.details.conditionalClosure){
+        if (nextNode === null && nodeInformation.details.conditionalClosure) {
           nextNode = currentNodes.find(cn => cn.details.nextNode === nodeInformation.details.conditionalClosure)
         }
-      }else{
+      } else {
         nextNode = currentNodes.find(cn => cn.id === nodeInformation.details.nextNode);
       }
 
-      if(nextNode.type === nodeKeys.GHOST){ //end of conditional leg
+      if (nextNode.type === nodeKeys.GHOST) { //end of conditional leg
         if (parentNode.details.conditionalDetails.type === 'boolean') {
           let newNode = await processNewNode({ ...nodeInformation, details: { nextNode: nextNode.details.nextNode } }, mainManager, "Tarefa temporária!");
           parentNode.details.nextNode[previousIndex] = newNode['_id'];
-          newNextNode = parentNode.details.nextNode; 
+          newNextNode = parentNode.details.nextNode;
         }
         else {
           //TODO: REMOVE SWITCH OPTION
         }
       }
-      else{
+      else {
         parentNode.details.nextNode[previousIndex] = nextNode.id;
-        newNextNode = parentNode.details.nextNode; 
+        newNextNode = parentNode.details.nextNode;
       }
     }
-    if(nodeInformation.type !== nodeKeys.CONDITIONAL_KEY && parentNode.type !== nodeKeys.CONDITIONAL_KEY){
+    if (nodeInformation.type !== nodeKeys.CONDITIONAL_KEY && parentNode.type !== nodeKeys.CONDITIONAL_KEY) {
       newNextNode = processNextNodeForNewNode(nodeInformation, mainManager);
     }
     await updateNextNode(parentNode.id, newNextNode);
   }
 
-   await updateConditionalClosure(currentNodes, nodeInformation.id, newNextNode);
-   await mainManager.reload();
+  await updateConditionalClosure(currentNodes, nodeInformation.id, newNextNode);
+  await mainManager.reload();
+  mainManager.loadingService.hide();
+
   return
 }
 

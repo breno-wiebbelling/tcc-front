@@ -62,6 +62,10 @@ const TypeSelector = ({ nodeInfo, setNodeDetails, setNodeType, nodeType, nodeDet
     setIsTypeChangeAvailable(![NodeDetailsTypeEnum.START.code, NodeDetailsTypeEnum.END.code].includes(nodeType.key))
   },[nodeType])
 
+  React.useEffect(() => {
+    console.log(nodeDetails)
+  }, [nodeDetails])
+
   return (
     <StyledNodeDetailsTypeComponent
       id={'TypeSelectorComponent'}

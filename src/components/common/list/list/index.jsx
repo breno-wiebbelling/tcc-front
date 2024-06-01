@@ -120,7 +120,7 @@ export default function BasicTable({ getWithPage, listName, elementName, element
                                 (() => {
                                   if( elementFieldDetails["tooltip"][index] ){
                                     return (
-                                      <Tooltip title={element[elementKey]} key={`body${index}`}>
+                                      <Tooltip title={element[elementKey]} key={`body${index}`} disableInteractive>
                                         <p>{element[elementKey]}</p>
                                       </Tooltip>
                                     )

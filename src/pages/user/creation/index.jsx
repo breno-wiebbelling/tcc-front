@@ -202,7 +202,7 @@ export default () => {
 							formStep === 3 &&
 							(
 								<div className="form-items">
-									<Tooltip title={"Este será o subdmínio das suas simulações"}>
+									<Tooltip title={"Este será o subdmínio das suas simulações"} disableInteractive>
 										<TextField
 											label="Host"
 											type="text"

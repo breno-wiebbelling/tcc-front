@@ -22,7 +22,7 @@ const YourComponent = ({ data }) => {
             setIsOptionsVisible(true);
           }}
         > 
-          <Tooltip title={data.label}>
+          <Tooltip title={data.label} disableInteractive>
             <p onClick={() => {setIsOptionsVisible(true);}}>
               {data.label}
             </p>

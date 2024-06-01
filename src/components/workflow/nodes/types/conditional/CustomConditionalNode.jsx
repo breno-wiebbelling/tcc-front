@@ -22,7 +22,7 @@ export default ({ data }) => {
           style={{ border: isOptionsVisible ? '2px solid black' : '1px solid black' }}
           onClick={ () => { setIsOptionsVisible(true); }}
         >
-          <Tooltip title={data.label}> 
+          <Tooltip title={data.label} disableInteractive> 
             <p onClick={ () => { setIsOptionsVisible(true); }}> {data.label} </p>
           </Tooltip>
         </div>

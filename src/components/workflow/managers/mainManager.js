@@ -4,7 +4,7 @@ import LineManager from "./lineManager";
 import EdgeManager from "./edgeManager";
 import { reloadNodesAndAddGhostNodes } from "./nodeManager";
 
-export default (initialNode, initialNodes, nodeEventClicks, simulationId, searchInicialNodes) => {
+export default (initialNode, initialNodes, nodeEventClicks, simulationId, searchInicialNodes, loadingService) => {
   let mainManagerLibrary = {};
 
   mainManagerLibrary.simulation_id = simulationId;
@@ -14,6 +14,7 @@ export default (initialNode, initialNodes, nodeEventClicks, simulationId, search
   mainManagerLibrary.edgeManagerInstance = EdgeManager()
   mainManagerLibrary.lineManagerInstance = LineManager()
   mainManagerLibrary.nodeManagerInstance = NodeManager(initialNodes, mainManagerLibrary, nodeEventClicks)
+  mainManagerLibrary.loadingService = loadingService;
 
   mainManagerLibrary.loadNodes = async () => {
     mainManagerLibrary.nodeManagerInstance.processNode(initialNode, mainManagerLibrary) 

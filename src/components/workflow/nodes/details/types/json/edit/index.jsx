@@ -226,7 +226,7 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
               <div className='json_line'>
                 <div className="json_ident"></div>
                 <div style={{ minHeight: '18px', display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
-                  <Tooltip title="Chave">
+                  <Tooltip title="Chave" disableInteractive>
                     <input type="text" value={String(newJsonOperation.key)} onChange={(event) => { handleNewKeyChange(event.target.value) }} style={{ textAlign: 'center' }} placeholder='chave' />
                   </Tooltip>
                   :
@@ -243,7 +243,7 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
             (
               <div className='json_line'>
                 <div className="json_ident"></div>
-                <Tooltip title="Chave a ser deletada">
+                <Tooltip title="Chave a ser deletada" disableInteractive>
                   <div style={{ minHeight: '18px', display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
                     <input type="text" value={String(newJsonOperation.key)} onChange={(event) => { handleNewKeyChange(event.target.value) }} style={{ textAlign: 'center' }} placeholder='chave' />
                   </div>

@@ -3,7 +3,7 @@ import Tooltip from "@mui/material/Tooltip";
 export default ({ value, onChange, placeholder, error, type, tooltipTitle }) => {
 	return (
 		<div style={{ margin: "8px 0px" }} >
-			<Tooltip title={tooltipTitle}>
+			<Tooltip title={tooltipTitle} disableInteractive>
 				<input
 					className="input"
 					placeholder={placeholder}

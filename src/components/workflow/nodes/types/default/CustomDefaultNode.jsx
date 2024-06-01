@@ -18,7 +18,7 @@ export default ({ data }) => {
     <ClickOutsideWrapper onOutsideClick={() => { setIsOptionsVisible(false); }}>
       <DefaultNodeStyled>
         <Handle className="handle_bottom" type="target" position={Position.Top} />
-        <Tooltip title={data.label} arrow>
+        <Tooltip title={data.label} arrow disableInteractive>
           <div
             className="worker"
             style={{ border: isOptionsVisible ? '2px solid black' : '1px solid black' }}

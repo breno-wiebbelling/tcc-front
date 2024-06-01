@@ -14,7 +14,7 @@ export default ({ value, setValue, valueType, setValueType, nodeInfo, placeHolde
       {
         valueType.code === MathValueTypeEnum.NUMBER.code
         && (
-          <Tooltip title={`Valor da ${placeHolder}`}>
+          <Tooltip title={`Valor da ${placeHolder}`} disableInteractive>
             <input
               className="input"
               placeholder="Digite um número"
@@ -28,12 +28,12 @@ export default ({ value, setValue, valueType, setValueType, nodeInfo, placeHolde
       {
         valueType.code === MathValueTypeEnum.VARIABLE.code
         && (
-          <div className="dropdown-valuetype">
+          <div className="dropdown-valuetype" >
             <Dropdown options={variables} value={value} placeholder={placeHolder} onChange={handleDropdownValueChange} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={() => { setVariableCreationModalOpen(true) }} isEnabled={true} tooltipTitle={`Valor da ${placeHolder}`} />
           </div>
         )
       }
-      <Tooltip title={`Tipo da ${placeHolder}`}>
+      <Tooltip title={`Tipo da ${placeHolder}`} disableInteractive>
         <div className='variable-type-selector'>
           <div className='variable-type-selector-names'>
             <p className='variable-type-selector-name' onClick={() => { setValueType(MathValueTypeEnum.NUMBER) }}>Número</p>

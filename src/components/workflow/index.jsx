@@ -4,10 +4,12 @@ import 'reactflow/dist/style.css';
 import StyledSimulation from "./styled"
 import { white } from "../common/style/index"
 import useMainManager from "./managers/mainManager";
+import { LoadingConsumer } from "../../context/loadingContext";
 
 export default ({ initialNodes, initialNode, isInfoPanelOpen, nodeEventClicks, simulationId, searchInicialNodes}) => {
 
-  let mainManager = useMainManager(initialNode, initialNodes, nodeEventClicks, simulationId, searchInicialNodes);
+  const loadingService = LoadingConsumer();
+  let mainManager = useMainManager(initialNode, initialNodes, nodeEventClicks, simulationId, searchInicialNodes, loadingService);
 
   useEffect(() => {
     const fetchData = async () => {
