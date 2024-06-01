@@ -173,12 +173,12 @@ export const deleteNode = async (nodeInformation, mainManager) => {
   });
   nodeInformation = currentNodes.find(node => node.id === nodeInformation.id);
   
-  await deleteById(nodeInformation.id);
+   await deleteById(nodeInformation.id);
   let newNextNode;
   let parentNodes = currentNodes.filter(node => isNodeIdPresentOnNextNode(nodeInformation.id, node));
-
   for(let parentNode of parentNodes.filter(pn => ![nodeKeys.CONDITIONAL_GHOST, nodeKeys.GHOST].includes(pn.type))){
     //TODO: delete all nodes until cond. closure
+    let newNode;
     if(nodeInformation.type === nodeKeys.CONDITIONAL_KEY){
       let conditionalClosure = getConditionalClosure(nodeInformation.id, currentNodes);
 
@@ -227,8 +227,8 @@ export const deleteNode = async (nodeInformation, mainManager) => {
     await updateNextNode(parentNode.id, newNextNode);
   }
 
-  await updateConditionalClosure(currentNodes, nodeInformation.id, newNextNode);
-  await mainManager.reload();
+   await updateConditionalClosure(currentNodes, nodeInformation.id, newNextNode);
+   await mainManager.reload();
   return
 }
 

@@ -151,10 +151,9 @@ export const reloadNodesAndAddGhostNodes = async (mainManager) => {
         let nodesPoitingToSimilarNode = latestNodes.filter(node => isNodeIdPresentOnNextNode(similarNodeId, node))
         if (nodesPoitingToSimilarNode.length > 1) {
           let newGhostColumns = [];
-
           nodesPoitingToSimilarNode.forEach(nodePoitingToSimilar => {
             let newGhostNode = { id: idGenerator("ghost"), details: { "nextNode": nodePoitingToSimilar.details.nextNode }, type: nodeKeys.GHOST, column: nodePoitingToSimilar.column, line: ghostLine }
-            nodePoitingToSimilar.details.originalNextNode = nodePoitingToSimilar.details.nextNode;
+            nodePoitingToSimilar.details.originalNextNode = Array.isArray(nodePoitingToSimilar.details.nextNode) ? [ ...nodePoitingToSimilar.details.nextNode] : nodePoitingToSimilar.details.nextNode;
             nodePoitingToSimilar.details.nextNode = newGhostNode.id;
 
             latestNodes.push(newGhostNode);
@@ -222,7 +221,8 @@ export const reloadNodesAndAddGhostNodes = async (mainManager) => {
     if (Array.isArray(conditionalNode.details.nextNode)) {
       nextNodes = conditionalNode.details.nextNode
     } else {
-      nextNodes = conditionalNode.details.originalNextNode;
+      nextNodes = [ ...conditionalNode.details.originalNextNode ];
+      
       if (nextNodes.includes(conditionalClosure['_id'])) {
         nextNodes.splice(nextNodes.indexOf(conditionalClosure['_id']), 1)
       }
