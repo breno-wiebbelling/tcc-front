@@ -18,7 +18,6 @@ export default styled.div`
 
   .simulationList .header p, .simulations .simulation p{
     width: 100%;
-    height: 100%;
     align-items: center;
     justify-content: left;
   }
@@ -48,6 +47,7 @@ export default styled.div`
 
   .simulationList .header p{
     font-size: 14px;
+    margin-right: 20px;
   }
 
   .simulationsInfo{
@@ -114,6 +114,7 @@ export default styled.div`
 
     font-size: 13px;
 
+    display: flex;
     flex-direction: row;
     align-items: center;
 
@@ -131,6 +132,22 @@ export default styled.div`
 
   .simulations .simulation:active{
     background-color: ${smokeWhiteLight};
+  }
+
+  .simulations .simulation{
+    display: flex;
+    align-items: center;
+  }
+
+  .simulations .simulation p{
+    display: block;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    box-sizing: content-box;
+
+    padding: 0px 20px 0px 0px;
   }
 
   .simulationList .header .actions, .simulations .actions{

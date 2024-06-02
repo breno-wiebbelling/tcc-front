@@ -27,6 +27,16 @@ export const LoginStyled = styled.div`
         box-sizing: border-box;
     }
 
+    .container .fieldName{
+        display: flex;
+        align-items: center;
+    }
+
+    .container .fieldName .title{
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
     .edit_field_name_icon{
         width: 18px; 
         height: 18px; 

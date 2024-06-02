@@ -5,6 +5,7 @@ import { LoadingConsumer } from '../../../context/loadingContext.jsx'
 import { getSimulationsByUser, deleteSimulationById } from "../../../service/clients/simulationClient";
 import SimulationListStyled from "./style"
 import PopperAlert from '../../../components/alert/index';
+import Tooltip from '@mui/material/Tooltip';
 
 import NoResults from '../../common/list/noResults/index.jsx';
 import AddIcon from '@mui/icons-material/Add';
@@ -69,8 +70,8 @@ export default () => {
     <SimulationListStyled className='display_flex_center'>
       {alertInfo.msg != "" && <PopperAlert message={alertInfo.msg} mode={'error'} resetMessage={resetErrorMessage} />}
 
-      <CreationModal reload={()=>{ loadSimulations(page) }} open={isCreationModalOpen} setOpen={setIsCreationModalOpen} setErrorMessage={popError} />
-      <EditionModal  reload={()=>{ loadSimulations(page) }} open={isEditionModalOpen}  setOpen={setIsEditionModalOpen}  setErrorMessage={popError} simulationInfo={simulationInfo} setSimulationInfo={setSimulationInfo} />
+      <CreationModal reload={() => { loadSimulations(page) }} open={isCreationModalOpen} setOpen={setIsCreationModalOpen} setErrorMessage={popError} />
+      <EditionModal reload={() => { loadSimulations(page) }} open={isEditionModalOpen} setOpen={setIsEditionModalOpen} setErrorMessage={popError} simulationInfo={simulationInfo} setSimulationInfo={setSimulationInfo} />
 
       <div className='simulationList'>
         <div className="simulationsInfo">
@@ -99,13 +100,18 @@ export default () => {
                 simulations.map(simulation => {
                   return (
                     <div className={"simulation"} key={simulation['_id']}>
-                      <p onClick={()=>{ onSimulationClick(simulation) }} style={{ width: "25%", paddingLeft: "10px" }} > {simulation['name']} </p>
-                      <p style={{ width: "35%" }} onClick={()=>{ onSimulationClick(simulation) }} > {simulation['description']} </p>
-                      <p style={{ width: "30%" }} onClick={()=>{ onSimulationClick(simulation) }}> {String(simulation['createdAt']).split("T")[0]} </p>
-
+                      <Tooltip title={simulation['name']} arrow disableInteractive className="simulation_info_container">
+                        <p style={{ width: "25%", paddingLeft: "10px" }} onClick={() => { onSimulationClick(simulation) }}> {simulation['name']} </p>
+                      </Tooltip>
+                      <Tooltip title={simulation['description']} arrow disableInteractive className="simulation_info_container">
+                        <p style={{ width: "35%" }} onClick={() => { onSimulationClick(simulation) }}> {simulation['description']}   </p>
+                      </Tooltip>
+                      <Tooltip title={simulation['createdAt']} arrow disableInteractive className="simulation_info_container">
+                        <p style={{ width: "30%" }} onClick={() => { onSimulationClick(simulation) }}> {String(simulation['createdAt']).split("T")[0]} </p>
+                      </Tooltip>
                       <div className='actions'>
-                        <EditIcon   className='action' onClick={()=>{ editSimulation(simulation)   }} />
-                        <DeleteIcon className='action' onClick={()=>{ deleteSimulation(simulation) }} />
+                        <EditIcon className='action' onClick={() => { editSimulation(simulation) }} />
+                        <DeleteIcon className='action' onClick={() => { deleteSimulation(simulation) }} />
                       </div>
                     </div>
                   )

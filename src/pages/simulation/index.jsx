@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from "../../components/header/index";
@@ -13,32 +13,32 @@ import { getSimulationById } from "../../service/clients/simulationClient";
 import { getInitialNodesBySimulationId } from "../../service/clients/simulationClient.js";
 import PopperAlert from "../../components/alert";
 
-const nodeEventNames = { add: "addNode", edit:"editNode", delete: "deleteNode" }
+const nodeEventNames = { add: "addNode", edit: "editNode", delete: "deleteNode" }
 
 export default () => {
 
   const { simulationId } = useParams();
   const loadingService = LoadingConsumer()
 
-  const [isInfoPanelOpen, setIsInfoPanelOpen] = useState(false); 
+  const [isInfoPanelOpen, setIsInfoPanelOpen] = useState(false);
   const [simulationInfo, setSimulationInfo] = useState(null);
-  const [InfoPanelComponent, setInfoPanelComponent] = useState(()=> { return <SimulationInfo simulationInfo={simulationInfo}/> });
+  const [InfoPanelComponent, setInfoPanelComponent] = useState(() => { return <SimulationInfo simulationInfo={simulationInfo} /> });
   const [initialNodes, setInitialNodes] = useState([{ "id": "0" }]);
   const [loaded, setLoaded] = useState(false);
-  const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: ''});
-  const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: ''}); }
+  const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: '' });
+  const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: '' }); }
 
   const nodeEventClicks = {
-    editNode : (nodeInformation) => {
+    editNode: (nodeInformation) => {
       openModalWithNodeEvent(nodeEventNames.edit, nodeInformation)
     },
-    newNode: (updateAfterFinish) => { openModalWithNodeEvent(nodeEventNames.edit, updateAfterFinish)}
+    newNode: (updateAfterFinish) => { openModalWithNodeEvent(nodeEventNames.edit, updateAfterFinish) }
   }
 
   const openModalWithNodeEvent = (eventName, nodeInformation) => {
     nodeInformation['simulationId'] = simulationId;
 
-    switch (eventName){
+    switch (eventName) {
       case nodeEventNames.edit:
         setInfoPanelComponent(() => {
           return (
@@ -55,12 +55,12 @@ export default () => {
       default:
         break;
     }
-      
+
   }
 
   const loadInformation = async () => {
     setLoaded(false);
-    
+
     let localSimulation = await getSimulationById(simulationId);
     setSimulationInfo(localSimulation);
 
@@ -71,7 +71,7 @@ export default () => {
         return initialNode;
       })
     );
-    
+
     setLoaded(true);
     loadingService.hide()
   }
@@ -87,7 +87,7 @@ export default () => {
 
   return (
     <SimulationStyled>
-      <Header/>
+      <Header />
       {alertInfo.msg !== "" && <PopperAlert message={alertInfo.msg} mode={alertInfo.mode} resetMessage={resetErrorMessage} />}
 
       <div className='container'>
@@ -102,7 +102,7 @@ export default () => {
             searchInicialNodes={searchInicialNodes}
           />
         }
-        
+
         {/*{*/}
         {/*  !isInfoPanelOpen && */}
         {/*  <IconButton className="openInfoPanel" onClick={ () => { setIsInfoPanelOpen(true)} } >*/}
@@ -111,10 +111,10 @@ export default () => {
         {/*}*/}
 
         <InfoPanel isOpen={isInfoPanelOpen} setIsOpen={setIsInfoPanelOpen}>
-          { InfoPanelComponent }
-        </InfoPanel> 
+          {InfoPanelComponent}
+        </InfoPanel>
       </div>
-     
+
     </SimulationStyled>
   )
 }

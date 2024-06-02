@@ -10,7 +10,7 @@ import FieldEdition from "./fieldEdition/index.jsx";
 import PopperAlert from "../../../components/alert/index.jsx"
 
 import { getUserImage, updateUserImage, getUserInfo, validateHostEligibility, updateUserInfo } from "../../../service/clients/userClient";
-import { verifyCredentialEligibility } from "../../../service/validators/userValidator.js";
+import { verifyCredentialEligibility, verifyUserAndEmailEligibility } from "../../../service/validators/userValidator.js";
 
 import AvatarContainer from "./avatarLogo/index";
 
@@ -61,15 +61,14 @@ export default () => {
     }));
 
     if (!await verifyCredentialEligibility(newValue, valueName)) {
-      popAlertError(`${valueName[0].toUpperCase()+valueName.slice(1)} já registrado`, setAlertInfo)
+      popAlertError(`${valueName[0].toUpperCase() + valueName.slice(1)} já registrado`, setAlertInfo)
     }
 
   }, 500), [userInfo, setUserInfo, popAlertError, verifyCredentialEligibility]);
 
-  
-  //TODO: change validation
+
   const handleUpload = async () => {
-    /*let validationResult;
+    let validationResult;
     validationResult = await verifyUserAndEmailEligibility({ "username": userInfo['username'], "email": userInfo['email'] });
 
     if (validationResult['username'] !== '') {
@@ -88,7 +87,7 @@ export default () => {
     }
 
     await updateUserInfo(userInfo['username'], userInfo['email'], userInfo['host'])
-    popSuccess("Dados alterados com sucesso!")*/
+    popSuccess("Dados alterados com sucesso!")
   }
 
   return (
@@ -104,21 +103,30 @@ export default () => {
             <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
 
             <div style={{ marginTop: "20%" }}>
-              <FieldEdition
-                fieldName={'username'}
-                fieldValue={userInfo['username']}
-                handleValueChange={handleValueChange}
-              />
-              <FieldEdition
-                fieldName={'email'}
-                fieldValue={userInfo['email']}
-                handleValueChange={handleValueChange}
-              />
-              <FieldEdition
-                fieldName={'host'}
-                fieldValue={userInfo['host']}
-                handleValueChange={handleValueChange}
-              />
+              <div className={"fieldName"}>
+                <p className={"title"}>nome: </p>
+                <FieldEdition
+                  fieldName={'username'}
+                  fieldValue={userInfo['username']}
+                  handleValueChange={handleValueChange}
+                />
+              </div>
+              <div className={"fieldName"}>
+                <p className={"title"}>email</p>
+                <FieldEdition
+                  fieldName={'email'}
+                  fieldValue={userInfo['email']}
+                  handleValueChange={handleValueChange}
+                />
+              </div>
+              <div className={"fieldName"}>
+                <p className={"title"}>host: </p>
+                <FieldEdition
+                  fieldName={'host'}
+                  fieldValue={userInfo['host']}
+                  handleValueChange={handleValueChange}
+                />
+              </div>
             </div>
           </Container>
           <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginBottom: "30px" }}>
