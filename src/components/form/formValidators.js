@@ -1,5 +1,5 @@
 export const validateDangerousChars = (value, setError) => {
-	const dangerousChars = ['<', '>', '/', '?', '%', '#', '&', "*", "$","!"];
+	const dangerousChars = ['<', '>', '/', '?', '%', '#', '&', "*", "$","!", "{", "}", "!", "#", "$", "¨¨", "(", ")", "_", "-", "+", "+", "=", "[", "]"];
 	setError("");
 
 	if (dangerousChars.some(char => value.includes(char))) {

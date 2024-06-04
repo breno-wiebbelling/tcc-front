@@ -2,12 +2,18 @@ import React from 'react';
 import GetJsonValueStyled from "./styled";
 import Input from "../../../../../../form/rawInput/index"
 import Dropdown from '../../../../../../form/dropdown';
+import PopperAlert from '../../../../../../alert/index';
+import { validateDangerousChars } from "../../../../../../form/formValidators";
 
-const DEFAULT_NEW_JSON_VALUE = { key: 'key', label: 'valor', value: 'Não definido' };
+const DEFAULT_NEW_JSON_VALUE = { key: 'key', label: 'Variável destino', value: 'Não definido' };
 
 export default ({ nodeInfo, setNodeDetails, variables, openVariableCreationModal }) => {
   const [resultVariable, setResultVariable] = React.useState(DEFAULT_NEW_JSON_VALUE);
   const [keyName, setKeyName] = React.useState('');
+
+	const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: ''});
+	const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: ''}); }
+  const setError = (errMsg) => { setAlertInfo({ mode: 'error', msg: errMsg }) }
 
   const handleResultVariableChange = (newResultVariable) => {
     setResultVariable(newResultVariable)
@@ -19,6 +25,12 @@ export default ({ nodeInfo, setNodeDetails, variables, openVariableCreationModal
 
   const handleKeyNameChange = (event) => {
     let newKeyName = event.target.value;
+
+    if(!validateDangerousChars(newKeyName, setError)){
+      return;
+    }
+    newKeyName = String(newKeyName).replace(/\s+/g, '');
+
     setKeyName(newKeyName);
     setNodeDetails(latest => {
       latest['keyName'] = newKeyName;
@@ -40,10 +52,12 @@ export default ({ nodeInfo, setNodeDetails, variables, openVariableCreationModal
 
   return (
     <GetJsonValueStyled>
+			{alertInfo.msg != "" && <PopperAlert message={alertInfo.msg} mode={alertInfo.mode} resetMessage={resetErrorMessage} />}	
+
+      <Input value={keyName} onChange={handleKeyNameChange} placeholder="chave de consulta" />
       <div style={{ height:"45px" }}>
         <Dropdown options={variables} value={resultVariable} onChange={handleResultVariableChange} placeholder={"Variável Destino"} hasNewValueOption={true} onNewValueOptionClick={openVariableCreationModal} iconSizes={{ height: '18px', width: '18px' }} />
       </div>
-      <Input value={keyName} onChange={handleKeyNameChange} placeholder="Chave" />
     </GetJsonValueStyled>
   )
 }

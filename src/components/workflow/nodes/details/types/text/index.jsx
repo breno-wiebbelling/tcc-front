@@ -9,12 +9,14 @@ import VariableCreationModal from "../../../../../variable/creation/variableCrea
 import TextValueModal from "./textBuilder/textValueDetailsModal";
 import { getVariablesByUserAndSimulationId } from "../../../../../../service/clients/variableClient";
 import TextValueTypeEnum from "./textBuilder/TextValueTypeEnum";
+import VariableTypeEnum from '../../../../../variable/VariableTypeEnum';
 
 const DEFAULT_RESULT_VARIABLE = { key: 'key', label: 'Variável resultado', value: 'key' };
 
 export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
 
   const [variables, setVariables] = React.useState([]);
+  const [textVariables, setTextVariables] = React.useState([]);
   const [variableCreationModalOpen, setVariableCreationModalOpen] = React.useState(false);
   const [textEditModalOpen, setTextEditModalOpen] = React.useState(false);
 
@@ -29,9 +31,10 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
     getVariablesByUserAndSimulationId(0, nodeInfo['simulationId'])
       .then(userVariables => {
         let filteredVariables = userVariables.list.map(v => {
-          return { key: v['_id'], label: v['name'], value: v['value'] }
+          return { key: v['_id'], label: v['name'], value: v['value'], type: v['type'] }
         });
 
+        setTextVariables(filteredVariables.filter(v => v['type'] === VariableTypeEnum.TEXT.code))
         setVariables(filteredVariables)
         return filteredVariables;
       })
@@ -156,18 +159,10 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
         </IconButton>
       </div>
       <div style={{ height: '45px', display: 'flex', marginTop: "10px" }}>
-        <Dropdown options={variables} value={resultVariable} placeholder={"Variável destino"} tooltipTitle={"Variável selecionada"} onChange={handleResultVariable} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={openVariableCreationModal} isEnabled={true} />
+        <Dropdown options={textVariables} value={resultVariable} placeholder={"Variável destino"} tooltipTitle={"Variável selecionada"} onChange={handleResultVariable} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={openVariableCreationModal} isEnabled={true} />
       </div>
       <div className="node-details-line"></div>
-      <TextValueModal
-        isOpen={textEditModalOpen}
-        close={closeTextEditModalOpen}
-        onComplete={handleTextEdition}
-        onDelete={handleTextDeletion}
-        textInfo={newTextInfo}
-        variables={variables}
-        openVariableCreationModal={openVariableCreationModal}
-      />
+      <TextValueModal isOpen={textEditModalOpen} close={closeTextEditModalOpen} onComplete={handleTextEdition} onDelete={handleTextDeletion} textInfo={newTextInfo} variables={variables} openVariableCreationModal={openVariableCreationModal}/>
       <VariableCreationModal
         isOpen={variableCreationModalOpen}
         close={() => { closeVariableCreationModal(false) }}

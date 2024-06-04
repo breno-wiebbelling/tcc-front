@@ -14,6 +14,7 @@ const mathOptions = [
   { key: MathOperationEnum.MULT.code, value: MathOperationEnum.MULT.code, label: MathOperationEnum.MULT.name },
   { key: MathOperationEnum.DIV.code, value: MathOperationEnum.DIV.code, label: MathOperationEnum.DIV.name },
 ]
+const DEFAULT_RESULT_VARIABLE = { key: 'key', label:'Variável Resultado', value: "none"};
 
 const processValue = (value, valueType) => {
 
@@ -44,7 +45,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
   const [mathOperation, setMathOperation] = React.useState({ key: MathOperationEnum.NONE.code, value: MathOperationEnum.NONE.code, label: MathOperationEnum.NONE.name });
   const [secondValueType, setSecondValueType] = React.useState(TypeValuesEnum.NUMBER);
   const [secondValue, setSecondValue] = React.useState(0);
-  const [resultVariable, setResultVariable] = React.useState("");
+  const [resultVariable, setResultVariable] = React.useState(DEFAULT_RESULT_VARIABLE);
 
   const loadUserVariables = () => {
     return getVariablesByUserAndTypeAndSimulationId(page, nodeInfo['simulationId'], VariableTypeEnum.NUMBER.code)
@@ -81,18 +82,19 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
 
   React.useEffect(() => {
     setNodeDetails(latestDetails => {
+
       return {
         ...latestDetails,
         "firstValue": {
-          "firstValueType": firstValueType.code,
-          "firstValue": processValue(firstValue, firstValueType.code)
+          "firstValueType": (firstValueType.code),
+          "firstValue": (processValue(firstValue, firstValueType.code))
         },
         "secondValue": {
-          "secondValueType": secondValueType.code,
-          "secondValue": processValue(secondValue, secondValueType.code)
+          "secondValueType": (secondValueType.code),
+          "secondValue": (processValue(secondValue, secondValueType.code))
         },
-        "mathOperation": mathOperation.key,
-        "resultVariable": resultVariable.key
+        "mathOperation": (mathOperation.key),
+        "resultVariable": (resultVariable && resultVariable.key ) ? (resultVariable.key) : ''
       }
     })
   }, [firstValue, secondValue, resultVariable, mathOperation])

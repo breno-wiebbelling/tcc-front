@@ -65,7 +65,6 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
         setError('Chave já registrada!')
         return
       }
-      return
       newJsonOperation['key'] = String(newJsonOperation['key']).replace(/\s+/g, '');
     }
 

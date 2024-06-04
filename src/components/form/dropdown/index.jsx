@@ -29,7 +29,7 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
   }, [])
 
   React.useEffect(() => {
-    if (value['key'] != 'key') {
+    if (typeof value !== 'undefined' && typeof value['key'] !== 'undefined' && value['key'] !== 'key') {
       setHasChanged(true);
     }
 
@@ -41,7 +41,7 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
         ? value.label
         : placeholder
     );
-  }, [value])
+  }, [value]);
 
   const getVariableValue = (variable) => {
     if (variable.constructor === ({}).constructor) {

@@ -35,52 +35,52 @@ const validateInputTypeDetails = async (nodeInformation, setError) => {
 
 const validateConditionalTypeDetails = (nodeInformation, setError) => {
   if (
-    typeof nodeInformation['details']['conditionalClosure'] === "undefined" 
-    || typeof nodeInformation['details']['conditionalDetails']   === "undefined"
+    typeof nodeInformation['details']['conditionalClosure'] === "undefined"
+    || typeof nodeInformation['details']['conditionalDetails'] === "undefined"
     || typeof nodeInformation['details']['conditionalDetails']['comparisonDetails'] === "undefined"
-  ){
+  ) {
     setError("Adicione uma Condição!");
     return false;
   }
 
   if (
-    typeof nodeInformation['details']['conditionalDetails']['comparisonDetails']['firstVariable'] === "undefined" 
+    typeof nodeInformation['details']['conditionalDetails']['comparisonDetails']['firstVariable'] === "undefined"
     || nodeInformation['details']['conditionalDetails']['comparisonDetails']['firstVariable']['key']
     || nodeInformation['details']['conditionalDetails']['comparisonDetails']['firstVariable'] === 'key'
-  ){
+  ) {
     setError("Adicione a primeira variável na Condição");
     return false;
   }
 
   if (
-    typeof nodeInformation['details']['conditionalDetails']['comparisonDetails']['comparison'] === "undefined" 
+    typeof nodeInformation['details']['conditionalDetails']['comparisonDetails']['comparison'] === "undefined"
     || nodeInformation['details']['conditionalDetails']['comparisonDetails']['comparison']['key']
     || nodeInformation['details']['conditionalDetails']['comparisonDetails']['comparison'] === 'key'
-  ){
+  ) {
     setError("Adicione a comparação na Condição");
     return false;
   }
 
   if (
-    typeof nodeInformation['details']['conditionalDetails']['comparisonDetails']['secondVariable'] === "undefined" 
+    typeof nodeInformation['details']['conditionalDetails']['comparisonDetails']['secondVariable'] === "undefined"
     || nodeInformation['details']['conditionalDetails']['comparisonDetails']['secondVariable']['key']
     || nodeInformation['details']['conditionalDetails']['comparisonDetails']['secondVariable'] === 'key'
-  ){
+  ) {
     setError("Adicione a segunda variável na Condição");
     return false;
   }
 
-  if(typeof nodeInformation['details']['conditionalDetails']['options'] === "undefined"){
+  if (typeof nodeInformation['details']['conditionalDetails']['options'] === "undefined") {
     setError("Selecione as opções da Comparação");
     return false;
   }
 
-  if(nodeInformation['details']['conditionalDetails']['options'].map(op => op.option).includes('key')){
+  if (nodeInformation['details']['conditionalDetails']['options'].map(op => op.option).includes('key')) {
     setError("Selecione todas opções da Comparação");
     return false;
   }
 
-  if(allEqual(nodeInformation['details']['conditionalDetails']['options'].map(op => op.option)) && nodeInformation['details']['conditionalDetails']['options'][0]['option'] !== 'temp' ){
+  if (allEqual(nodeInformation['details']['conditionalDetails']['options'].map(op => op.option)) && nodeInformation['details']['conditionalDetails']['options'][0]['option'] !== 'temp') {
     setError("As opções da Comparação não podem ser iguais");
     return false;
   }
@@ -91,6 +91,53 @@ const validateConditionalTypeDetails = (nodeInformation, setError) => {
     }
     return option;
   })
+
+  return true;
+}
+
+const validateTextTypeDetails = (nodeInformation, setError) => {
+  if (nodeInformation['details']['textElements'].length <= 0) {
+    setError("Insira operações de texto!")
+    return false;
+  }
+
+  if (nodeInformation['details']['resultVariable'] === 'key') {
+    setError("Selecione a variável de destino!")
+    return false;
+  }
+
+  return true;
+}
+
+const validateJsonTypeDetails = (nodeInformation, setError) => {
+  if( typeof nodeInformation['details']['jsonVariable'] === 'undefined'){
+    setError('Selecione uma variável json!');
+    return false;
+  }
+
+  if( typeof nodeInformation['details']['jsonOperationMode'] === 'undefined'){
+    setError('Selecione a operação json!');
+    return false;
+  }
+
+  if( nodeInformation['details']['jsonOperationMode'] === 'get'){
+    if( typeof nodeInformation['details']['keyName'] === 'undefined'){
+      setError('Insira a chave de consultada');
+      return false;
+    }
+
+    if(typeof nodeInformation['details']['resultVariable'] === 'undefined'){
+      setError('Insira a variável resultado');
+      return false;
+    }
+  }
+
+  if( nodeInformation['details']['jsonOperationMode'] === 'edit'){
+    if(typeof nodeInformation['details']['jsonOperations'] === 'undefined' ||  nodeInformation['details']['jsonOperations'].length === 0 ){
+      setError('Insira alterações no Json!');
+      return false;
+    }
+  }
 
   return true;
 }
@@ -111,6 +158,14 @@ const validateType = async (nodeInformation, setError) => {
 
   if (nodeInformation.type === NodeDetailsTypeEnum.COND.code && !validateConditionalTypeDetails(nodeInformation, setError)) {
     return false
+  }
+
+  if (nodeInformation.type === NodeDetailsTypeEnum.TEXT.code && !validateTextTypeDetails(nodeInformation, setError)) {
+    return false;
+  }
+
+  if (nodeInformation.type === NodeDetailsTypeEnum.JSON.code && !validateJsonTypeDetails(nodeInformation, setError)) {
+    return false;
   }
 
   return true;
