@@ -59,7 +59,8 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
     setNewTextInfo(latest => {
       return {
         ...latest,
-        ...textElement
+        ...textElement,
+        isNew: false
       }
     })
     setTextEditModalOpen(true);
@@ -138,11 +139,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
         {
           textElements.map((textElement, index) => {
             return (
-              <div
-                className={"text-element"} key={index}
-                onClick={() => { openTextEditModalOpen(textElement) }}
-                style={{ cursor: 'pointer'}}
-              >
+              <div className={"text-element"} key={index} onClick={() => { openTextEditModalOpen(textElement) }} style={{ cursor: ''}} >
                 <p style={{ backgroundColor: (textElement.type == TextValueTypeEnum.TEXT.code) ? smokeWhiteHover : lightVividGreen }} >
                   {textElement.uiDisplay}
                 </p>
@@ -150,11 +147,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
             );
           })
         }
-        <IconButton
-          className={`display_flex_center`}
-          onClick={openTextModalCreation}
-          sx={{ width: "25px", height: "25px", borderRadius: "50%", color: denseSmoke, position: "absolute", bottom: '10px', right: '10px', backgroundColor: white, "&:hover": { backgroundColor: whiteHover }, "&:active": { backgroundColor: smokeWhiteLight } }}
-        >
+        <IconButton className={`display_flex_center`} onClick={openTextModalCreation} sx={{ width: "25px", height: "25px", borderRadius: "50%", color: denseSmoke, position: "absolute", bottom: '10px', right: '10px', backgroundColor: white, "&:hover": { backgroundColor: whiteHover }, "&:active": { backgroundColor: smokeWhiteLight } }} >
           <AddIcon sx={{ width: "18px", height: "18px" }} />
         </IconButton>
       </div>
@@ -163,12 +156,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
       </div>
       <div className="node-details-line"></div>
       <TextValueModal isOpen={textEditModalOpen} close={closeTextEditModalOpen} onComplete={handleTextEdition} onDelete={handleTextDeletion} textInfo={newTextInfo} variables={variables} openVariableCreationModal={openVariableCreationModal}/>
-      <VariableCreationModal
-        isOpen={variableCreationModalOpen}
-        close={() => { closeVariableCreationModal(false) }}
-        onCreate={handleVariableCreation}
-        simulationId={nodeInfo['simulationId']}
-      />
+      <VariableCreationModal isOpen={variableCreationModalOpen} close={() => { closeVariableCreationModal(false) }} onCreate={handleVariableCreation} simulationId={nodeInfo['simulationId']} />
     </TextDetailsStyled>
   )
 }

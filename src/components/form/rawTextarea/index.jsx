@@ -28,8 +28,7 @@ export default ({ value, onChange, placeholder, error }) => {
   return (
     <div>
       <textarea
-        placeholder={placeholder}
-        style={{ width: "100%", height: "50%", fontSize: "15px", padding: "15px", boxSizing: "border-box", resize: "none", border: `2px solid ${error ? 'red' : 'black'}`, borderRadius: "5px", marginTop: "8px"}}
+        placeholder={placeholder} style={{ width: "100%", height: "50%", fontSize: "15px", padding: "15px", boxSizing: "border-box", resize: "none", border: `2px solid ${error ? 'red' : 'black'}`, borderRadius: "5px", marginTop: "8px"}}
         value={inputValue}
         onChange={handleChange}
         onKeyDown={handleKeyDown}

@@ -27,15 +27,14 @@ export default styled.div`
   }
 
   .text-details .text-element{
-    cursor: 'pointer';
+    cursor: url('/edit.svg') 16 16, auto;
   }
 
   .text-details .text-element p{
     padding: 2px 6px;
     margin: 2px;
     border-radius: 4px;
-    cursor: 'pointer';
-
+    cursor: url('/edit.svg') 16 16, auto;
   }
 
 `

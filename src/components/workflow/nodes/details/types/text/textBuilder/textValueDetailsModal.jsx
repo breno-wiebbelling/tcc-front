@@ -52,24 +52,29 @@ export default ({ isOpen, close, onComplete, onDelete, textInfo, variables, open
   const handleSubmit = () => { onComplete(formatTextInfo(newTextInfo)); }
   const handleDelete = () => { onDelete(newTextInfo.index) }
 
-  const resetTextInfoFields = (newInfo) => {
+  const [value, setValue] = React.useState('');
 
+  const resetTextInfoFields = (newInfo) => {
     setNewTextInfo(latest=> {
       let newType = TextValueTypeEnum.getOptionByCode(newInfo['type']);
       let newValue = getTextValue(newInfo, newType, variables);
-      let formated = {
+
+      setValue(String(newInfo.value))
+
+      return {
         type: newType,
         value: newValue,
         index: newInfo.index,
-        isNew: newInfo.isNew,
-        uiDisplay: newInfo.uiDisplay
+        uiDisplay: newInfo.uiDisplay,
+        isNew: newInfo.isNew
       }
-      return formated
     });
   }
 
   React.useEffect(()=>{
-    resetTextInfoFields(textInfo);
+    if(isOpen){
+      resetTextInfoFields(textInfo);
+    }
   },[textInfo])
 
   return (
@@ -78,16 +83,7 @@ export default ({ isOpen, close, onComplete, onDelete, textInfo, variables, open
       <Modal open={isOpen} onClose={close} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description" className='modal'>
         <Box sx={style}>
           <div style={{width: "100%", height: "10%"}}>
-            <IconButton className='display_flex_center' onClick={close} sx={{
-              width: "40px",
-              height: "40px",
-              backgroundColor: smokeWhite,
-              borderRadius: "50%",
-              color: white,
-              cursor: "pointer",
-              "&:hover": {backgroundColor: smoke},
-              "&:active": {backgroundColor: smokeHover}
-            }}>
+            <IconButton className='display_flex_center' onClick={close} sx={{ width: "40px", height: "40px", backgroundColor: smokeWhite, borderRadius: "50%", color: white, cursor: "pointer", "&:hover": {backgroundColor: smoke}, "&:active": {backgroundColor: smokeHover} }}>
               <CloseIcon/>
             </IconButton>
           </div>
@@ -99,11 +95,7 @@ export default ({ isOpen, close, onComplete, onDelete, textInfo, variables, open
             {
               newTextInfo.type.key === TextValueTypeEnum.TEXT.code &&
               (
-                <Textarea
-                  value={newTextInfo.value}
-                  onChange={(event)=>{ setTextValue(event.target.value, setNewTextInfo) }}
-                  placeholder={"Valor em Texto"}
-                />
+                <Textarea value={value} onChange={(event)=>{ setTextValue(event.target.value, setNewTextInfo) }} placeholder={"Valor em Texto"} />
               )
             }
             {
@@ -116,27 +108,13 @@ export default ({ isOpen, close, onComplete, onDelete, textInfo, variables, open
             }
           </div>
           <div style={{display: "flex", alignItems: "center", justifyContent: "center", gap: "20px"}}>
-            <Button type="submit" sx={{
-              mt: 3,
-              mb: 1,
-              fontWeight: 600,
-              letterSpacing: "2px",
-              backgroundColor: smokeHover,
-              "&:hover": {backgroundColor: smoke}
-            }} variant="contained" onClick={handleSubmit}>
+            <Button type="submit" sx={{ mt: 3, mb: 1, fontWeight: 600, letterSpacing: "2px", backgroundColor: smokeHover, "&:hover": {backgroundColor: smoke} }} variant="contained" onClick={handleSubmit}>
               Salvar
             </Button>
             {
               newTextInfo.isNew == false &&
               (
-                <Button type="delete" sx={{
-                  mt: 3,
-                  mb: 1,
-                  fontWeight: 600,
-                  letterSpacing: "2px",
-                  backgroundColor: vividRed,
-                  "&:hover": {backgroundColor: vividRedHover}
-                }} variant="contained" onClick={handleDelete}>
+                <Button type="delete" sx={{ mt: 3, mb: 1, fontWeight: 600, letterSpacing: "2px", backgroundColor: vividRed, "&:hover": {backgroundColor: vividRedHover} }} variant="contained" onClick={handleDelete}>
                   Deletar
                 </Button>
               )
