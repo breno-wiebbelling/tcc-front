@@ -31,10 +31,10 @@ export default () => {
 	const loadingService = LoadingConsumer();
 
 	const setValidationResult = (result) => {
-		if (Object.values(result).every(erro => erro === '')) return true;
-
-		setFormErrors(result);
 		loadingService.hide();
+
+		if (Object.values(result).every(erro => erro === '')) return true;
+		setFormErrors(result);
 
 		return false;
 	}
