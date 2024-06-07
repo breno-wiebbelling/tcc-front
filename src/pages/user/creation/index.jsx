@@ -75,6 +75,8 @@ export default () => {
 					"host": "Host não disponível"
 				}
 			})
+			loadingService.hide();
+
 			return
 		}
 
@@ -84,6 +86,7 @@ export default () => {
 			"password": password,
 			"host": host
 		});
+		loadingService.hide();
 
 		if (userCreationResponse == true) {
 			navigate('/');
@@ -112,17 +115,7 @@ export default () => {
 					<p>Garanta a funcionalidade dos seus endpoints <span className="before">antes</span> do desenvolvimento.</p>
 				</div>
 
-				<Container
-					sx={{
-						width: '40%',
-						height: '100%',
-						boxSizing: 'border-box',
-						padding: '5% 0%',
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'center',
-					}}
-				>
+				<Container sx={{ width: '40%', height: '100%', boxSizing: 'border-box', padding: '5% 0%', display: 'flex', flexDirection: 'column', alignItems: 'center', }} >
 					<div style={{ width: '70%', marginBottom: '20px', display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
 						<div style={{ height: '30px', width: '30px' }}>
 							{
@@ -146,27 +139,8 @@ export default () => {
 							formStep === 1 &&
 							(
 								<div className="form-items">
-									<TextField
-										label="Nome"
-										value={username}
-										onChange={(e) => setUsername(e.target.value)}
-										error={!!formErrors.username}
-										helperText={formErrors.username}
-										margin="normal"
-										sx={{ width: "70%" }}
-										onKeyDown={(e) => handleKeyDown(e, handleFirstStep) }
-									/>
-									<TextField
-										label="Email"
-										type="email"
-										value={email}
-										onChange={(e) => setEmail(e.target.value)}
-										error={!!formErrors.email}
-										helperText={formErrors.email}
-										margin="normal"
-										sx={{ width: "70%" }}
-										onKeyDown={(e) => handleKeyDown(e, handleFirstStep) }
-									/>
+									<TextField label="Nome" value={username} onChange={(e) => setUsername(e.target.value)} error={!!formErrors.username} helperText={formErrors.username} margin="normal" sx={{ width: "70%" }} onKeyDown={(e) => handleKeyDown(e, handleFirstStep) } />
+									<TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} error={!!formErrors.email} helperText={formErrors.email} margin="normal" sx={{ width: "70%" }} onKeyDown={(e) => handleKeyDown(e, handleFirstStep) } />
 									<Button onClick={handleFirstStep} variant="contained" className="continueButton" color="primary">
 										Avançar
 									</Button>

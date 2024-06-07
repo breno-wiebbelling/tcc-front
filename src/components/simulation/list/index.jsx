@@ -100,15 +100,17 @@ export default () => {
                 simulations.map(simulation => {
                   return (
                     <div className={"simulation"} key={simulation['_id']}>
-                      <Tooltip title={simulation['name']} arrow disableInteractive className="simulation_info_container">
-                        <p style={{ width: "25%", paddingLeft: "10px" }} onClick={() => { onSimulationClick(simulation) }}> {simulation['name']} </p>
-                      </Tooltip>
-                      <Tooltip title={simulation['description']} arrow disableInteractive className="simulation_info_container">
-                        <p style={{ width: "35%" }} onClick={() => { onSimulationClick(simulation) }}> {simulation['description']}   </p>
-                      </Tooltip>
-                      <Tooltip title={simulation['createdAt']} arrow disableInteractive className="simulation_info_container">
-                        <p style={{ width: "30%" }} onClick={() => { onSimulationClick(simulation) }}> {String(simulation['createdAt']).split("T")[0]} </p>
-                      </Tooltip>
+                      <div style={{ width: "100%", height: "100%" }} className='display_flex_center' onClick={() => { onSimulationClick(simulation) }}>
+                        <Tooltip title={simulation['name']} arrow disableInteractive className="simulation_info_container">
+                          <p style={{ width: "25%", paddingLeft: "10px" }} > {simulation['name']} </p>
+                        </Tooltip>
+                        <Tooltip title={simulation['description']} arrow disableInteractive className="simulation_info_container">
+                          <p style={{ width: "35%" }} > {simulation['description']}   </p>
+                        </Tooltip>
+                        <Tooltip title={simulation['createdAt']} arrow disableInteractive className="simulation_info_container">
+                          <p style={{ width: "30%" }} > {String(simulation['createdAt']).split("T")[0]} </p>
+                        </Tooltip>
+                      </div>
                       <div className='actions'>
                         <EditIcon className='action' onClick={() => { editSimulation(simulation) }} />
                         <DeleteIcon className='action' onClick={() => { deleteSimulation(simulation) }} />

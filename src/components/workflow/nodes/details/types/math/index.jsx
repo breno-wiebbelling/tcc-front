@@ -69,7 +69,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
       setPage(0);
       setVariableCreationModalOpen(false);
 
-      if (typeof nodeDetails.mathOperation != 'undefined') {
+      if (typeof nodeDetails.mathOperation !== 'undefined') {
         setFirstValueType(TypeValuesEnum.getByCode(nodeDetails.firstValue.firstValueType));
         setFirstValue(receiveValue(nodeDetails.firstValue.firstValue, nodeDetails.firstValue.firstValueType, userVariables));
         setMathOperation(MathOperationEnum.getDropdownOptionByCode(nodeDetails.mathOperation));

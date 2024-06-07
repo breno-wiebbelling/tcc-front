@@ -29,11 +29,12 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
   }, [])
 
   React.useEffect(() => {
-    if (typeof value !== 'undefined' && typeof value['key'] !== 'undefined' && value['key'] !== 'key') {
+    if (value !== null && typeof value !== 'undefined' && typeof value['key'] !== 'undefined' && value['key'] !== 'key') {
       setHasChanged(true);
     }
 
     setDisplay(
+      value !== null &&
       value instanceof Object &&
         value !== "" &&
         value.label !== undefined &&
@@ -44,7 +45,7 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
   }, [value]);
 
   const getVariableValue = (variable) => {
-    if (variable.constructor === ({}).constructor) {
+    if (variable !== null && variable.constructor === ({}).constructor) {
       return JSON.stringify(variable);
     }
 
@@ -56,10 +57,7 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
   }
 
   return (
-    <StyledDropdown
-      value={value}
-      style={{ backgroundColor: ((isEnabled) ? white : smokeWhiteLightHover), borderBottomLeftRadius: (isOptionsOpen && isEnabled) ? "0px" : "8px", borderBottomRightRadius: (isOptionsOpen && isEnabled) ? "0px" : "8px", cursor: (!isEnabled) ? "not-allowed" : "pointer" }}
-    >
+    <StyledDropdown value={value} style={{ backgroundColor: ((isEnabled) ? white : smokeWhiteLightHover), borderBottomLeftRadius: (isOptionsOpen && isEnabled) ? "0px" : "8px", borderBottomRightRadius: (isOptionsOpen && isEnabled) ? "0px" : "8px", cursor: (!isEnabled) ? "not-allowed" : "pointer" }} >
       <ClickOutsideWrapper
         className="wrapper"
         onOutsideClick={() => { setIsOptionOpen(false); }}

@@ -4,7 +4,7 @@ import Dropdown from "../../../../../../form/dropdown";
 import MathValueTypeEnum from "./mathValueTypeEnum";
 import Tooltip from "@mui/material/Tooltip";
 
-export default ({ value, setValue, valueType, setValueType, nodeInfo, placeHolder, variables, loadUserVariables, setVariableCreationModalOpen }) => {
+export default ({ value, setValue, valueType, setValueType, placeHolder, variables, setVariableCreationModalOpen }) => {
 
   const handleInputValueChange = (event) => { setValue(event.target.value); }
   const handleDropdownValueChange = (newValue) => { setValue(newValue); }
