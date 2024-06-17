@@ -8,6 +8,7 @@ import { IconButton } from "@mui/material";
 import Dropdown from '../../../../../../form/dropdown';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Tooltip from '@mui/material/Tooltip';
+import { validateDangerousChars } from "../../../../../../form/formValidators";
 
 const DEFAULT_KEY_NAME = "";
 const DEFAULT_NEW_JSON_VALUE = { key: 'key', label: 'valor', value: 'Não definido' }
@@ -53,6 +54,10 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
 
   const handleEditModeChange = () => {
     if (editModeOn && (addModeOn || deleteModeOn)) {
+      if(!validateDangerousChars(newJsonOperation['key'], setError)){
+        return;
+      }
+
       if (newJsonOperation['key'] === DEFAULT_KEY_NAME) {
         setWarning('Insira uma chave!')
         return;
@@ -184,7 +189,11 @@ export default ({ nodeInfo, setNodeDetails, variables, jsonVariable, openVariabl
                       typeof jsonOperation['value'] !== "undefined" &&
                       <div className='json_info' onClick={() => { editJsonOperation(jsonOperation) }}>
                         <p>
-                          <EditIcon className="icon" />
+                          {
+                            editModeOn && (
+                              <EditIcon className="icon" />
+                            )
+                          }
                           {jsonOperation['key']}
                         </p>
                         :
