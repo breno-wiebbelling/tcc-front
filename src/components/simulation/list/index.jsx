@@ -52,7 +52,11 @@ export default () => {
       })
   }
 
-  const editSimulation = async (simulation) => {
+  const createSimulation = () => {
+    setIsCreationModalOpen(true)
+  } 
+
+  const editSimulation = (simulation) => {
     setSimulationInfo(simulation);
     setIsEditionModalOpen(true);
   }
@@ -71,13 +75,13 @@ export default () => {
       {alertInfo.msg != "" && <PopperAlert message={alertInfo.msg} mode={'error'} resetMessage={resetErrorMessage} />}
 
       <CreationModal reload={() => { loadSimulations(page) }} open={isCreationModalOpen} setOpen={setIsCreationModalOpen} setErrorMessage={popError} />
-      <EditionModal reload={() => { loadSimulations(page) }} open={isEditionModalOpen} setOpen={setIsEditionModalOpen} setErrorMessage={popError} simulationInfo={simulationInfo} setSimulationInfo={setSimulationInfo} />
+      <EditionModal  reload={() => { loadSimulations(page) }} open={isEditionModalOpen}  setOpen={setIsEditionModalOpen}  setErrorMessage={popError} simulationInfo={simulationInfo} setSimulationInfo={setSimulationInfo} />
 
       <div className='simulationList'>
         <div className="simulationsInfo">
           <h4>Simulações</h4>
           <div className="actions">
-            <button onClick={() => { setIsCreationModalOpen(true) }} className='display_flex_center'>
+            <button onClick={() => { createSimulation() }} className='display_flex_center'>
               <AddIcon className='add_icon' style={{ color: smokeHover }} />
               <span>criar simulação</span>
             </button>

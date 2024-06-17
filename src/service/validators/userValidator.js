@@ -1,6 +1,6 @@
 import { validateNameAndEmailEligibility, verifyUserCredential } from "../clients/userClient";
 
-const validateEmail = (email) => {
+export const validateEmail = (email) => {
     if (email === '') return 'O email é obrigatório.'
     if (!/\S+@\S+\.\S+/.test(email)) return 'O email não é válido.'
 

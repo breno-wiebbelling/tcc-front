@@ -6,12 +6,22 @@ import { validateNewUriInfo } from "../clients/nodeClient";
 const allEqual = arr => arr.every(val => val === arr[0]);
 
 const validateMathTypeDetails = (nodeInformation, setError) => {
+  if (nodeInformation.details.firstValue.firstValueType === "var" && typeof nodeInformation.details.firstValue.firstValue === "undefined"){
+    setError('Adicione o primeiro valor!')
+    return false;
+  }
+
   if (nodeInformation.details.mathOperation === MathOperationEnum.NONE.code) {
     setError('Selecione uma operação matemática!')
     return false;
   }
 
-  if (typeof nodeInformation.details.resultVariable == 'undefined') {
+  if (nodeInformation.details.secondValue.secondValueType === "var" && typeof nodeInformation.details.secondValue.secondValue === "undefined"){
+    setError('Adicione o segundo valor!')
+    return false;
+  }
+
+  if (typeof nodeInformation.details.resultVariable === 'undefined' || nodeInformation.details.resultVariable  === 'key' ) {
     setError('Selecione a variável destino!')
     return false;
   }

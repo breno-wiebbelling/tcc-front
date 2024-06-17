@@ -15,13 +15,7 @@ export default ({ value, setValue, valueType, setValueType, placeHolder, variabl
         valueType.code === MathValueTypeEnum.NUMBER.code
         && (
           <Tooltip title={`Valor da ${placeHolder}`} disableInteractive>
-            <input
-              className="input"
-              placeholder="Digite um número"
-              value={value}
-              type="number"
-              onChange={handleInputValueChange}
-            />
+            <input className="input" placeholder="Digite um número" value={value} type="number" onChange={handleInputValueChange} />
           </Tooltip>
         )
       }

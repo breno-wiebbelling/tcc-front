@@ -9,10 +9,10 @@ import VariableTypeEnum from "../../../../../variable/VariableTypeEnum";
 import VariableCreationModal from "../../../../../variable/creation/variableCreationModal";
 
 const mathOptions = [
-  { key: MathOperationEnum.ADD.code, value: MathOperationEnum.ADD.code, label: MathOperationEnum.ADD.name },
-  { key: MathOperationEnum.SUB.code, value: MathOperationEnum.SUB.code, label: MathOperationEnum.SUB.name },
-  { key: MathOperationEnum.MULT.code, value: MathOperationEnum.MULT.code, label: MathOperationEnum.MULT.name },
-  { key: MathOperationEnum.DIV.code, value: MathOperationEnum.DIV.code, label: MathOperationEnum.DIV.name },
+  { key: MathOperationEnum.ADD.code,  value: MathOperationEnum.ADD.code,  label: MathOperationEnum.ADD.name   },
+  { key: MathOperationEnum.SUB.code,  value: MathOperationEnum.SUB.code,  label: MathOperationEnum.SUB.name   },
+  { key: MathOperationEnum.MULT.code, value: MathOperationEnum.MULT.code, label: MathOperationEnum.MULT.name  },
+  { key: MathOperationEnum.DIV.code,  value: MathOperationEnum.DIV.code,  label: MathOperationEnum.DIV.name   },
 ]
 const DEFAULT_RESULT_VARIABLE = { key: 'key', label:'Variável Resultado', value: "none"};
 
@@ -97,7 +97,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
         "resultVariable": (resultVariable && resultVariable.key ) ? (resultVariable.key) : ''
       }
     })
-  }, [firstValue, secondValue, resultVariable, mathOperation])
+  }, [firstValue, secondValue, firstValueType, secondValueType, resultVariable, mathOperation])
 
   return (
     <MathSelectorStyled>

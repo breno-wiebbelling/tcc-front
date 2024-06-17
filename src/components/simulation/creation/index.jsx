@@ -56,13 +56,7 @@ export default ({ open, setOpen, reload, setErrorMessage }) => {
 
   return (
     <CreationModalStyled>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        className='modal'
-      >
+      <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description" className='modal'>
         <Box sx={style}>
           <div style={{ width: "100%", height: "10%" }} >
             <IconButton 
