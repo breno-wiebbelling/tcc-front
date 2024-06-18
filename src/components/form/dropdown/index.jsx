@@ -45,7 +45,7 @@ export default ({ options, value, onChange, placeholder, hasNewValueOption, onNe
   }, [value]);
 
   const getVariableValue = (variable) => {
-    if (variable !== null && variable.constructor === ({}).constructor) {
+    if (variable !== null && typeof variable !== "undefined" && variable.constructor === ({}).constructor) {
       return JSON.stringify(variable);
     }
 
