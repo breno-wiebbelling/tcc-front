@@ -31,11 +31,15 @@ const style = {
 
 export default ({ open, setOpen, setSimulationInfo, simulationInfo, reload, setErrorMessage }) => {
 
-  const handleClose = () => setOpen(false);
   const [name, setName] = React.useState("");
   const [description, setDescription] = React.useState("");
-
   const [nameError, setNameError] = React.useState("");
+
+  const handleClose = () => {
+    setName('');
+    setDescription('');
+    setOpen(false);
+  }
 
   const handleSubmit = () => {
     if (name !== "" && name.trim() !== "") {
@@ -44,9 +48,9 @@ export default ({ open, setOpen, setSimulationInfo, simulationInfo, reload, setE
         name: name,
         description: description,
       })
-      .then(new_simulations => {
+      .then(new_simulation => {
         setSimulationInfo({});
-        setOpen(false);
+        handleClose();
         reload();
       })
       .catch(e => {

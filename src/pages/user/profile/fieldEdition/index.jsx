@@ -2,10 +2,14 @@ import React from 'react';
 import Input from "../../../../components/form/rawInput/index"
 import EditIcon from '@mui/icons-material/Edit';
 
-export default ({ fieldName, fieldValue, handleValueChange }) => {
+export default ({ fieldName, fieldValue, handleValueChange, editionEnabled }) => {
 
   const [isEditionEnabled, setIsEditionEnabled] = React.useState(false);
   const [fieldState, setFieldState] = React.useState(fieldValue);
+
+  React.useEffect(() => {
+    setIsEditionEnabled(false);
+  }, [editionEnabled]);
 
   React.useEffect(() => {
     setFieldState(fieldValue)

@@ -2,9 +2,9 @@ import { LoginStyled } from "./styled"
 import { vividGreen, softGreen } from "../../../components/common/style";
 
 import React, { useCallback } from 'react';
+import { LoadingConsumer } from '../../../context/loadingContext.jsx'
 import _ from 'lodash';
 import { Box, Button, Container } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
 import Header from "../../../components/header/index";
 import FieldEdition from "./fieldEdition/index.jsx";
 import PopperAlert from "../../../components/alert/index.jsx"
@@ -25,11 +25,12 @@ const popAlertError = (e, setAlertInfo) => {
 }
 
 export default () => {
-  const navigate = useNavigate();
 
+  const loadingService = LoadingConsumer();
   const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: '' });
   const [userInfo, setUserInfo] = React.useState({ "username": "", "email": "", "host": "" });
   const [userImageUrl, setUserImageUrl] = React.useState("");
+  const [editionEnabled, setEditionEnabled] = React.useState(false);
 
   const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: '' }); }
   const popSuccess = (message) => { resetErrorMessage(); setAlertInfo({ msg: message, mode: 'ok' }); }
@@ -38,10 +39,18 @@ export default () => {
   const handleOpenFileInput = () => { fileInputRef.current.click(); };
 
   React.useEffect(() => {
+    loadingService.show(); 
+
     getUserInfo()
-      .then(user => { setUserInfo(user) });
+      .then(user => { 
+        setUserInfo(user) 
+        loadingService.hide(); 
+      });
     getUserImage()
       .then(data => { setUserImageUrl(data) });
+    setEditionEnabled(!editionEnabled);
+    
+
   }, []);
 
   const handleFileChange = async (event) => {
@@ -87,6 +96,7 @@ export default () => {
     }
 
     await updateUserInfo(userInfo['username'], userInfo['email'], userInfo['host'])
+    setEditionEnabled(!editionEnabled);
     popSuccess("Dados alterados com sucesso!")
   }
 
@@ -97,37 +107,32 @@ export default () => {
       <Container sx={{ display: "flex", height: '92vh', ...displayCenter }}>
         <Box className="container" style={{ height: "92%" }} >
           <Container sx={{ justifyContent: "flex-start", height: "90%", margin: "30px 0px" }}>
-            <Container sx={{ mb: '25px' }}>
-              <AvatarContainer userInfo={userInfo} userImageUrl={userImageUrl} handleOpenFileInput={handleOpenFileInput} />
-            </Container>
-            <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
-
-            <div style={{ marginTop: "20%" }}>
-              <div className={"fieldName"}>
-                <p className={"title"}>nome: </p>
-                <FieldEdition
-                  fieldName={'username'}
-                  fieldValue={userInfo['username']}
-                  handleValueChange={handleValueChange}
-                />
-              </div>
-              <div className={"fieldName"}>
-                <p className={"title"}>email</p>
-                <FieldEdition
-                  fieldName={'email'}
-                  fieldValue={userInfo['email']}
-                  handleValueChange={handleValueChange}
-                />
-              </div>
-              <div className={"fieldName"}>
-                <p className={"title"}>host: </p>
-                <FieldEdition
-                  fieldName={'host'}
-                  fieldValue={userInfo['host']}
-                  handleValueChange={handleValueChange}
-                />
-              </div>
-            </div>
+          {
+            userInfo['username'] && userInfo['email'] && userInfo['host']
+            && (
+              <>
+                <Container sx={{ mb: '25px' }}>
+                  <AvatarContainer userInfo={userInfo} userImageUrl={userImageUrl} handleOpenFileInput={handleOpenFileInput} />
+                </Container>
+                <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
+                
+                <div style={{ marginTop: "20%" }}>
+                  <div className={"fieldName"}>
+                    <p className={"title"}>nome: </p>
+                    <FieldEdition fieldName={'username'} fieldValue={userInfo['username']} handleValueChange={handleValueChange} editionEnabled={editionEnabled} />
+                  </div>
+                  <div className={"fieldName"}>
+                    <p className={"title"}>email</p>
+                    <FieldEdition fieldName={'email'} fieldValue={userInfo['email']} handleValueChange={handleValueChange} editionEnabled={editionEnabled} />
+                  </div>
+                  <div className={"fieldName"}>
+                    <p className={"title"}>host: </p>
+                    <FieldEdition fieldName={'host'} fieldValue={userInfo['host']} handleValueChange={handleValueChange} editionEnabled={editionEnabled} />
+                  </div>
+                </div>
+              </>
+            )
+          }
           </Container>
           <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginBottom: "30px" }}>
             <Button

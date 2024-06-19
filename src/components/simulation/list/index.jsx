@@ -41,7 +41,8 @@ export default () => {
 
   const loadSimulations = async (pge) => {
     loadingService.show();
-
+    setSimulationInfo({ name: "", description: "" })
+    
     getSimulationsByUser(pge)
       .then(clientResponse => {
         setSimulations(clientResponse.list);

@@ -17,7 +17,7 @@ const compTypesEnumValues = {
   },
   MAJEQ: {
     code: "majeq",
-    name: "Menor ou Igual"
+    name: "Maior ou Igual"
   },
   NONE: {
     code: "key",

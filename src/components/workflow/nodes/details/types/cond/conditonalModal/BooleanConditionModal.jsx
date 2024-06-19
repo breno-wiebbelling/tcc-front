@@ -9,16 +9,6 @@ import { smoke, smokeHover, smokeWhite, white } from "../../../../../../common/s
 import Dropdown from "../../../../../../form/dropdown";
 const style = { width: '40%', minWidth: "500px", height: '80%', p: 4, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, borderRadius: "15px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", outline: "none" };
 
-const getComparisonName = (comparisonDetails, setName) => {
-	if(typeof comparisonDetails.name != "undefined"){
-		if(comparisonDetails.name === "Não definida"){
-			setName("Nome da Comparação")
-		}else{
-			setName(comparisonDetails.name)
-		}
-	}
-}
-
 const formatComparison = (name, firstVariable, comparison, secondVariable) => {
 	return {
 		name: name,
@@ -40,7 +30,7 @@ export default ({ isOpen, close, onCreate, comparisonDetails, variables, setVarC
 	const [secondVariable, setSecondVariable] = React.useState({ key: "key", label:"Segunda Variável"})
 
 	React.useEffect(()=>{
-		getComparisonName(typeof comparisonDetails.name !== "undefined" ? comparisonDetails.name : "" )
+		setName(typeof comparisonDetails.name !== "undefined" && comparisonDetails.name !== "Não definida"? comparisonDetails.name : "")
 		setFirstVariable(typeof comparisonDetails['firstVariable'] !== 'undefined' ? comparisonDetails['firstVariable'] : { key: "key", label:"Primeira Variável"});
 		setComparison(typeof comparisonDetails['comparison'] !== "undefined" ? comparisonDetails['comparison']: ComparisonTypesEnum.defaultOption );
 		setSecondVariable(typeof comparisonDetails['secondVariable'] !== 'undefined' ? comparisonDetails['secondVariable'] : { key: "key", label:"Segunda Variável"});
@@ -104,13 +94,7 @@ export default ({ isOpen, close, onCreate, comparisonDetails, variables, setVarC
 						<h3>Detalhes de Condição</h3>
 
 						<div style={{width: "90%"}}>
-							<Input
-								value={name}
-								onChange={(event) => setName(event.target.value)}
-								placeholder="Nome da Comparação"
-								error={nameError}
-								tooltipTitle={"Nome da Comparação"}
-							/>
+							<Input value={name} onChange={(event) => setName(event.target.value)} placeholder="Nome da Comparação" error={nameError} tooltipTitle={"Nome da Comparação"} />
 							<div style={{height: '45px'}}>
 								<Dropdown options={variables} value={firstVariable} placeholder={"Primeira Variável"} tooltipTitle={"Primeira Variável"} onChange={setFirstVariable} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={() => {setVarCreationModal(true)}} isEnabled={true}/>
 							</div>

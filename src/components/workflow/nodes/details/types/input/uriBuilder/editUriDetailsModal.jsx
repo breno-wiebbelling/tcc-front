@@ -27,7 +27,6 @@ const handleVariableChange = (newVariable, setNewUriInfo) => {
   })
 }
 
-
 const handleLabelChange = (newDisplayValue, setNewUriInfo) => {
   setNewUriInfo(latest => {
     return {
@@ -41,8 +40,6 @@ const handleLabelChange = (newDisplayValue, setNewUriInfo) => {
       }
     };
   })
-
-  
 }
 
 const setUriTypeAndValue = (newType, setNewUriInfo) => {
@@ -56,7 +53,6 @@ const setUriTypeAndValue = (newType, setNewUriInfo) => {
       }
     };
   })
-
 }
 
 const setUiDisplay = (newDisplay, setNewUriInfo) => {
@@ -85,13 +81,23 @@ export default ({ isOpen, close, onComplete, onDelete, validateNewQueryElement, 
   const resetErrorMessage = () => { setAlertInfo({ msg: '', mode: ''}); }
   const setError = (errMsg) => { setAlertInfo({ mode: 'error', msg: errMsg }) }
 
-  const handleSubmit = () => { 
+  const validateQueryNameEligibility = (newName) => {
     if(
-      (newUriInfo.raw.type == URIValueTypeEnum.QUERY.code || newUriInfo.raw.type.key == URIValueTypeEnum.QUERY.code) 
-      && !validateNewQueryElement(newUriInfo.raw.value.label)
+      ( isNewUri && !validateNewQueryElement(newName) )
+      ||
+      ( !isNewUri && !validateNewQueryElement(newName, newUriInfo['index']) )
     )
     {
       return;
+    }
+  }
+
+  const handleSubmit = () => { 
+    if(
+      (newUriInfo.raw.type == URIValueTypeEnum.QUERY.code || newUriInfo.raw.type.key == URIValueTypeEnum.QUERY.code)
+    )
+    {
+      validateQueryNameEligibility(newUriInfo.raw.value.label);
     }
 
     onComplete(formatURIInfo(newUriInfo, newUriInfo.index)); 
@@ -99,9 +105,10 @@ export default ({ isOpen, close, onComplete, onDelete, validateNewQueryElement, 
   const handleDelete = () => { onDelete(newUriInfo.index) }
 
   const handleQueryUriDisplayChange = (newDisplayValue) => {
-    validateStringValue(newDisplayValue, setError);
-    validateNewQueryElement(newDisplayValue);
+    newDisplayValue = String(newDisplayValue).toLowerCase();
+    validateStringValue(newDisplayValue, setError, "Insira uma chave");
     handleLabelChange(newDisplayValue, setNewUriInfo);
+    validateQueryNameEligibility(newDisplayValue);
   }
   
   const resetUriInfoFields = (newInfo) => {
@@ -126,7 +133,6 @@ export default ({ isOpen, close, onComplete, onDelete, validateNewQueryElement, 
   }
 
   React.useEffect(()=>{
-
     resetUriInfoFields(uriInfo);
   },[uriInfo])
 

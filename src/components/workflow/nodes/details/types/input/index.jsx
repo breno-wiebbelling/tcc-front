@@ -111,7 +111,6 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
   const handleVariableCreation = () => {
     setVariableCreationModalOpen(false);
     loadUserVariables(nodeInfo['simulationId'], setVariables, setJsonVariables);
-    // setIsUriEditModalOpen(true);
   }
 
   const handleInputVariableChange = (newVariable) => {
@@ -213,10 +212,13 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
     setIsUriEditModalOpen(true);
   }
 
-  const validateNewQueryElement = (newUriElement) => {
+  const validateNewQueryElement = (newUriElement, index) => {
     let localQueryElementNames = getUrisByType(uriElements, URIValueTypeEnum.QUERY.code).map(qe => qe.raw.value.label);
 
-    if(localQueryElementNames.includes(newUriElement)){
+    if(
+      localQueryElementNames.includes(newUriElement) 
+      && ( typeof index === "undefined" || localQueryElementNames.indexOf(newUriElement) !== index)  
+    ){
       setError('Nome da query path já cadastrado!')
       return false;
     }
