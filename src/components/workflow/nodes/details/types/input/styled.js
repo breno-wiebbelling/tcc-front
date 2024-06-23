@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {smoke, smokeWhiteLightHover, whiteLight} from "../../../../../common/style"
+import {whiteLightHover, smoke, smokeHover, smokeWhiteLightHover, whiteLight} from "../../../../../common/style"
 
 export default styled.div`
 
@@ -16,36 +16,53 @@ export default styled.div`
   }
     
   .get-request-http-details{
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
 
-      min-height: 80px;
-      
-      border-radius: 8px;
-      border: 1px solid ${smoke};
-      background-color: ${smokeWhiteLightHover};
-      
-      box-sizing: border-box;
-      padding: 8px;
-  }
+    min-height: 100px;
+    max-height: 100px;
+    overflow-y: auto;
+
+    border-radius: 8px;
+    border: 1px solid ${smoke};
+    background-color: ${smokeWhiteLightHover};
     
-  .get-request-http-details .uri-element {
-      background-color: ${whiteLight} ;
-      width: fit-content;
-      height: 18px;
-      padding: 5px 7px;
-      
-      border-radius: 6px;
-      
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+    box-sizing: border-box;
+    padding: 8px;
+  }
+  
+  .get-request-http-details::-webkit-scrollbar {
+    width: 5px;  
+    border-radius: 5px;   
+  }
 
-      cursor:pointer;
+  .get-request-http-details::-webkit-scrollbar-track {
+    background-color: ${whiteLightHover};
+  }  
+
+  .get-request-http-details::-webkit-scrollbar-thumb {
+    background-color: ${smokeHover};
+    border-radius: 5px;   
+    border: none;   
+  }
+
+  .get-request-http-details .uri-element {
+    background-color: ${whiteLight} ;
+    width: fit-content;
+    height: 18px;
+    padding: 5px 7px;
+    
+    border-radius: 6px;
+    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    cursor:pointer;
   }
 
 `;

@@ -74,7 +74,7 @@ const getVariableById = (uriInformation, variables) => {
   return ""
 }
 
-export default ({ isOpen, close, onComplete, onDelete, validateNewQueryElement, uriInfo, variables, openVariableCreationModal, isNewUri, httpMethod }) => {
+export default ({ isOpen, close, onComplete, onDelete, validateQueryElementName, uriInfo, variables, openVariableCreationModal, isNewUri, httpMethod }) => {
   const [newUriInfo, setNewUriInfo] = React.useState({ "uiDisplay": "/", "raw": { "value": { "label": "", "variable" : "" }, "type": "" } , "index": 0 });
 
   const [alertInfo, setAlertInfo] = React.useState({ msg: '', mode: ''});
@@ -83,21 +83,24 @@ export default ({ isOpen, close, onComplete, onDelete, validateNewQueryElement, 
 
   const validateQueryNameEligibility = (newName) => {
     if(
-      ( isNewUri && !validateNewQueryElement(newName) )
+      ( isNewUri && !validateQueryElementName(newName) )
       ||
-      ( !isNewUri && !validateNewQueryElement(newName, newUriInfo['index']) )
+      ( !isNewUri && validateQueryElementName(newName, newUriInfo['index']) )
     )
     {
-      return;
+      return false;
     }
+
+    return true;
   }
 
   const handleSubmit = () => { 
     if(
       (newUriInfo.raw.type == URIValueTypeEnum.QUERY.code || newUriInfo.raw.type.key == URIValueTypeEnum.QUERY.code)
+      && !validateQueryNameEligibility(newUriInfo.raw.value.label)
     )
     {
-      validateQueryNameEligibility(newUriInfo.raw.value.label);
+      return
     }
 
     onComplete(formatURIInfo(newUriInfo, newUriInfo.index)); 
@@ -176,7 +179,7 @@ export default ({ isOpen, close, onComplete, onDelete, validateNewQueryElement, 
                 newUriInfo.raw.type.value === URIValueTypeEnum.QUERY.code &&
                 (
                   <div>
-                    <Input onChange={(event)=>{ handleQueryUriDisplayChange(event.target.value.split(" ").join("")) }} value={newUriInfo.raw.value.label} type={"text"} tooltipTitle={"Valor do path parameter"} placeholder={"Valor do path parameter"}/>
+                    <Input onChange={(event)=>{ handleQueryUriDisplayChange(event.target.value.split(" ").join("")) }} value={newUriInfo.raw.value.label} type={"text"} tooltipTitle={"Valor do query parameter"} placeholder={"Valor do query parameter"}/>
                     <div style={{ height: '45px', display: 'flex' }}>
                       <Dropdown options={variables} value={newUriInfo.raw.value.variable} placeholder={"Variável Destino"} tooltipTitle={"Variável Destino"} onChange={(selectedVariable)=>{ handleVariableChange(selectedVariable, setNewUriInfo) }} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={() => { openVariableCreationModal() }} isEnabled={true}  />
                     </div>

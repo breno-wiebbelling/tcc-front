@@ -212,14 +212,16 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
     setIsUriEditModalOpen(true);
   }
 
-  const validateNewQueryElement = (newUriElement, index) => {
-    let localQueryElementNames = getUrisByType(uriElements, URIValueTypeEnum.QUERY.code).map(qe => qe.raw.value.label);
+  const validateQueryElementName = (newUriElementName, index) => {
+    let similarElements = getUrisByType(uriElements, URIValueTypeEnum.QUERY.code)
+      .filter((el, eIndex) => 
+        (typeof index !== "undefined" && el.raw.value.label === newUriElementName && eIndex === index )
+        ||
+        (typeof index === "undefined" && el.raw.value.label === newUriElementName)
+      );
 
-    if(
-      localQueryElementNames.includes(newUriElement) 
-      && ( typeof index === "undefined" || localQueryElementNames.indexOf(newUriElement) !== index)  
-    ){
-      setError('Nome da query path já cadastrado!')
+    if( similarElements.length > 0 ){
+      setError('Nome da query param. já cadastrado!')
       return false;
     }
 
@@ -284,7 +286,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
           </div>
         )
       }
-      <div className={"get-request-http-details"} style={{ position: "relative" }}>
+      <div className={"get-request-http-details"}>
         {
           uriElements.map((uriElement, index) => {
             return (
@@ -297,24 +299,21 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
             );
           })
         }
-        <IconButton className={`display_flex_center`} onClick={()=>{ openUriEditModalNew() }} sx={{ width: "25px",  height: "25px", borderRadius: "50%",  color: denseSmoke, position: "absolute", bottom: '10px', right: '10px', backgroundColor: white, "&:hover": {backgroundColor: whiteHover}, "&:active": {backgroundColor: smokeWhiteLight} }}>
+      </div>
+      <div className="node-details-line" style={{ position: "relative" }}>
+        <IconButton className={`display_flex_center`} onClick={()=>{ openUriEditModalNew() }} sx={{ top: '-60px', left: '325px' , width: "25px",  height: "25px", borderRadius: "50%", color: denseSmoke, position: "absolute", backgroundColor: white, "&:hover": {backgroundColor: whiteHover}, "&:active": {backgroundColor: smokeWhiteLight} }}>
           <AddIcon sx={{width: "18px", height: "18px"}} />
         </IconButton>
       </div>
-      <div className="node-details-line"></div>
-      <VariableCreationModal
-        isOpen={variableCreationModalOpen}
-        close={() => { closeVariableCreationModal(false) }}
-        onCreate={handleVariableCreation}
-        simulationId={nodeInfo['simulationId']}
-      />
+
+      <VariableCreationModal isOpen={variableCreationModalOpen} close={() => { closeVariableCreationModal(false) }} onCreate={handleVariableCreation} simulationId={nodeInfo['simulationId']} />
       <EditUriDetailsModal
         isOpen={isUriEditModalOpen}
         close={closeUriEditModalOpen}
         onComplete={handleUriEdit}
         onDelete={handleUriDelete}
         simulationId={nodeInfo['simulationId']}
-        validateNewQueryElement={validateNewQueryElement}
+        validateQueryElementName={validateQueryElementName}
         uriInfo={newUriInfo}
         isNewUri={isNewUri}
         variables={variables}
