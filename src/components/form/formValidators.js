@@ -25,8 +25,6 @@ export const validateJSON = (jsonString, setError, errorMessage) => {
 	try {
 		JSON.parse(jsonString);
 		return true
-		//TODO: add validation for json
-		// return validateDangerousChars(jsonString, setError);
 	} catch (error) {
 		setError(errorMessage);
 		return false;

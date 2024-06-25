@@ -74,15 +74,6 @@ export const addNodeBelow = async (fromNodeInformation, mainManager) => {
     return node;
   }));
 
-  // localNodes = [...localNodes, newNodeBelow];
-  // localNodes = reprocessNextNodePosition(currentNode, localNodes, mainManager);
-
-  // mainManager.edgeManagerInstance.updateSource(currentNode.id, newNodeBelow.details.nextNode, newNodeBelow.id);
-  // mainManager.edgeManagerInstance.create(currentNode.id, newNodeBelow.id)
-  // mainManager.nodeManagerInstance.setNodes(localNodes);
-
-  // updateGhostPositions(mainManager)
-  // updateNodesPositions(mainManager)
   await mainManager.reload();
   mainManager.loadingService.hide();
   return localNodes;
@@ -146,12 +137,6 @@ export const addNodeAbove = async (fromNodeInformation, mainManager) => {
 
   await mainManager.reload();
   mainManager.loadingService.hide();
-  // localNodes = [...localNodes, newNode];
-  // localNodes = reprocessNextNodePosition(newNode, localNodes, mainManager);
-  // mainManager.nodeManagerInstance.setNodes(localNodes);
-
-  // updateGhostPositions(mainManager);
-  // updateNodesPositions(mainManager);
 }
 
 export const addConditionalLeg = (fromNodeInformation, mainManager) => {
@@ -162,7 +147,6 @@ export const addConditionalLeg = (fromNodeInformation, mainManager) => {
     let final_node = latestNodes.find(node => node.type === nodeKeys.FINAL_KEY);
     let currentNode = latestNodes.find(node => node.id === fromNodeInformation.id);
     let newNodeId = idGenerator();
-    //TODO
     let newNode = { id: newNodeId, type: nodeKeys.NEW_KEY, data: { label: newNodeId, id: newNodeId, click: mainManager.nodeManagerInstancenodeClickEvents }, details: { nextNode: final_node.id }, line: mainManager.lineManagerInstance.process(currentNode.line) }
 
     currentNode.details.nextNode.push(newNode.id);
@@ -218,14 +202,14 @@ export const deleteNode = async (nodeInformation, mainManager) => {
         nextNode = currentNodes.find(cn => cn.id === nodeInformation.details.nextNode);
       }
 
-      if (nextNode.type === nodeKeys.GHOST) { //end of conditional leg
+      if (nextNode.type === nodeKeys.GHOST) { 
         if (parentNode.details.conditionalDetails.type === 'boolean') {
           let newNode = await processNewNode({ ...nodeInformation, details: { nextNode: nextNode.details.nextNode } }, mainManager, "Tarefa temporária!");
           parentNode.details.nextNode[previousIndex] = newNode['_id'];
           newNextNode = parentNode.details.nextNode;
         }
         else {
-          //TODO: REMOVE SWITCH OPTION
+          //TODO: REMOVE SWITCH OPTIONS
         }
       }
       else {

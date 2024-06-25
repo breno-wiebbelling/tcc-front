@@ -3,6 +3,7 @@ import MathOperationEnum from "../../components/workflow/nodes/details/types/mat
 
 import { validateStringValue } from "../../components/form/formValidators";
 import { validateNewUriInfo } from "../clients/nodeClient";
+import HttpOperationEnum from "../../components/workflow/nodes/details/types/input/HttpOperationEnum";
 const allEqual = arr => arr.every(val => val === arr[0]);
 
 const validateMathTypeDetails = (nodeInformation, setError) => {
@@ -34,6 +35,12 @@ const validateInputTypeDetails = async (nodeInformation, setError) => {
     setError('Adicione informações URI!');
     return false;
   }
+
+  if(nodeInformation['details']['httpMethod'] === HttpOperationEnum.POST.code && typeof nodeInformation['details']['inputVariable'] === "undefined" ){
+    setError('Adicione a variável de entrada!');
+    return false;
+  }
+  console.log(nodeInformation)
 
   if (!(await validateNewUriInfo(nodeInformation))) {
     setError('Você já possui uma simulação com essa URI!');

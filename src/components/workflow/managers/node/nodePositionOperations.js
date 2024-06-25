@@ -261,12 +261,6 @@ export const reloadNodesAndAddGhostNodes = async (mainManager) => {
 
   mainManager.nodeManagerInstance.setNodes(latestNodes);
   updateNodesPositions(mainManager)
-
-  // conditionalNodesBetweenClosure = conditionalNodes.filter(cn => (cn.position.y < conditionalClosure.position.y && cn.position > conditionalNode.position.y))
-
-  // conditionalNode.details.nextNode.forEach(nn => {
-  //   console.log(nn)
-  // });
 }
 
 export const updateNodesPositions = (mainManager) => {
@@ -278,12 +272,6 @@ export const updateNodesPositions = (mainManager) => {
         x: mainManager.columnManagerInstance.getColumnPosition(node.column),
         y: mainManager.lineManagerInstance.getLinePosition(node.line)
       }
-
-      // if(node.data){
-      //   node.data.label = node.line;
-      // }else{
-      //   node.data = { label: node.line }
-      // }
 
       if (node.type === nodeKeys.START_KEY) { node.position.y -= 120 }
       if (node.type === nodeKeys.CONDITIONAL_KEY) { node.position.y -= 50 }

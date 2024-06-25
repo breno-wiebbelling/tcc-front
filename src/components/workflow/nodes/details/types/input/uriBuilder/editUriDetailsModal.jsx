@@ -35,7 +35,7 @@ const handleLabelChange = (newDisplayValue, setNewUriInfo) => {
         ...latest.raw,
         value: {
           ...latest.raw.value,
-          label: newDisplayValue
+          label: String(newDisplayValue).toLowerCase()
         }
       }
     };
