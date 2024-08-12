@@ -217,12 +217,12 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
 
   const openVariableCreationModal = () => {
     setVariableCreationModalOpen(true);
-    setIsUriEditModalOpen(false);
+    // setIsUriEditModalOpen(false);
   }
 
   const closeVariableCreationModal = () => {
     setVariableCreationModalOpen(false);
-    setIsUriEditModalOpen(true);
+    // setIsUriEditModalOpen(true);
   }
 
   const validateQueryElementName = (newUriElementName, index) => {

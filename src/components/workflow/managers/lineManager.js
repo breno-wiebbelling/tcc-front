@@ -126,6 +126,19 @@ const LineManager =  () => {
     ];
   }
 
+  lineLibrary.getLowerLine = (lineNames) => {
+    return (
+      lineNames.map(lineName => {
+        return {
+          name: lineName,
+          position: lineLibrary.getLinePosition(lineName)
+        }
+      })
+      .sort((a,b) => b.position - a.position)
+      [0]['name']
+    );
+  }
+
   return lineLibrary;
 }
 

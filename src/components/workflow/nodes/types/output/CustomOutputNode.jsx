@@ -15,35 +15,19 @@ export default ({ data }) => {
     <ClickOutsideWrapper onOutsideClick={ () => { setIsOptionsVisible(false); } }>
       <CustomeOutputStyled>
         <Handle type="target" position={Position.Top} className='handle_top'/>
-        <div
-          className="worker"
-          style={{ border: isOptionsVisible ? '2px solid black' : '1px solid black' }}
-          onClick={ () => { setIsOptionsVisible(true); }}
-        > 
+        <div className="worker" style={{ border: isOptionsVisible ? '2px solid black' : '1px solid black' }} onClick={ () => { setIsOptionsVisible(true); }}> 
           <Tooltip title={data.label} disableInteractive>
             <p onClick={ () => { setIsOptionsVisible(true); }} >{data.label}</p>
           </Tooltip>
         </div>
-        <div onClick={() => {
-          setIsOptionsVisible(false);
-        }}>
-          <div
-            className='action_button left'
-            onClick={() => { data.click.editNode(data) }}
-            style={{"left": (isOptionsVisible) ? "-7px" : "50px"}}
-          >
+        <div onClick={() => { setIsOptionsVisible(false); }}>
+          <div className='action_button left' onClick={() => { data.click.editNode(data) }} style={{"left": (isOptionsVisible) ? "-7px" : "50px"}}>
             <IconButton className='action_button_element'>
               <EditIcon/>
             </IconButton>
           </div>
 
-          <div
-            className='action_button left'
-            onClick={() => {
-              data.click.addNode(nodeCRUDOperations.ADD_ABOVE, data)
-            }}
-            style={{"top": (isOptionsVisible) ? "-60px" : "0px", "left": "75px"}}
-          >
+          <div className='action_button left' onClick={() => { data.click.addNode(nodeCRUDOperations.ADD_ABOVE, data) }} style={{"top": (isOptionsVisible) ? "-60px" : "0px", "left": "75px"}} >
             <IconButton className='action_button_element'>
               <AddIcon className='add_action'/>
               <ArrowBackIosIcon className='arrow_action'/>

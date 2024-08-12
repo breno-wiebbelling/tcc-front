@@ -27,7 +27,7 @@ export default ({ data }) => {
           </Tooltip>
         </div>
         <div onClick={ () => { setIsOptionsVisible(false); }} >
-          <div 
+          {/* <div 
             className='action_button left' 
             onClick={ () => { data.click.addNode(nodeCRUDOperations.CONDITIONAL_KEY, data) } } 
             style={{ "top": (isOptionsVisible) ? "170px" : "50px" , "left": "75px" }} 
@@ -35,11 +35,11 @@ export default ({ data }) => {
             <IconButton className='action_button_element'>
               <CallSplitIcon style={{ transform: "rotate(180deg)"}}/>
             </IconButton>
-          </div>
+          </div> */}
           <div 
             className='action_button center'
             onClick={()=>{ data.click.editNode(data) }}
-            style={{ "left": (isOptionsVisible) ? "-40px" : "50px" }}
+            style={{ "left": (isOptionsVisible) ? "-30px" : "50px" }}
           >
             <IconButton className='action_button_element'>
               <EditIcon/>
@@ -48,7 +48,7 @@ export default ({ data }) => {
 
           <div  
             className='action_button rigth'
-            onClick={ () => { data.click.deleteNode(data) } }  style={{ "right": (isOptionsVisible) ? "-40px" : "50px" }}
+            onClick={ () => { data.click.deleteNode(data) } }  style={{ "right": (isOptionsVisible) ? "-30px" : "50px" }}
           >
             <IconButton className='action_button_element'>
               <DeleteIcon/>
@@ -57,7 +57,7 @@ export default ({ data }) => {
           <div 
             className='action_button top'
             onClick={ () => { data.click.addNode(nodeCRUDOperations.ADD_ABOVE, data) } }
-            style={{ "top": (isOptionsVisible) ? "-60px" : "30px" , "left": "75px" }} 
+            style={{ "top": (isOptionsVisible) ? "-50px" : "30px" , "left": "75px" }} 
           >
             <IconButton className='action_button_element add_above'>
               <AddIcon className='add_action'/>

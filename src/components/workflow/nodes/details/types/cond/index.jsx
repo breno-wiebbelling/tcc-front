@@ -10,6 +10,7 @@ import BooleanConditionalModal from "./conditonalModal/BooleanConditionModal";
 import { getVariablesByUserAndSimulationId } from "../../../../../../service/clients/variableClient";
 import { getNextNodesAvailable } from "../../../../../../service/clients/simulationClient"
 import ComparisonTypesEnum from './conditonalModal/ComparisonTypesEnum';
+import { nodeKeys } from '../../../../managers/nodeManager';
 
 const loadUserVariables = async (simulationId, setVariables) => {
   let userVariables = await getVariablesByUserAndSimulationId(0, simulationId)
@@ -38,6 +39,18 @@ const defaultBooleanOptionDetails = ([
     option: { key: "key", value: "", label: `Node caso false` }
   }
 ]);
+
+const getConditionalClosureForNewNode = (nodeInfo) => {
+  if(nodeInfo.details.nextNode.includes("ghost")){
+    return nodeInfo.details.originalNextNode;
+  }
+  
+  if(nodeInfo['type'] === nodeKeys.CONDITIONAL_KEY){
+    return nodeInfo.details.conditionalClosure;
+  }
+
+  return nodeInfo.details.nextNode;
+}
 
 export default ({ nodeInfo, setNodeDetails }) => {
   const [variables, setVariables] = React.useState([]);
@@ -69,7 +82,7 @@ export default ({ nodeInfo, setNodeDetails }) => {
             comparisonDetails: newComparisonDetails,
             type: conditionalType.key,
           },
-          conditionalClosure: ((nodeInfo.details.nextNode.includes("ghost")) ? nodeInfo.details.originalNextNode : nodeInfo.details.nextNode)
+          conditionalClosure: getConditionalClosureForNewNode(nodeInfo)
         };
 
         return newDetails;

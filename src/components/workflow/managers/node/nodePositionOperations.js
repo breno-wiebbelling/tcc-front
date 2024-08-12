@@ -146,11 +146,23 @@ export const reloadNodesAndAddGhostNodes = async (mainManager) => {
 
       nodesWithSimilarity.forEach(similarNodeId => {
         let similarNode = latestNodes.find(node => node.id === similarNodeId);
-        let ghostLine = mainManager.lineManagerInstance.processGhostLine(similarNode.line);
 
         let nodesPoitingToSimilarNode = latestNodes.filter(node => isNodeIdPresentOnNextNode(similarNodeId, node))
         if (nodesPoitingToSimilarNode.length > 1) {
           let newGhostColumns = [];
+          
+          /*
+          //v2
+          let lowerLine = mainManager.lineManagerInstance.getLowerLine(nodesPoitingToSimilarNode.map(npsn => npsn.line))
+          similarNode.line = mainManager.lineManagerInstance.process(lowerLine);
+          latestNodes = reprocessNextNodePosition(similarNode, latestNodes, mainManager)
+
+          let ghostLine = mainManager.lineManagerInstance.processGhostLine(similarNode.line);
+          */
+          //v1
+          let ghostLine = mainManager.lineManagerInstance.processGhostLine(similarNode.line);
+
+
           nodesPoitingToSimilarNode.forEach(nodePoitingToSimilar => {
             let newGhostNode = { id: idGenerator("ghost"), details: { "nextNode": nodePoitingToSimilar.details.nextNode }, type: nodeKeys.GHOST, column: nodePoitingToSimilar.column, line: ghostLine }
             nodePoitingToSimilar.details.originalNextNode = Array.isArray(nodePoitingToSimilar.details.nextNode) ? [ ...nodePoitingToSimilar.details.nextNode] : nodePoitingToSimilar.details.nextNode;
