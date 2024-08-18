@@ -42,7 +42,7 @@ export default () => {
   const loadSimulations = async (pge) => {
     loadingService.show();
     setSimulationInfo({ name: "", description: "" })
-    
+
     getSimulationsByUser(pge)
       .then(clientResponse => {
         setSimulations(clientResponse.list);
@@ -55,7 +55,7 @@ export default () => {
 
   const createSimulation = () => {
     setIsCreationModalOpen(true)
-  } 
+  }
 
   const editSimulation = (simulation) => {
     setSimulationInfo(simulation);
@@ -76,7 +76,7 @@ export default () => {
       {alertInfo.msg != "" && <PopperAlert message={alertInfo.msg} mode={'error'} resetMessage={resetErrorMessage} />}
 
       <CreationModal reload={() => { loadSimulations(page) }} open={isCreationModalOpen} setOpen={setIsCreationModalOpen} setErrorMessage={popError} />
-      <EditionModal  reload={() => { loadSimulations(page) }} open={isEditionModalOpen}  setOpen={setIsEditionModalOpen}  setErrorMessage={popError} simulationInfo={simulationInfo} setSimulationInfo={setSimulationInfo} />
+      <EditionModal reload={() => { loadSimulations(page) }} open={isEditionModalOpen} setOpen={setIsEditionModalOpen} setErrorMessage={popError} simulationInfo={simulationInfo} setSimulationInfo={setSimulationInfo} />
 
       <div className='simulationList'>
         <div className="simulationsInfo">
@@ -88,11 +88,21 @@ export default () => {
             </button>
           </div>
         </div>
-        <div className="header">
-          <p style={{ width: "25%", paddingLeft: "10px" }}> Nome </p>
-          <p style={{ width: "35%" }}> Descrição        </p>
-          <p style={{ width: "30%" }}> Data de Criação  </p>
-          <div className="actions"></div>
+        <div className="headers">
+          <div className="header_container">
+            <div className="header">
+              <div style={{ width: "25%" }}>
+                <p>Nome</p>
+              </div>
+              <div style={{ width: "35%" }} >
+                <p> Descrição </p>
+              </div>
+              <div style={{ width: "30%" }} >
+                <p > Data de Criação  </p>
+              </div>
+            </div>
+            <div style={{ width: "10%" }} className="actions"></div>
+          </div>
         </div>
         <div className="simulations">
           {
@@ -100,32 +110,35 @@ export default () => {
           }
           {
             simulations.length > 0 &&
-            <>
-              {
-                simulations.map(simulation => {
-                  return (
-                    <div className={"simulation"} key={simulation['_id']}>
-                      <div style={{ width: "100%", height: "100%" }} className='display_flex_center' onClick={() => { onSimulationClick(simulation) }}>
-                        <Tooltip title={simulation['name']} arrow disableInteractive className="simulation_info_container">
-                          <p style={{ width: "25%", paddingLeft: "10px" }} > {simulation['name']} </p>
-                        </Tooltip>
-                        <Tooltip title={simulation['description']} arrow disableInteractive className="simulation_info_container">
-                          <p style={{ width: "35%" }} > {simulation['description']}   </p>
-                        </Tooltip>
-                        <Tooltip title={simulation['createdAt']} arrow disableInteractive className="simulation_info_container">
-                          <p style={{ width: "30%" }} > {String(simulation['createdAt']).split("T")[0]} </p>
-                        </Tooltip>
-                      </div>
-                      <div className='actions'>
-                        <EditIcon className='action' onClick={() => { editSimulation(simulation) }} />
-                        <DeleteIcon className='action' onClick={() => { deleteSimulation(simulation) }} />
-                      </div>
+
+            simulations.map(simulation => {
+              return (
+                <div className={"simulation_container"} key={simulation['_id']}>
+                  <div className='simulation' onClick={() => { onSimulationClick(simulation) }} >
+                    <div style={{ width: "25%" }} >
+                      <Tooltip title={simulation['name']} arrow disableInteractive className="simulation_info_container">
+                        <p> {simulation['name']} </p>
+                      </Tooltip>
                     </div>
-                  )
-                })
-              }
-            </>
-          }
+                    <div style={{ width: "35%" }}>
+                      <Tooltip title={simulation['description']} arrow disableInteractive className="simulation_info_container">
+                        <p style={{ width: "80%" }}> {simulation['description']}   </p>
+                      </Tooltip>
+                    </div>
+                    <div style={{ width: "30%" }}>
+                      <Tooltip  title={simulation['createdAt']} arrow disableInteractive className="simulation_info_container">
+                        <p> {String(simulation['createdAt']).split("T")[0]} </p>
+                      </Tooltip>
+                    </div>
+                  </div>
+                  <div style={{ width: "10%" }} className='actions'>
+                    <EditIcon className='action' onClick={() => { editSimulation(simulation) }} />
+                    <DeleteIcon className='action' onClick={() => { deleteSimulation(simulation) }} />
+                  </div>
+                </div>
+              )
+            })
+          } 
         </div>
         <div className="pagination display_flex_center">
           {

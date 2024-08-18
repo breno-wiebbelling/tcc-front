@@ -7,19 +7,8 @@ export default styled.div`
   width: 100%; 
   height: 100%;
 
-  .simulationList, .simulationsInfo, .simulationList .header, .simulationList .header p, .simulations .simulation, .simulations .actions, .simulations p{
+  .simulationList{
     display: flex;
-  }
-
-  .simulationList .header, .simulations .simulation{
-    height: 43px;
-    width: 100%;
-  }
-
-  .simulationList .header p, .simulations .simulation p{
-    width: 100%;
-    align-items: center;
-    justify-content: left;
   }
 
   .simulationList{
@@ -39,15 +28,59 @@ export default styled.div`
     box-shadow: 1px 10px 10px 3px ${denseSmokeBlack};
   }
 
-  .simulationList .header{
+  .simulationList .header_container{
     color: ${smokeHover};
     border-bottom: 1px solid ${smokeWhiteLight};
     font-weight: 700;
+    
+    font-size: 14px;
   }
 
-  .simulationList .header p{
-    font-size: 14px;
-    margin-right: 20px;
+  .simulationList .header .actions, .simulations .actions{
+    height: 100%;
+    width: 15%;
+    box-sizing: border-box;
+
+    justify-content: start;
+    align-items: center;
+  }
+
+  .headers, 
+  .simulations{
+    height: 43px;
+    width: 100%;
+  }
+
+  .headers .header_container,
+  .simulations .simulation_container{
+    height: 43px;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  .headers .header_container .header,
+  .simulations .simulation_container .simulation{
+    height: 100%;
+    width: 90%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: baseline;
+    align-items: center;
+  }
+
+  .headers .header_container .header div,
+  .simulations .simulation_container .simulation div{
+    height: 43px;
+    padding-left: 5px;
+
+    display: flex;  
+    align-items: center;
+
+    box-sizing: border-box;
   }
 
   .simulationsInfo{
@@ -57,6 +90,7 @@ export default styled.div`
     padding: 2%;
     box-sizing: border-box;
 
+    display: flex;
     align-items: center;
     justify-content: space-between;
 
@@ -90,7 +124,8 @@ export default styled.div`
   .simulations{
     height: calc(100% - 40px - 80px);
     width: 100%;
-    overflow: auto;
+    overflow-y: auto;
+    font-weight: 300;
   }
 
   .simulations::-webkit-scrollbar {
@@ -108,21 +143,12 @@ export default styled.div`
     border: none;   
   }
 
-  .simulations .simulation{
-    width: 100%;
-    box-sizing: border-box;
-
-    font-size: 13px;
-
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
+  .simulations .simulation_container{
     border-bottom: 1px solid ${smokeWhiteLight};
     cursor: pointer;
   }
 
-  .simulations .simulation:hover{
+  .simulations .simulation_container:hover{
     background-color: ${whiteLightHover};
   }
 
@@ -134,29 +160,12 @@ export default styled.div`
     background-color: ${smokeWhiteLight};
   }
 
-  .simulations .simulation{
-    display: flex;
-    align-items: center;
-  }
-
   .simulations .simulation p{
-    display: block;
-
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    box-sizing: content-box;
-
-    padding: 0px 20px 0px 0px;
-  }
-
-  .simulationList .header .actions, .simulations .actions{
-    height: 100%;
-    width: 15%;
     box-sizing: border-box;
-
-    justify-content: start;
-    align-items: center;
+    font-size: 13px;
   }
 
   .actions .action{
