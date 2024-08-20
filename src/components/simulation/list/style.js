@@ -75,7 +75,7 @@ export default styled.div`
   .headers .header_container .header div,
   .simulations .simulation_container .simulation div{
     height: 43px;
-    padding-left: 5px;
+    padding-left: 10px;
 
     display: flex;  
     align-items: center;
@@ -152,7 +152,7 @@ export default styled.div`
     background-color: ${whiteLightHover};
   }
 
-  .simulations .simulation:hover .action{
+  .simulations .simulation_container:hover .action{
     visibility: visible;
   }
 
@@ -168,11 +168,18 @@ export default styled.div`
     font-size: 13px;
   }
 
+  .simulation_container .actions{
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
   .actions .action{
     border-radius: 50%;
     padding: 5px;
     margin-right: 5px;
     color: ${smokeHover};
+    background-color: ${smokeWhite};
     z-index: 1;
     height: 20px;
     width: 20px;
