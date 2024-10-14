@@ -4,6 +4,7 @@ import InputDetailsStyled from "./styled";
 import Dropdown from "../../../../../form/dropdown";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 import PopperAlert from '../../../../../alert/index';
 import { IconButton } from "@mui/material";
 import VariableCreationModal from "../../../../../variable/creation/variableCreationModal";
@@ -306,7 +307,7 @@ export default ({ nodeInfo, setNodeDetails, nodeDetails }) => {
               <div className={"uri-element"} onMouseEnter={() => setOpacity(true, document, index)} onMouseLeave={() => setOpacity(false, document, index)} key={index}>
                 <p>{uriElement.uiDisplay}</p>
                 <IconButton className={`display_flex_center`} id={`${URI_ELEMENT_CLASS}${index}`} onClick={() => { openUriEditModal(uriElement, false) }} sx={{ width: "20px", height: "20px", backgroundColor: smokeWhite, borderRadius: "50%", color: white, opacity: 0, "&:hover": { backgroundColor: smoke }, "&:active": { backgroundColor: smokeHover } }}>
-                  <MoreHorizIcon sx={{ width: "15px", height: "16px" }} className={"closeicon-uri-element"} />
+                  <EditIcon sx={{ width: "15px", height: "16px" }} className={"closeicon-uri-element"} />
                 </IconButton>
               </div>
             );
