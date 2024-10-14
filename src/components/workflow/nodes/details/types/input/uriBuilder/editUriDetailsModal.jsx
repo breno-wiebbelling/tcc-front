@@ -161,14 +161,14 @@ export default ({ isOpen, close, onComplete, onDelete, validateQueryElementName,
               {
                 newUriInfo.raw.type.value === URIValueTypeEnum.URI.code &&
                 (
-                  <Input onChange={(event)=>{ handleLabelChange(event.target.value.split(" ").join(""), setNewUriInfo) }} value={newUriInfo.raw.value.label} type={"text"} tooltipTitle={"Valor do Caminho URI"} placeholder={"Valor do Caminho URI"}/>
+                  <Input onChange={(event)=>{ handleLabelChange(event.target.value.split(" ").join(""), setNewUriInfo) }} value={newUriInfo.raw.value.label} type={"text"} tooltipTitle={"Nome do Caminho URI"} placeholder={"Nome do Caminho URI"}/>
                 )
               }
               {
                 newUriInfo.raw.type.value === URIValueTypeEnum.PATH.code &&
                 (
                   <div>
-                    <Input onChange={(event)=>{ handleLabelChange(event.target.value.split(" ").join(""), setNewUriInfo, setError) }} value={newUriInfo.raw.value.label} type={"text"} tooltipTitle={"Valor do path parameter"} placeholder={"Valor do path parameter"}/>
+                    <Input onChange={(event)=>{ handleLabelChange(event.target.value.split(" ").join(""), setNewUriInfo, setError) }} value={newUriInfo.raw.value.label} type={"text"} tooltipTitle={"Nome do path parameter"} placeholder={"Nome do path parameter"}/>
                     <div style={{ height: '45px', display: 'flex' }}>
                       <Dropdown options={variables} value={newUriInfo.raw.value.variable} placeholder={"Variável Destino"} tooltipTitle={"Variável Destino"} onChange={(selectedVariable)=>{ handleVariableChange(selectedVariable, setNewUriInfo) }} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={() => { openVariableCreationModal() }} isEnabled={true}  />
                     </div>
@@ -179,7 +179,7 @@ export default ({ isOpen, close, onComplete, onDelete, validateQueryElementName,
                 newUriInfo.raw.type.value === URIValueTypeEnum.QUERY.code &&
                 (
                   <div>
-                    <Input onChange={(event)=>{ handleQueryUriDisplayChange(event.target.value.split(" ").join("")) }} value={newUriInfo.raw.value.label} type={"text"} tooltipTitle={"Valor do query parameter"} placeholder={"Valor do query parameter"}/>
+                    <Input onChange={(event)=>{ handleQueryUriDisplayChange(event.target.value.split(" ").join("")) }} value={newUriInfo.raw.value.label} type={"text"} tooltipTitle={"Nome do query parameter"} placeholder={"Nome do query parameter"}/>
                     <div style={{ height: '45px', display: 'flex' }}>
                       <Dropdown options={variables} value={newUriInfo.raw.value.variable} placeholder={"Variável Destino"} tooltipTitle={"Variável Destino"} onChange={(selectedVariable)=>{ handleVariableChange(selectedVariable, setNewUriInfo) }} hasNewValueOption={true} className="dropdown" onNewValueOptionClick={() => { openVariableCreationModal() }} isEnabled={true}  />
                     </div>
