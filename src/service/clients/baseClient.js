@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getToken } from '../authService'
 
-const BASE_URL_HOST = process.env.REACT_APP_BACK_END_URL;
+const BASE_URL_HOST = "http://restmup-backend.vercel.app";
 
 const baseInstance =  axios.create({
   baseURL: BASE_URL_HOST,
